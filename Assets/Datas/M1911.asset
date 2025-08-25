@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03385b920477804bae1691b40ab229b, type: 3}
+  m_Name: M1911
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: 1911
+  weaponModel: 0
+  gunType: 0
+  description: pistul
+  weaponIcon: {fileID: 21300000, guid: ee5d848ad03f10640a6cf38f94489bf5, type: 2}
+  damage: 30
+  fireRate: 400
+  range: 100
+  magazineSize: 7
+  reloadTime: 3
+  muzzleVelocity: 400
+  hipSpread: 2
+  adsSpread: 0.5
+  useGravity: 1
+  dropOffStart: 50
+  dropOffEnd: 100
+  minDamageMultiplier: 0.3
+  availableShootingModes: 00000000
+  defaultShootingMode: 0
+  bulletsPerBurst: 3
+  burstDelay: 0.1
+  projectileType: 0
+  pelletsPerShot: 1
+  pelletSpread: 0
+  shootSound: {fileID: 8300000, guid: 464d9a89a68115544b8c8eb770bf50b3, type: 3}
+  reloadSound: {fileID: 8300000, guid: 796cdd4a78a1ac0419ea1e3c022957fe, type: 3}
+  emptySound: {fileID: 8300000, guid: 4678fdfe6b6bfed41a85f7d82460bc2c, type: 3}
+  switchModeSound: {fileID: 0}
+  audioVolume: 1
+  muzzleFlashPrefab: {fileID: 0}
+  shellCasingPrefab: {fileID: 100000, guid: 1319cfeb42068a446bc5d43ef1562670, type: 3}
+  impactEffectPrefab: {fileID: 0}
+  muzzleLightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  muzzleLightIntensity: 2
+  muzzleLightDuration: 0.02
+  shootAnimation: RECOIL
+  shootADSAnimation: RECOIL_ADS
+  reloadAnimation: RELOAD
+  adsEnterAnimation: enterADS
+  adsExitAnimation: exitADS
+  idleAnimation: Idle
+  aimSpeed: 8
+  weaponSway: 1
+  recoilAmount: 1
+  recoilPattern: {x: 0, y: 1, z: -0.5}
+  ammoType: 0
+  maxAmmoReserve: 240
+  infiniteAmmo: 0
+  rarity: 0
+  purchasePrice: 100
+  sellPrice: 50
+  canBePurchased: 1
+  canBeDropped: 1
+  supportedAttachments: 

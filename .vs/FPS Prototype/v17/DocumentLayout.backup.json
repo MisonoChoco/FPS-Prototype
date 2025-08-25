@@ -1,0 +1,120 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\UNITIES\\FPS Prototype\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|e:\\unities\\fps prototype\\assets\\scripts\\weapondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weapondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|e:\\unities\\fps prototype\\assets\\scripts\\weaponbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weaponbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|E:\\UNITIES\\FPS Prototype\\assets\\scripts\\weaponuniversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weaponuniversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|E:\\UNITIES\\FPS Prototype\\assets\\scripts\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|E:\\UNITIES\\FPS Prototype\\assets\\scripts\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|E:\\UNITIES\\FPS Prototype\\assets\\scripts\\selfdestroy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{45CFDB8D-936F-FBC5-3081-DA4428EB2E7B}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\selfdestroy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "WeaponData.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\WeaponData.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponData.cs",
+              "ToolTip": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\WeaponData.cs",
+              "RelativeToolTip": "Assets\\Scripts\\WeaponData.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAAwAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T15:37:13.413Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "WeaponUniversal.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\WeaponUniversal.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponUniversal.cs",
+              "ToolTip": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\WeaponUniversal.cs",
+              "RelativeToolTip": "Assets\\Scripts\\WeaponUniversal.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T15:27:31.619Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "WeaponBase.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\WeaponBase.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponBase.cs",
+              "ToolTip": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\WeaponBase.cs",
+              "RelativeToolTip": "Assets\\Scripts\\WeaponBase.cs",
+              "ViewState": "AgIAAGQCAAAAAAAAAAAcwIgCAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T15:24:38.447Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Bullet.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\Bullet.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Bullet.cs",
+              "ToolTip": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\Bullet.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Bullet.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE4BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T12:32:36.132Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SelfDestroy.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\SelfDestroy.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SelfDestroy.cs",
+              "ToolTip": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\SelfDestroy.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SelfDestroy.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T11:13:30.401Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Player.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\Player.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Player.cs",
+              "ToolTip": "E:\\UNITIES\\FPS Prototype\\Assets\\Scripts\\Player.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Player.cs",
+              "ViewState": "AgIAAG0CAAAAAAAAAAAAwH0CAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-23T11:09:46.382Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
