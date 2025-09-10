@@ -165,7 +165,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void HandleFireModeSwitch()
     {
-        if (Input.GetKeyDown(KeyCode.B) && availableShootingModes.Length > 1)
+        if (Input.GetKeyDown(KeyCode.V) && availableShootingModes.Length > 1)
         {
             CycleFireMode();
         }
@@ -552,6 +552,11 @@ public abstract class WeaponBase : MonoBehaviour
     public virtual void SetActiveWeapon(bool active)
     {
         IsActiveWeapon = active;
+        Animator animator = references.weaponAnimator;
+        if (animator != null)
+        {
+            animator.enabled = active;
+        }
 
         if (!active)
         {
@@ -560,6 +565,12 @@ public abstract class WeaponBase : MonoBehaviour
             if (IsADS)
             {
                 ExitADS();
+            }
+
+            GetComponent<Outline>().enabled = false;
+            if (animator != null)
+            {
+                animator.enabled = false;
             }
         }
     }

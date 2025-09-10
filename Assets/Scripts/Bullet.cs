@@ -290,22 +290,22 @@ public class PlayerCollisionHandler : CollisionHandler
 
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
-        var player = target.GetComponent<Player>();
-        if (player != null && !player.IsDead)
-        {
-            var damageInfo = new DamageInfo(
-                projectile.Damage,
-                impactData.Point,
-                -impactData.Normal,
-                (projectile as MonoBehaviour)?.gameObject,
-                DamageType.Bullet
-            );
+        //var player = target.GetComponent<Player>();
+        //if (player != null && !player.IsDead)
+        //{
+        //    var damageInfo = new DamageInfo(
+        //        projectile.Damage,
+        //        impactData.Point,
+        //        -impactData.Normal,
+        //        (projectile as MonoBehaviour)?.gameObject,
+        //        DamageType.Bullet
+        //    );
 
-            player.TakeDamage(projectile.Damage, damageInfo);
-            bloodEffect.CreateEffect(impactData.Point, impactData.Normal, target);
+        //    player.TakeDamage(projectile.Damage, damageInfo);
+        //    bloodEffect.CreateEffect(impactData.Point, impactData.Normal, target);
 
-            Debug.Log($"Hit player for {projectile.Damage} damage!");
-        }
+        //    Debug.Log($"Hit player for {projectile.Damage} damage!");
+        //}
     }
 }
 
@@ -399,16 +399,42 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         }
     }
 
+    public virtual void ResetState()
+    {
+        IsActive = true;
+        penetrationCount = 0;
+
+        if (projectileRigidbody != null)
+        {
+            projectileRigidbody.linearVelocity = Vector3.zero;
+            projectileRigidbody.angularVelocity = Vector3.zero;
+        }
+
+        StopAllCoroutines();
+        StartCoroutine(DestroyAfterLifetime());
+    }
+
     public virtual void Deactivate()
     {
         IsActive = false;
 
         if (projectileRigidbody != null)
         {
-            projectileRigidbody.linearVelocity = Vector3.zero; // Updated from linearVelocity
+            projectileRigidbody.linearVelocity = Vector3.zero;
+            projectileRigidbody.angularVelocity = Vector3.zero;
         }
 
-        Destroy(gameObject);
+        StopAllCoroutines();
+
+        var poolable = GetComponent<PoolableProjectile>();
+        if (poolable != null)
+        {
+            poolable.ReturnToPool();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     protected virtual void OnCollisionEnter(Collision collision)
@@ -679,162 +705,9 @@ public class BulletImpactEvents : MonoBehaviour
 
 #endregion Events
 
-#region Factory Pattern
-
-public class ProjectileFactory : MonoBehaviour
-{
-    [Header("Prefabs")]
-    [SerializeField] private GameObject bulletPrefab;
-
-    [SerializeField] private GameObject grenadePrefab;
-    [SerializeField] private GameObject rocketPrefab;
-
-    public static ProjectileFactory Instance { get; private set; }
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    public IProjectile CreateProjectile(ProjectileType type, Vector3 position, Quaternion rotation)
-    {
-        GameObject prefab = GetPrefabByType(type);
-        if (prefab == null) return null;
-
-        GameObject instance = Instantiate(prefab, position, rotation);
-        return instance.GetComponent<IProjectile>();
-    }
-
-    public T CreateProjectile<T>(Vector3 position, Quaternion rotation) where T : ProjectileBase
-    {
-        GameObject prefab = GetPrefabByType<T>();
-        if (prefab == null) return null;
-
-        GameObject instance = Instantiate(prefab, position, rotation);
-        return instance.GetComponent<T>();
-    }
-
-    private GameObject GetPrefabByType(ProjectileType type)
-    {
-        return type switch
-        {
-            ProjectileType.Bullet => bulletPrefab,
-            ProjectileType.Grenade => grenadePrefab,
-            ProjectileType.Rocket => rocketPrefab,
-            _ => null
-        };
-    }
-
-    private GameObject GetPrefabByType<T>() where T : ProjectileBase
-    {
-        if (typeof(T) == typeof(Bullet)) return bulletPrefab;
-        if (typeof(T) == typeof(Grenade)) return grenadePrefab;
-        // Add more types as needed
-        return null;
-    }
-}
-
 public enum ProjectileType
 {
     Bullet,
     Grenade,
     Rocket
 }
-
-#endregion Factory Pattern
-
-#region Object Pool (Optional Performance Enhancement)
-
-public class ProjectilePool : MonoBehaviour
-{
-    [System.Serializable]
-    public class PoolConfig
-    {
-        public GameObject prefab;
-        public int poolSize = 50;
-        public bool expandable = true;
-    }
-
-    [SerializeField] private List<PoolConfig> poolConfigs;
-    private Dictionary<GameObject, Queue<GameObject>> pools = new Dictionary<GameObject, Queue<GameObject>>();
-
-    public static ProjectilePool Instance { get; private set; }
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            InitializePools();
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    private void InitializePools()
-    {
-        foreach (var config in poolConfigs)
-        {
-            var queue = new Queue<GameObject>();
-
-            for (int i = 0; i < config.poolSize; i++)
-            {
-                GameObject obj = Instantiate(config.prefab);
-                obj.SetActive(false);
-                obj.transform.SetParent(transform);
-                queue.Enqueue(obj);
-            }
-
-            pools[config.prefab] = queue;
-        }
-    }
-
-    public GameObject GetPooledObject(GameObject prefab)
-    {
-        if (!pools.ContainsKey(prefab))
-        {
-            Debug.LogWarning($"No pool found for prefab: {prefab.name}");
-            return null;
-        }
-
-        var pool = pools[prefab];
-
-        if (pool.Count > 0)
-        {
-            GameObject obj = pool.Dequeue();
-            obj.SetActive(true);
-            return obj;
-        }
-
-        // Pool is empty, create new object if expandable
-        var config = poolConfigs.Find(c => c.prefab == prefab);
-        if (config?.expandable == true)
-        {
-            return Instantiate(prefab);
-        }
-
-        return null;
-    }
-
-    public void ReturnToPool(GameObject obj, GameObject prefab)
-    {
-        if (!pools.ContainsKey(prefab)) return;
-
-        obj.SetActive(false);
-        obj.transform.SetParent(transform);
-        pools[prefab].Enqueue(obj);
-    }
-}
-
-#endregion Object Pool (Optional Performance Enhancement)
