@@ -634,5 +634,4 @@ public class Player : ControllableEntity, IHealable, IRespawnable
 
 #endregion Utility Methods
 
-
 #endregion Player Class

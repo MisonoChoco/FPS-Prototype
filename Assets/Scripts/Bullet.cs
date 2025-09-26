@@ -446,6 +446,8 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         GameObject hitObject = collision.gameObject;
         ImpactData impactData = new ImpactData(collision.contacts[0], hitObject);
 
+       // Debug.Log($"Projectile collided with {hitObject.name} at {impactData.Point}");
+
         HandleCollision(hitObject, impactData);
     }
 
@@ -508,16 +510,9 @@ public class Bullet : ProjectileBase
     [Header("Bullet Specific")]
     [SerializeField] private Volume globalVolume;
 
-    private DepthOfField depthOfField;
-
     protected override void Awake()
     {
         base.Awake();
-
-        if (globalVolume?.profile.TryGet(out depthOfField) == true)
-        {
-            // Cache depth of field if needed for special effects
-        }
     }
 
     protected override void InitializeCollisionHandlers()

@@ -19,6 +19,11 @@ public class WeaponData : ScriptableObject
 
     public Sprite weaponIcon;
 
+    [Header("Viewmodel Positioning")]
+    public Vector3 baseViewmodelPosition = Vector3.zero;
+
+    public Vector3 baseViewmodelRotation = Vector3.zero;
+
     [Header("Combat Stats")]
     public int damage = 25;
 
@@ -52,6 +57,16 @@ public class WeaponData : ScriptableObject
 
     public int pelletsPerShot = 1; // For shotguns
     public float pelletSpread = 0f; // Additional spread for multiple pellets
+
+    [Header("Cycle-Based Firing")]
+    public bool requiresCycling = false;
+
+    public float cycleTime = 0.8f;
+    public string cycleAnimation = "CYCLE";
+    public AudioClip[] cycleSounds; // Array of pump/bolt sounds for randomization
+
+    [Header("Magazine Drop")]
+    public GameObject magazineDropPrefab;
 
     [Header("Audio Settings")]
     public AudioClip shootSound;

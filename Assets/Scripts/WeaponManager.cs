@@ -21,6 +21,7 @@ public class WeaponManager : MonoBehaviour
 
     [SerializeField] private int totalPistolAmmo = 0;
     [SerializeField] private int totalShotgunAmmo = 0;
+    [SerializeField] private int totalSniperAmmo = 0;
 
     [Header("Throwables")]
     [SerializeField] private ThrowableInventory throwableInventory;
@@ -97,6 +98,8 @@ public class WeaponManager : MonoBehaviour
         // Initialize ammo dictionary with inspector values
         totalAmmo[WeaponModel.AK47] = totalRifleAmmo; // Changed from Weapon.WeaponModel
         totalAmmo[WeaponModel.HandgunM1911] = totalPistolAmmo; // Changed from Weapon.WeaponModel
+        totalAmmo[WeaponModel.Shotgun] = totalShotgunAmmo;
+        totalAmmo[WeaponModel.SniperRifle] = totalSniperAmmo;
         // Add more weapon models as needed
     }
 
@@ -231,7 +234,7 @@ public class WeaponManager : MonoBehaviour
 
     #endregion Update Loop
 
-    #region Weapon Management (New & Legacy Support)
+    #region Weapon Management
 
     // New method for WeaponBase
     public bool PickupWeapon(WeaponBase weapon)
@@ -365,7 +368,7 @@ public class WeaponManager : MonoBehaviour
         return weaponSlots[slotIndex].GetComponentInChildren<WeaponBase>();
     }
 
-    #endregion Weapon Management (New & Legacy Support)
+    #endregion Weapon Management
 
     #region Slot Switching
 
@@ -439,7 +442,7 @@ public class WeaponManager : MonoBehaviour
 
             case AmmoBox.AmmoType.ShotgunAmmo:
                 totalShotgunAmmo += ammoBox.ammoAmount;
-                // Add shotgun weapon model when implemented
+                totalAmmo[WeaponModel.Shotgun] = totalShotgunAmmo;
                 break;
         }
 
@@ -460,6 +463,11 @@ public class WeaponManager : MonoBehaviour
                 totalPistolAmmo -= bulletsToDecrease;
                 totalAmmo[WeaponModel.HandgunM1911] = totalPistolAmmo;
                 break;
+
+            case WeaponModel.Shotgun:
+                totalShotgunAmmo -= bulletsToDecrease;
+                totalAmmo[WeaponModel.Shotgun] = totalShotgunAmmo;
+                break;
         }
 
         OnAmmoChanged?.Invoke(thisWeaponModel, GetAmmoCount(thisWeaponModel));
@@ -476,6 +484,7 @@ public class WeaponManager : MonoBehaviour
         {
             WeaponModel.AK47 => totalRifleAmmo, // Changed from Weapon.WeaponModel
             WeaponModel.HandgunM1911 => totalPistolAmmo, // Changed from Weapon.WeaponModel
+            WeaponModel.Shotgun => totalShotgunAmmo,
             _ => 0
         };
     }

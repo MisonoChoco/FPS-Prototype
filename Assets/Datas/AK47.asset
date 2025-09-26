@@ -17,14 +17,16 @@ MonoBehaviour:
   gunType: 0
   description: legendary
   weaponIcon: {fileID: 21300000, guid: 2ef11f94006f3a74fa737f41532c963b, type: 2}
-  damage: 25
-  fireRate: 600
+  baseViewmodelPosition: {x: 0.4, y: -0.44, z: -0.4}
+  baseViewmodelRotation: {x: 0, y: 0, z: 0}
+  damage: 21
+  fireRate: 500
   range: 100
   magazineSize: 30
   reloadTime: 4
   muzzleVelocity: 400
-  hipSpread: 2
-  adsSpread: 0.5
+  hipSpread: 1.5
+  adsSpread: 0
   useGravity: 1
   dropOffStart: 50
   dropOffEnd: 100
@@ -36,6 +38,11 @@ MonoBehaviour:
   projectileType: 0
   pelletsPerShot: 1
   pelletSpread: 0
+  requiresCycling: 0
+  cycleTime: 0.8
+  cycleAnimation: CYCLE
+  cycleSounds: []
+  magazineDropPrefab: {fileID: 1919992424398036836, guid: 0bdd831cc991d1c468dbdcdb381ee6b9, type: 3}
   shootSound: {fileID: 8300000, guid: 7fcea5c58b0dc9842940c2d12c605cc7, type: 3}
   reloadSound: {fileID: 8300000, guid: ff2d8fff2c42a4143b78bd9a89f42597, type: 3}
   emptySound: {fileID: 8300000, guid: 4678fdfe6b6bfed41a85f7d82460bc2c, type: 3}

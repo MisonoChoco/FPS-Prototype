@@ -17,14 +17,16 @@ MonoBehaviour:
   gunType: 0
   description: pistul
   weaponIcon: {fileID: 21300000, guid: ee5d848ad03f10640a6cf38f94489bf5, type: 2}
+  baseViewmodelPosition: {x: 0.22, y: 0.2, z: -0.2}
+  baseViewmodelRotation: {x: 0, y: 0, z: 180}
   damage: 30
   fireRate: 400
   range: 100
   magazineSize: 7
-  reloadTime: 3
-  muzzleVelocity: 400
-  hipSpread: 2
-  adsSpread: 0.5
+  reloadTime: 2.5
+  muzzleVelocity: 300
+  hipSpread: 1
+  adsSpread: 0
   useGravity: 1
   dropOffStart: 50
   dropOffEnd: 100
@@ -36,13 +38,18 @@ MonoBehaviour:
   projectileType: 0
   pelletsPerShot: 1
   pelletSpread: 0
+  requiresCycling: 0
+  cycleTime: 0.8
+  cycleAnimation: CYCLE
+  cycleSounds: []
+  magazineDropPrefab: {fileID: 8979655581460389549, guid: d126d480254ba314d9a404544543ea53, type: 3}
   shootSound: {fileID: 8300000, guid: 464d9a89a68115544b8c8eb770bf50b3, type: 3}
   reloadSound: {fileID: 8300000, guid: 796cdd4a78a1ac0419ea1e3c022957fe, type: 3}
   emptySound: {fileID: 8300000, guid: 4678fdfe6b6bfed41a85f7d82460bc2c, type: 3}
   switchModeSound: {fileID: 0}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
-  shellCasingPrefab: {fileID: 100000, guid: 1319cfeb42068a446bc5d43ef1562670, type: 3}
+  shellCasingPrefab: {fileID: 1046677776983374096, guid: 53f1328754e99b7459427f98b6f74222, type: 3}
   impactEffectPrefab: {fileID: 0}
   muzzleLightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   muzzleLightIntensity: 2
