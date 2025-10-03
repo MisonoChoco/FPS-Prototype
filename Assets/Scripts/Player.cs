@@ -516,25 +516,25 @@ public class Player : ControllableEntity, IHealable, IRespawnable
 
     private void PlayDamageSound()
     {
-        if (SoundManager.Instance?.playerChannel != null && SoundManager.Instance?.playerHurt != null)
+        if (SoundManager.Instance?.entityChannel != null && SoundManager.Instance?.playerHurt != null)
         {
-            SoundManager.Instance.playerChannel.PlayOneShot(SoundManager.Instance.playerHurt);
+            SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.playerHurt);
         }
     }
 
     private void PlayDeathEffects()
     {
-        if (SoundManager.Instance?.playerChannel != null)
+        if (SoundManager.Instance?.entityChannel != null)
         {
             if (SoundManager.Instance.playerDie != null)
             {
-                SoundManager.Instance.playerChannel.PlayOneShot(SoundManager.Instance.playerDie);
+                SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.playerDie);
             }
 
             if (SoundManager.Instance.gameOverMusic != null)
             {
-                SoundManager.Instance.playerChannel.clip = SoundManager.Instance.gameOverMusic;
-                SoundManager.Instance.playerChannel.PlayDelayed(effectSettings.deathSoundDelay);
+                SoundManager.Instance.entityChannel.clip = SoundManager.Instance.gameOverMusic;
+                SoundManager.Instance.entityChannel.PlayDelayed(effectSettings.deathSoundDelay);
             }
         }
 

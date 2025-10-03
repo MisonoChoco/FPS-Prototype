@@ -503,8 +503,8 @@ MonoBehaviour:
   aimReduction: 4
   magazineDropPrefab: {fileID: 8979655581460389549, guid: d126d480254ba314d9a404544543ea53, type: 3}
   magazineDropPoint: {fileID: 1235404710346288846}
-  magazineDropForce: {x: 2, y: -3, z: 1}
-  magazineDropTorque: 3
+  magazineDropForce: {x: 0, y: 0, z: 0}
+  magazineDropTorque: 1
   magInGun: {fileID: 4849729334492324104}
 --- !u!95 &1405736891299541404
 Animator:
@@ -578,7 +578,6 @@ GameObject:
   - component: {fileID: 275825317165871129}
   - component: {fileID: 5694597051433709982}
   - component: {fileID: 5265667009954231036}
-  - component: {fileID: 4939349945769503765}
   m_Layer: 0
   m_Name: RightArm
   m_TagString: Untagged
@@ -657,27 +656,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4939349945769503765
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3352942384817220023}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9999999, y: 1, z: 1.0000001}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3487263938575251950
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,7 +681,7 @@ Transform:
   m_GameObject: {fileID: 3487263938575251950}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0016, y: -0.087, z: -0.0058}
+  m_LocalPosition: {x: -0.0016, y: -0.071, z: -0.0058}
   m_LocalScale: {x: 0.39999998, y: 0.3999999, z: 0.39999998}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5808,7 +5786,6 @@ GameObject:
   - component: {fileID: 1973094375457734787}
   - component: {fileID: 6086336077346929432}
   - component: {fileID: 8370924085532612548}
-  - component: {fileID: 2550998922155030478}
   m_Layer: 0
   m_Name: LeftArm
   m_TagString: Untagged
@@ -5887,24 +5864,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2550998922155030478
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8190099100526702885}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9999999, y: 1, z: 1.0000001}
-  m_Center: {x: 0, y: 0, z: 0}

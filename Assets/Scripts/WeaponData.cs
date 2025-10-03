@@ -42,6 +42,64 @@ public class WeaponData : ScriptableObject
     public float dropOffEnd = 100f; // Distance where damage reaches minimum
     public float minDamageMultiplier = 0.3f; // Minimum damage as percentage of base damage
 
+    [Header("Shell Reload System")]
+    public bool useShellReload = false;
+
+    public float shellLoadTime = 0.8f;
+    public int maxShellsToLoad = 8;
+    public string shellLoadAnimation = "SHELL_LOAD";
+
+    [Header("Weapon Visual Effects")]
+    public bool haveWeaponRecoil = true;
+
+    public bool haveCameraRecoil = true;
+    public bool haveRotationalSway = true;
+    public bool haveBobbing = true;
+    public bool haveJumpSway = true;
+
+    [Header("Camera Recoil Values")]
+    public float recoilRotationSpeed = 6f;
+
+    public float recoilReturnSpeed = 25f;
+    public Vector3 hipFireRecoil = new Vector3(4f, 4f, 4f);
+    public Vector3 adsFireRecoil = new Vector3(2f, 2f, 2f);
+    public float hRecoil = 0.215f;
+    public float vRecoil = 0.221f;
+
+    [Header("Weapon Recoil Values")]
+    public float gunRecoilPositionSpeed = 8f;
+
+    public float gunPositionReturnSpeed = 10f;
+    public Vector3 recoilKickBackHip = new Vector3(0.015f, 0f, 0.05f);
+    public Vector3 recoilKickBackAds = new Vector3(-0.08f, 0.01f, 0.009f);
+    public float gunRecoilRotationSpeed = 8f;
+    public float gunRotationReturnSpeed = 38f;
+    public Vector3 recoilRotationHip = new Vector3(10f, 5f, 7f);
+    public Vector3 recoilRotationAds = new Vector3(10f, 4f, 6f);
+
+    [Header("Rotational Sway Values")]
+    public float rotationSwayIntensity = 10f;
+
+    public float rotationSwaySmoothness = 2f;
+
+    [Header("Jump Sway Values")]
+    public float jumpIntensity = 5f;
+
+    public float weaponMaxClamp = 20f;
+    public float weaponMinClamp = 20f;
+    public float jumpSmooth = 15f;
+    public float landingIntensity = 5f;
+    public float landingSmooth = 15f;
+    public float recoverySpeed = 50f;
+
+    [Header("Weapon Bobbing Values")]
+    public float bobbingMagnitude = 0.009f;
+
+    public float idleSpeed = 2f;
+    public float walkSpeedMultiplier = 4f;
+    public float walkSpeedMax = 6f;
+    public float aimReduction = 4f;
+
     [Header("Fire Modes")]
     public ShootingMode[] availableShootingModes = { ShootingMode.Semi };
 

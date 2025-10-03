@@ -31,13 +31,13 @@ public class Enemy : MonoBehaviour
                 animator.SetTrigger("DieForward");
             }
 
-            SoundManager.Instance.zombieChannel2.PlayOneShot(SoundManager.Instance.zombieDeath);
+            SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.zombieDeath);
         }
         else
         {
             animator.SetTrigger("DAMAGE");
 
-            SoundManager.Instance.zombieChannel2.PlayOneShot(SoundManager.Instance.zombieHurt);
+            SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.zombieHurt);
         }
     }
 

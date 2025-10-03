@@ -4800,7 +4800,6 @@ GameObject:
   - component: {fileID: 5465221785381098003}
   - component: {fileID: 4948441343837475790}
   - component: {fileID: 2515667946916471215}
-  - component: {fileID: 7775587921557969620}
   m_Layer: 0
   m_Name: RightArm
   m_TagString: Untagged
@@ -4879,27 +4878,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7775587921557969620
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4999042544885169939}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9999999, y: 1, z: 1.0000001}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5685932164023762820
 GameObject:
   m_ObjectHideFlags: 0
@@ -5420,7 +5398,6 @@ GameObject:
   - component: {fileID: 1722237252637422869}
   - component: {fileID: 8265818501287125984}
   - component: {fileID: 6357652174756274616}
-  - component: {fileID: 4256860135608307228}
   m_Layer: 0
   m_Name: LeftArm
   m_TagString: Untagged
@@ -5499,27 +5476,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4256860135608307228
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7747006875687263873}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9999999, y: 1, z: 1.0000001}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8277936520801934321
 GameObject:
   m_ObjectHideFlags: 0
@@ -5587,54 +5543,13 @@ MonoBehaviour:
     weaponAnimator: {fileID: 365186803224831344}
     viewmodelTransform: {fileID: 8637291332472225657}
     cameraTransform: {fileID: 0}
+  cameraRecoilHolder: {fileID: 0}
+  gunPositionHolder: {fileID: 0}
+  magazineDropPoint: {fileID: 4707601953564410102}
+  magazineDropForce: {x: -1, y: -0.5, z: 6}
+  magazineDropTorque: 1
   weaponModel: 1
   availableShootingModes: 0000000002000000
-  requiresCycling: 0
-  cycleTime: 0.8
-  cycleAnimation: CYCLE
-  useShellReload: 0
-  shellLoadTime: 0.8
-  maxShellsToLoad: 8
-  shellLoadAnimation: SHELL_LOAD
-  haveCameraRecoil: 1
-  cameraRecoilHolder: {fileID: 0}
-  recoilRotationSpeed: 20
-  recoilReturnSpeed: 12
-  hipFireRecoil: {x: 6, y: 6, z: 6}
-  adsFireRecoil: {x: 4, y: 4, z: 4}
-  hRecoil: 0.6
-  vRecoil: 0.5
-  haveWeaponRecoil: 1
-  gunPositionHolder: {fileID: 0}
-  gunRecoilPositionSpeed: 10
-  gunPositionReturnSpeed: 8
-  recoilKickBackHip: {x: 0.025, y: 0.05, z: 0.075}
-  recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 10
-  gunRotationReturnSpeed: 24
-  recoilRotationHip: {x: 12, y: 8, z: 10}
-  recoilRotationAds: {x: 11, y: 7, z: 9}
-  haveRotationalSway: 1
-  rotationSwayIntensity: 10
-  rotationSwaySmoothness: 2
-  haveJumpSway: 1
-  jumpIntensity: 5
-  weaponMaxClamp: 20
-  weaponMinClamp: 20
-  jumpSmooth: 15
-  landingIntensity: 5
-  landingSmooth: 15
-  recoverySpeed: 50
-  haveBobbing: 1
-  magnitude: 0.03
-  idleSpeed: 2
-  walkSpeedMultiplier: 4
-  walkSpeedMax: 6
-  aimReduction: 4
-  magazineDropPrefab: {fileID: 1919992424398036836, guid: 0bdd831cc991d1c468dbdcdb381ee6b9, type: 3}
-  magazineDropPoint: {fileID: 4707601953564410102}
-  magazineDropForce: {x: 2, y: 0.5, z: 1}
-  magazineDropTorque: 1
   magInGun: {fileID: 8881421651726174816}
 --- !u!65 &2778912014186288304
 BoxCollider:

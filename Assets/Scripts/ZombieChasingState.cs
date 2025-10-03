@@ -22,10 +22,10 @@ public class ZombieChasingState : StateMachineBehaviour
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (SoundManager.Instance.zombieChannel.isPlaying == false)
+        if (SoundManager.Instance.entityChannel.isPlaying == false)
         {
-            SoundManager.Instance.zombieChannel.clip = SoundManager.Instance.zombieChase;
-            SoundManager.Instance.zombieChannel.PlayDelayed(3f);
+            SoundManager.Instance.entityChannel.clip = SoundManager.Instance.zombieChase;
+            SoundManager.Instance.entityChannel.PlayDelayed(3f);
         }
 
         agent.SetDestination(Player.position);
@@ -50,6 +50,6 @@ public class ZombieChasingState : StateMachineBehaviour
     {
         agent.SetDestination(animator.transform.position);
 
-        SoundManager.Instance.zombieChannel.Stop();
+        SoundManager.Instance.entityChannel.Stop();
     }
 }

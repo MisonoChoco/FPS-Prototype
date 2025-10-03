@@ -31,6 +31,43 @@ MonoBehaviour:
   dropOffStart: 50
   dropOffEnd: 100
   minDamageMultiplier: 0.3
+  useShellReload: 1
+  shellLoadTime: 0.8
+  maxShellsToLoad: 8
+  shellLoadAnimation: SHELL_LOAD
+  haveWeaponRecoil: 1
+  haveCameraRecoil: 1
+  haveRotationalSway: 1
+  haveBobbing: 1
+  haveJumpSway: 1
+  recoilRotationSpeed: 25
+  recoilReturnSpeed: 10
+  hipFireRecoil: {x: 15, y: 15, z: 15}
+  adsFireRecoil: {x: 10, y: 10, z: 10}
+  hRecoil: 1
+  vRecoil: 2
+  gunRecoilPositionSpeed: 15
+  gunPositionReturnSpeed: 12
+  recoilKickBackHip: {x: 0.015, y: 0.1, z: 0.15}
+  recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
+  gunRecoilRotationSpeed: 8
+  gunRotationReturnSpeed: 38
+  recoilRotationHip: {x: 14, y: 9, z: 11}
+  recoilRotationAds: {x: 12, y: 7, z: 9}
+  rotationSwayIntensity: 10
+  rotationSwaySmoothness: 2
+  jumpIntensity: 5
+  weaponMaxClamp: 20
+  weaponMinClamp: 20
+  jumpSmooth: 15
+  landingIntensity: 5
+  landingSmooth: 15
+  recoverySpeed: 50
+  bobbingMagnitude: 0.009
+  idleSpeed: 2
+  walkSpeedMultiplier: 4
+  walkSpeedMax: 6
+  aimReduction: 4
   availableShootingModes: 00000000
   defaultShootingMode: 0
   bulletsPerBurst: 3
@@ -47,8 +84,8 @@ MonoBehaviour:
   magazineDropPrefab: {fileID: 0}
   shootSound: {fileID: 8300000, guid: 7e921ed260d54ac479116fad1369b0a1, type: 3}
   reloadSound: {fileID: 0}
-  emptySound: {fileID: 8300000, guid: 4678fdfe6b6bfed41a85f7d82460bc2c, type: 3}
-  switchModeSound: {fileID: 0}
+  emptySound: {fileID: 8300000, guid: c4902d8b61636034ea7166678a165da3, type: 3}
+  switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 8550284322650201004, guid: 2dbd1ae46205a6b48ac87da24b0cfebf, type: 3}

@@ -39,10 +39,10 @@ public class ZombiePatrollingState : StateMachineBehaviour
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (SoundManager.Instance.zombieChannel.isPlaying == false)
+        if (SoundManager.Instance.entityChannel.isPlaying == false)
         {
-            SoundManager.Instance.zombieChannel.clip = SoundManager.Instance.zombieWalk;
-            SoundManager.Instance.zombieChannel.PlayDelayed(1f);
+            SoundManager.Instance.entityChannel.clip = SoundManager.Instance.zombieWalk;
+            SoundManager.Instance.entityChannel.PlayDelayed(1f);
         }
 
         //if agent arrived at waypoint, move to next waypoint
@@ -73,6 +73,6 @@ public class ZombiePatrollingState : StateMachineBehaviour
         //stop the agent
         agent.SetDestination(agent.transform.position);
 
-        SoundManager.Instance.zombieChannel.Stop();
+        SoundManager.Instance.entityChannel.Stop();
     }
 }

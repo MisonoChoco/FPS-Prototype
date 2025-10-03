@@ -2,7 +2,7 @@
 - Project name: FPS-Prototype
 - Unity version: Unity 6000.2.2f1
 - Active game object:
-  - Name: WeaponManager
+  - Name: M1911 (1)
   - Tag: Untagged
-  - Layer: Default
+  - Layer: WeaponRender
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

@@ -5,14 +5,11 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; set; }
 
     [Header("Audio Channels")]
-    public AudioSource ShootingChannel;
+    public AudioSource weaponChannel;
 
-    public AudioSource EmptyShooting;
-    public AudioSource CyclingChannel;
+    public AudioSource entityChannel;
     public AudioSource throwablesChannel;
-    public AudioSource zombieChannel;
-    public AudioSource zombieChannel2;
-    public AudioSource playerChannel;
+    public AudioSource musicChannel;
 
     [Header("Weapon Shooting Sounds")]
     public AudioClip AK47Shot;
@@ -20,31 +17,41 @@ public class SoundManager : MonoBehaviour
     public AudioClip M1911Shot;
     public AudioClip ShotgunShot;
     public AudioClip SniperShot;
+    public AudioClip emptyGunClick;
 
-    [Header("Weapon Reload Sounds (Magazine-Fed)")]
-    public AudioSource Reloading_AK;
+    public AudioClip enemyHitmarker;
 
-    public AudioSource Reloading_M1911;
-    public AudioSource Reloading_Sniper;
+    [Header("Weapon Reload Sounds")]
+    public AudioClip AK47Reload;
 
-    [Header("Shell Loading Sounds (Shotgun)")]
-    public AudioClip[] ShellLoadSounds; // Array for randomized shell insertion sounds
+    public AudioClip M1911Reload;
+    public AudioClip SniperReload;
 
-    [Header("Cycle Sounds (Pump/Bolt Action)")]
-    public AudioClip[] PumpShotgunSounds;  // Array for pump action cycling
+    public AudioClip MagDrop;
 
-    public AudioClip[] BoltActionSounds;   // Array for bolt action cycling
+    [Header("Shell Loading & Cycling Sounds")]
+    public AudioClip[] ShellLoadSounds;
 
-    [Header("Other Sounds")]
+    public AudioClip[] PumpShotgunSounds;
+    public AudioClip[] BoltActionSounds;
+
+    [Header("Throwables")]
     public AudioClip grenadeSound;
 
+    [Header("Zombie Sounds")]
     public AudioClip zombieDeath;
+
     public AudioClip zombieWalk;
     public AudioClip zombieAttack;
     public AudioClip zombieChase;
     public AudioClip zombieHurt;
+
+    [Header("Player Sounds")]
     public AudioClip playerHurt;
+
     public AudioClip playerDie;
+
+    [Header("Music")]
     public AudioClip gameOverMusic;
 
     private void Awake()
@@ -63,81 +70,87 @@ public class SoundManager : MonoBehaviour
 
     public void PlayShootingSound(Weapon.WeaponModel weapon)
     {
+        AudioClip clip = null;
+
         switch (weapon)
         {
             case Weapon.WeaponModel.AK47:
-                ShootingChannel.PlayOneShot(AK47Shot);
+                clip = AK47Shot;
                 break;
 
             case Weapon.WeaponModel.HandgunM1911:
-                ShootingChannel.PlayOneShot(M1911Shot);
+                clip = M1911Shot;
                 break;
 
             case Weapon.WeaponModel.Shotgun:
-                ShootingChannel.PlayOneShot(ShotgunShot);
+                clip = ShotgunShot;
                 break;
 
             case Weapon.WeaponModel.SniperRifle:
-                ShootingChannel.PlayOneShot(SniperShot);
+                clip = SniperShot;
                 break;
+        }
+
+        if (clip != null && weaponChannel != null)
+        {
+            weaponChannel.PlayOneShot(clip);
+        }
+    }
+
+    public void PlayEmptyGunSound()
+    {
+        if (emptyGunClick != null && weaponChannel != null)
+        {
+            weaponChannel.PlayOneShot(emptyGunClick);
         }
     }
 
     public void PlayReloadSound(Weapon.WeaponModel weapon)
     {
+        AudioClip clip = null;
+
         switch (weapon)
         {
             case Weapon.WeaponModel.AK47:
-                Reloading_AK.Play();
+                clip = AK47Reload;
                 break;
 
             case Weapon.WeaponModel.HandgunM1911:
-                Reloading_M1911.Play();
+                clip = M1911Reload;
                 break;
 
             case Weapon.WeaponModel.SniperRifle:
-                Reloading_Sniper.Play();
+                clip = SniperReload;
                 break;
 
             case Weapon.WeaponModel.Shotgun:
                 // Shotgun uses shell loading, not magazine reload
-                break;
+                return;
+        }
+
+        if (clip != null && weaponChannel != null)
+        {
+            weaponChannel.PlayOneShot(clip);
         }
     }
 
     public void StopReloadSound(Weapon.WeaponModel weapon)
     {
-        switch (weapon)
+        if (weaponChannel != null && weaponChannel.isPlaying)
         {
-            case Weapon.WeaponModel.AK47:
-                Reloading_AK.Stop();
-                break;
-
-            case Weapon.WeaponModel.HandgunM1911:
-                Reloading_M1911.Stop();
-                break;
-
-            case Weapon.WeaponModel.SniperRifle:
-                Reloading_Sniper.Stop();
-                break;
-
-            case Weapon.WeaponModel.Shotgun:
-                // No magazine reload to stop for shotgun
-                break;
+            weaponChannel.Stop();
         }
     }
 
-    // NEW: Shell loading sound for shotguns
     public void PlayShellLoadSound()
     {
-        if (ShellLoadSounds != null && ShellLoadSounds.Length > 0 && ShootingChannel != null)
+        if (ShellLoadSounds != null && ShellLoadSounds.Length > 0 && weaponChannel != null)
         {
             int randomIndex = Random.Range(0, ShellLoadSounds.Length);
-            ShootingChannel.PlayOneShot(ShellLoadSounds[randomIndex]);
+            weaponChannel.PlayOneShot(ShellLoadSounds[randomIndex]);
         }
     }
 
-    // NEW: Cycle sound for pump-action and bolt-action
     public void PlayCycleSound(Weapon.WeaponModel weapon)
     {
         AudioClip[] cycleSounds = null;
@@ -153,61 +166,116 @@ public class SoundManager : MonoBehaviour
                 break;
         }
 
-        if (cycleSounds != null && cycleSounds.Length > 0 && CyclingChannel != null)
+        if (cycleSounds != null && cycleSounds.Length > 0 && weaponChannel != null)
         {
             int randomIndex = Random.Range(0, cycleSounds.Length);
-            CyclingChannel.PlayOneShot(cycleSounds[randomIndex]);
+            weaponChannel.PlayOneShot(cycleSounds[randomIndex]);
+        }
+    }
+
+    public void PlayEnemyHitmarker()
+    {
+        if (enemyHitmarker != null)
+        {
+            weaponChannel.PlayOneShot(enemyHitmarker);
         }
     }
 
     #endregion Weapon Sounds
 
-    #region Other Sounds
+    #region Throwables
 
     public void PlayGrenadeSound()
     {
-        throwablesChannel.PlayOneShot(grenadeSound);
+        if (grenadeSound != null && throwablesChannel != null)
+        {
+            throwablesChannel.PlayOneShot(grenadeSound);
+        }
     }
+
+    #endregion Throwables
+
+    #region Zombie Sounds
 
     public void PlayZombieDeathSound()
     {
-        zombieChannel.PlayOneShot(zombieDeath);
+        if (zombieDeath != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(zombieDeath);
+        }
     }
 
     public void PlayZombieWalkSound()
     {
-        zombieChannel.PlayOneShot(zombieWalk);
+        if (zombieWalk != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(zombieWalk);
+        }
     }
 
     public void PlayZombieAttackSound()
     {
-        zombieChannel2.PlayOneShot(zombieAttack);
+        if (zombieAttack != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(zombieAttack);
+        }
     }
 
     public void PlayZombieChaseSound()
     {
-        zombieChannel.PlayOneShot(zombieChase);
+        if (zombieChase != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(zombieChase);
+        }
     }
 
     public void PlayZombieHurtSound()
     {
-        zombieChannel2.PlayOneShot(zombieHurt);
+        if (zombieHurt != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(zombieHurt);
+        }
     }
+
+    #endregion Zombie Sounds
+
+    #region Player Sounds
 
     public void PlayPlayerHurtSound()
     {
-        playerChannel.PlayOneShot(playerHurt);
+        if (playerHurt != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(playerHurt);
+        }
     }
 
     public void PlayPlayerDieSound()
     {
-        playerChannel.PlayOneShot(playerDie);
+        if (playerDie != null && entityChannel != null)
+        {
+            entityChannel.PlayOneShot(playerDie);
+        }
     }
+
+    #endregion Player Sounds
+
+    #region Music
 
     public void PlayGameOverMusic()
     {
-        playerChannel.PlayOneShot(gameOverMusic);
+        if (gameOverMusic != null && musicChannel != null)
+        {
+            musicChannel.PlayOneShot(gameOverMusic);
+        }
     }
 
-    #endregion Other Sounds
+    public void StopMusic()
+    {
+        if (musicChannel != null && musicChannel.isPlaying)
+        {
+            musicChannel.Stop();
+        }
+    }
+
+    #endregion Music
 }

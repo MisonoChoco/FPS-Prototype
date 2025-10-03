@@ -1,8 +1,10 @@
-using System;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Weapon; // Add using directive for the namespace
+using Weapon;
 
 public class HUDManager : MonoBehaviour
 {
@@ -24,13 +26,20 @@ public class HUDManager : MonoBehaviour
     public Image lethalUI;
 
     public TextMeshProUGUI lethalAmountUI;
-
     public Image tacticalUI;
     public TextMeshProUGUI tacticalAmountUI;
 
+    [Header("Hitmarker")]
+    public GameObject hitmarkerPrefab;
+
+    public Transform hitmarkerContainer;
+    public int hitmarkerPoolSize = 10;
+    public bool debugHitmarker = true; // Toggle debug logs
+    private Queue<GameObject> hitmarkerPool;
+    private List<GameObject> activeHitmarkers;
+
     public Sprite emptySlot;
     public Sprite greySlot;
-
     public GameObject Crosshair;
 
     private void Awake()
@@ -43,6 +52,64 @@ public class HUDManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        InitializeHitmarkerPool();
+    }
+
+    private void Start()
+    {
+        // Delay subscription to ensure BulletImpactEvents is initialized
+        StartCoroutine(SubscribeToEventsDelayed());
+    }
+
+    private IEnumerator SubscribeToEventsDelayed()
+    {
+        // Wait until BulletImpactEvents.Instance exists
+        float timeout = 1f;
+        float elapsed = 0f;
+
+        while (BulletImpactEvents.Instance == null && elapsed < timeout)
+        {
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
+
+        // If still null, create it automatically
+        if (BulletImpactEvents.Instance == null)
+        {
+            Debug.LogWarning("HUDManager: BulletImpactEvents not found, creating automatically...");
+
+            GameObject eventsObj = new GameObject("BulletImpactEvents");
+            eventsObj.AddComponent<BulletImpactEvents>();
+
+            // Wait one frame for Awake to run
+            yield return null;
+
+            if (BulletImpactEvents.Instance == null)
+            {
+                Debug.LogError("HUDManager: Failed to create BulletImpactEvents!");
+                yield break;
+            }
+
+            Debug.Log("HUDManager: BulletImpactEvents created successfully!");
+        }
+
+        // Subscribe to event
+        BulletImpactEvents.Instance.OnEnemyHit += ShowHitmarker;
+
+        if (debugHitmarker)
+        {
+            Debug.Log("HUDManager: Successfully subscribed to OnEnemyHit event!");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from event
+        if (BulletImpactEvents.Instance != null)
+        {
+            BulletImpactEvents.Instance.OnEnemyHit -= ShowHitmarker;
+        }
     }
 
     private void Update()
@@ -51,6 +118,152 @@ public class HUDManager : MonoBehaviour
         UpdateThrowablesUIVisual();
     }
 
+    #region Hitmarker System
+
+    private void InitializeHitmarkerPool()
+    {
+        if (hitmarkerPrefab == null)
+        {
+            Debug.LogWarning("HUDManager: Hitmarker prefab not assigned!");
+            return;
+        }
+
+        if (hitmarkerContainer == null)
+        {
+            hitmarkerContainer = transform;
+            if (debugHitmarker)
+            {
+                Debug.Log("HUDManager: Hitmarker container not assigned, using HUDManager transform");
+            }
+        }
+
+        hitmarkerPool = new Queue<GameObject>();
+        activeHitmarkers = new List<GameObject>();
+
+        for (int i = 0; i < hitmarkerPoolSize; i++)
+        {
+            GameObject hitmarker = Instantiate(hitmarkerPrefab, hitmarkerContainer);
+            hitmarker.name = $"Hitmarker_{i}";
+
+            // Force initialization by accessing components
+            Animator animator = hitmarker.GetComponent<Animator>();
+            CanvasGroup canvasGroup = hitmarker.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = hitmarker.AddComponent<CanvasGroup>();
+            }
+
+            // Force animator to load its runtime controller
+            if (animator != null)
+            {
+                animator.enabled = false;
+                animator.enabled = true;
+            }
+
+            hitmarker.SetActive(false);
+            hitmarkerPool.Enqueue(hitmarker);
+        }
+
+        if (debugHitmarker)
+        {
+            Debug.Log($"HUDManager: Initialized hitmarker pool with {hitmarkerPoolSize} objects");
+        }
+    }
+
+    private void ShowHitmarker(Vector3 hitPosition, int damage)
+    {
+        hitPosition = new Vector3(0, 0, 0);
+
+        if (debugHitmarker)
+        {
+            Debug.Log($"HUDManager: ShowHitmarker called! Position: {hitPosition}, Damage: {damage}");
+        }
+
+        if (hitmarkerPool == null)
+        {
+            Debug.LogError("HUDManager: Hitmarker pool is null!");
+            return;
+        }
+
+        GameObject hitmarker = GetHitmarkerFromPool();
+
+        if (hitmarker == null)
+        {
+            Debug.LogError("HUDManager: Failed to get hitmarker from pool!");
+            return;
+        }
+
+        // Randomize rotation (Z-axis for 2D UI elements)
+        float randomRotation = UnityEngine.Random.Range(-10f, 10f);
+        hitmarker.transform.rotation = Quaternion.Euler(0f, 0f, randomRotation);
+
+        // Reset alpha to full opacity
+        CanvasGroup canvasGroup = hitmarker.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = hitmarker.AddComponent<CanvasGroup>();
+        }
+        canvasGroup.alpha = 1f;
+
+        hitmarker.SetActive(true);
+
+        // Reset animator
+        Animator animator = hitmarker.GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.Rebind();
+            animator.Update(0f);
+            animator.Play("Hitmarker", 0, 0f);
+
+            if (debugHitmarker)
+            {
+                Debug.Log("HUDManager: Playing hitmarker animation");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("HUDManager: Hitmarker doesn't have Animator component!");
+        }
+
+        activeHitmarkers.Add(hitmarker);
+        StartCoroutine(ReturnHitmarkerToPool(hitmarker, 0.2f));
+    }
+
+    private GameObject GetHitmarkerFromPool()
+    {
+        if (hitmarkerPool.Count > 0)
+        {
+            return hitmarkerPool.Dequeue();
+        }
+        else
+        {
+            Debug.LogWarning("HUDManager: Hitmarker pool exhausted, creating new instance");
+            GameObject newHitmarker = Instantiate(hitmarkerPrefab, hitmarkerContainer);
+            return newHitmarker;
+        }
+    }
+
+    private IEnumerator ReturnHitmarkerToPool(GameObject hitmarker, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (hitmarker != null)
+        {
+            hitmarker.SetActive(false);
+            activeHitmarkers.Remove(hitmarker);
+            hitmarkerPool.Enqueue(hitmarker);
+
+            if (debugHitmarker)
+            {
+                Debug.Log($"HUDManager: Returned hitmarker to pool. Pool size: {hitmarkerPool.Count}");
+            }
+        }
+    }
+
+    #endregion Hitmarker System
+
+    #region UI Updates
+
     private void UpdateWeaponUI()
     {
         WeaponBase activeWeapon = WeaponManager.Instance?.CurrentWeapon;
@@ -58,19 +271,15 @@ public class HUDManager : MonoBehaviour
 
         if (activeWeapon != null)
         {
-            // Get weapon info from the new system
             var weaponInfo = activeWeapon.GetWeaponInfo();
 
-            // Update ammo display
             MagazineAmmoUI.text = $"{weaponInfo.BulletsLeft}";
             TotalAmmoUI.text = $"{WeaponManager.Instance.CheckAmmoLeftFor(weaponInfo.Model)}";
 
-            // Update weapon and ammo sprites
             WeaponModel model = weaponInfo.Model;
             AmmoTypeUI.sprite = GetAmmoSprite(model);
             activeWeaponUI.sprite = GetWeaponSprite(model);
 
-            // Update inactive weapon UI
             if (unActiveWeapon != null)
             {
                 unActiveWeaponUI.sprite = GetWeaponSprite(unActiveWeapon.weaponModel);
@@ -82,16 +291,13 @@ public class HUDManager : MonoBehaviour
         }
         else
         {
-            // No active weapon - clear UI
             MagazineAmmoUI.text = "";
             TotalAmmoUI.text = "";
-
             AmmoTypeUI.sprite = emptySlot;
             activeWeaponUI.sprite = emptySlot;
             unActiveWeaponUI.sprite = emptySlot;
         }
 
-        // Always clear the dummy slot
         unActiveWeaponUI2.sprite = emptySlot;
     }
 
@@ -108,20 +314,20 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    private Sprite GetWeaponSprite(WeaponModel model) // Changed parameter type
+    private Sprite GetWeaponSprite(WeaponModel model)
     {
         switch (model)
         {
-            case WeaponModel.HandgunM1911: // Changed from Weapon.WeaponModel
+            case WeaponModel.HandgunM1911:
                 return Resources.Load<Sprite>("M1911_Weapon");
 
-            case WeaponModel.AK47: // Changed from Weapon.WeaponModel
+            case WeaponModel.AK47:
                 return Resources.Load<Sprite>("AK47_Weapon");
 
-            case WeaponModel.Shotgun: // Add shotgun support
+            case WeaponModel.Shotgun:
                 return Resources.Load<Sprite>("Shotgun_Weapon");
 
-            case WeaponModel.SniperRifle: // Add sniper support
+            case WeaponModel.SniperRifle:
                 return Resources.Load<Sprite>("Sniper_Weapon");
 
             default:
@@ -129,18 +335,18 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    private Sprite GetAmmoSprite(WeaponModel model) // Changed parameter type
+    private Sprite GetAmmoSprite(WeaponModel model)
     {
         switch (model)
         {
-            case WeaponModel.HandgunM1911: // Changed from Weapon.WeaponModel
+            case WeaponModel.HandgunM1911:
                 return Resources.Load<Sprite>("Pistol_Ammo");
 
-            case WeaponModel.AK47: // Changed from Weapon.WeaponModel
+            case WeaponModel.AK47:
             case WeaponModel.SniperRifle:
                 return Resources.Load<Sprite>("Rifle_Ammo");
 
-            case WeaponModel.Shotgun: // Add shotgun support
+            case WeaponModel.Shotgun:
                 return Resources.Load<Sprite>("Shotgun_Ammo");
 
             default:
@@ -150,8 +356,7 @@ public class HUDManager : MonoBehaviour
 
     private WeaponBase GetUnactiveWeapon()
     {
-        // Find the first weapon that's not in the active slot
-        for (int i = 0; i < 3; i++) // Assuming 3 weapon slots
+        for (int i = 0; i < 3; i++)
         {
             if (i != WeaponManager.Instance.ActiveSlotIndex)
             {
@@ -170,7 +375,6 @@ public class HUDManager : MonoBehaviour
         lethalAmountUI.text = $"{WeaponManager.Instance.lethalsCount}";
         tacticalAmountUI.text = $"{WeaponManager.Instance.tacticalsCount}";
 
-        // Update lethal throwable sprite
         switch (WeaponManager.Instance.equippedLethal)
         {
             case Throwable.ThrowableType.Frag:
@@ -181,7 +385,6 @@ public class HUDManager : MonoBehaviour
                 }
                 else
                 {
-                    // Fallback to loading GameObject and getting sprite
                     var fragObj = Resources.Load<GameObject>("Frag");
                     if (fragObj != null)
                     {
@@ -199,7 +402,6 @@ public class HUDManager : MonoBehaviour
                 break;
         }
 
-        // Update tactical throwable sprite
         switch (WeaponManager.Instance.equippedTactical)
         {
             case Throwable.ThrowableType.Smoke:
@@ -210,7 +412,6 @@ public class HUDManager : MonoBehaviour
                 }
                 else
                 {
-                    // Fallback to loading GameObject and getting sprite
                     var smokeObj = Resources.Load<GameObject>("Smoke");
                     if (smokeObj != null)
                     {
@@ -228,4 +429,6 @@ public class HUDManager : MonoBehaviour
                 break;
         }
     }
+
+    #endregion UI Updates
 }

@@ -13,102 +13,40 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected WeaponData weaponData; // Main data source
 
     [SerializeField] protected WeaponReferences references;
+    [SerializeField] private Transform cameraRecoilHolder;
+    [SerializeField] private Transform gunPositionHolder;
+
+    [Header("Magazine Drop Values")]
+    public Transform magazineDropPoint;
+
+    public Vector3 magazineDropForce = new Vector3(-2f, -1f, 1f);
+    public float magazineDropTorque = 5f;
 
     [Header("Weapon Info")]
     public Weapon.WeaponModel weaponModel;
 
     public Weapon.ShootingMode[] availableShootingModes = { Weapon.ShootingMode.Semi };
 
-    [Header("Cycle-Based Firing")]
-    [SerializeField] private bool requiresCycling = false; // Enable for pump/bolt weapons
-
-    [SerializeField] private float cycleTime = 0.8f;
-    [SerializeField] private string cycleAnimation = "CYCLE";
-
-    [Header("Shell Loading")]
-    [SerializeField] private bool useShellReload = false; // Enable for shotguns
-
-    [SerializeField] private float shellLoadTime = 0.8f;
-    [SerializeField] private int maxShellsToLoad = 8; // Tube capacity
-    [SerializeField] private string shellLoadAnimation = "SHELL_LOAD";
-
     public bool IsCycled { get; private set; } = true;
     private bool isCycling = false;
     private Coroutine cycleCoroutine;
 
-    [Header("Camera Recoil Settings")]
-    [SerializeField] private bool haveCameraRecoil = true;
-
-    [SerializeField] private Transform cameraRecoilHolder;
-    [SerializeField] private float recoilRotationSpeed = 6f;
-    [SerializeField] private float recoilReturnSpeed = 25f;
-    [SerializeField] private Vector3 hipFireRecoil = new Vector3(4f, 4f, 4f);
-    [SerializeField] private Vector3 adsFireRecoil = new Vector3(2f, 2f, 2f);
-    [SerializeField] private float hRecoil = 0.215f;
-    [SerializeField] private float vRecoil = 0.221f;
-
     private Vector3 currentCameraRotation;
     private Vector3 cameraRot;
-
-    [Header("Weapon Recoil Settings")]
-    [SerializeField] private bool haveWeaponRecoil = true;
-
-    [SerializeField] private Transform gunPositionHolder;
-    [SerializeField] private float gunRecoilPositionSpeed = 8f;
-    [SerializeField] private float gunPositionReturnSpeed = 10f;
-    [SerializeField] private Vector3 recoilKickBackHip = new Vector3(0.015f, 0f, 0.05f);
-    [SerializeField] private Vector3 recoilKickBackAds = new Vector3(-0.08f, 0.01f, 0.009f);
-    [SerializeField] private float gunRecoilRotationSpeed = 8f;
-    [SerializeField] private float gunRotationReturnSpeed = 38f;
-    [SerializeField] private Vector3 recoilRotationHip = new Vector3(10f, 5f, 7f);
-    [SerializeField] private Vector3 recoilRotationAds = new Vector3(10f, 4f, 6f);
 
     private Vector3 rotationRecoil;
     private Vector3 positionRecoil;
     private Vector3 weaponRot;
 
-    [Header("Weapon Rotational Sway")]
-    [SerializeField] private bool haveRotationalSway = true;
-
-    [SerializeField] private float rotationSwayIntensity = 10f;
-    [SerializeField] private float rotationSwaySmoothness = 2f;
-
     private Quaternion originRotation;
     private float mouseX;
     private float mouseY;
 
-    [Header("Jump Sway")]
-    [SerializeField] private bool haveJumpSway = true;
-
-    [SerializeField] private float jumpIntensity = 5f;
-    [SerializeField] private float weaponMaxClamp = 20f;
-    [SerializeField] private float weaponMinClamp = 20f;
-    [SerializeField] private float jumpSmooth = 15f;
-    [SerializeField] private float landingIntensity = 5f;
-    [SerializeField] private float landingSmooth = 15f;
-    [SerializeField] private float recoverySpeed = 50f;
-
     private float impactForce = 0;
-
-    [Header("Weapon Move Bobbing")]
-    [SerializeField] private bool haveBobbing = true;
-
-    [SerializeField] private float magnitude = 0.009f;
-    [SerializeField] private float idleSpeed = 2f;
-    [SerializeField] private float walkSpeedMultiplier = 4f;
-    [SerializeField] private float walkSpeedMax = 6f;
-    [SerializeField] private float aimReduction = 4f;
 
     private float sinY = 0f;
     private float sinX = 0f;
     private Vector3 lastPosition;
-
-    [Header("Magazine Drop System")]
-    [SerializeField] private GameObject magazineDropPrefab; // Separate magazine prefab
-
-    [SerializeField] private Transform magazineDropPoint;   // Empty GameObject positioned where mag should drop
-    [SerializeField] private Vector3 magazineDropForce = new Vector3(-2f, -1f, 1f);
-    [SerializeField] private float magazineDropTorque = 5f;
 
     // State
     public bool IsActiveWeapon { get; set; }
@@ -195,7 +133,7 @@ public abstract class WeaponBase : MonoBehaviour
 
         // Initialize weapon effects
         lastPosition = transform.position;
-        if (haveRotationalSway) originRotation = transform.localRotation;
+        if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
 
         // Set default camera recoil holder if not assigned
         if (cameraRecoilHolder == null && playerCamera != null)
@@ -206,7 +144,7 @@ public abstract class WeaponBase : MonoBehaviour
             gunPositionHolder = transform;
 
         // Store the ADJUSTED rotation as origin for sway
-        if (haveRotationalSway) originRotation = transform.localRotation;
+        if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
     }
 
     protected virtual void ValidateReferences()
@@ -242,6 +180,7 @@ public abstract class WeaponBase : MonoBehaviour
         HandleAiming();
         HandleShooting();
         HandleReloading();
+        HandleInspection();
         HandleFireModeSwitch();
 
         // Update mouse input for sway
@@ -253,28 +192,28 @@ public abstract class WeaponBase : MonoBehaviour
 
     private void HandleWeaponRecoil()
     {
-        if (!haveWeaponRecoil || gunPositionHolder == null) return;
+        if (!weaponData.haveWeaponRecoil || gunPositionHolder == null) return;
 
-        rotationRecoil = Vector3.Lerp(rotationRecoil, Vector3.zero, gunRotationReturnSpeed * Time.deltaTime);
-        positionRecoil = Vector3.Lerp(positionRecoil, Vector3.zero, gunPositionReturnSpeed * Time.deltaTime);
+        rotationRecoil = Vector3.Lerp(rotationRecoil, Vector3.zero, weaponData.gunRotationReturnSpeed * Time.deltaTime);
+        positionRecoil = Vector3.Lerp(positionRecoil, Vector3.zero, weaponData.gunPositionReturnSpeed * Time.deltaTime);
 
-        gunPositionHolder.localPosition = Vector3.Slerp(gunPositionHolder.localPosition, positionRecoil, gunRecoilPositionSpeed * Time.deltaTime);
-        weaponRot = Vector3.Slerp(weaponRot, rotationRecoil, gunRecoilRotationSpeed * Time.deltaTime);
+        gunPositionHolder.localPosition = Vector3.Slerp(gunPositionHolder.localPosition, positionRecoil, weaponData.gunRecoilPositionSpeed * Time.deltaTime);
+        weaponRot = Vector3.Slerp(weaponRot, rotationRecoil, weaponData.gunRecoilRotationSpeed * Time.deltaTime);
         gunPositionHolder.localRotation = Quaternion.Euler(weaponRot);
     }
 
     private void HandleCameraRecoil()
     {
-        if (!haveCameraRecoil || cameraRecoilHolder == null) return;
+        if (!weaponData.haveCameraRecoil || cameraRecoilHolder == null) return;
 
-        currentCameraRotation = Vector3.Lerp(currentCameraRotation, Vector3.zero, recoilReturnSpeed * Time.deltaTime);
-        cameraRot = Vector3.Slerp(cameraRot, currentCameraRotation, recoilRotationSpeed * Time.deltaTime);
+        currentCameraRotation = Vector3.Lerp(currentCameraRotation, Vector3.zero, weaponData.recoilReturnSpeed * Time.deltaTime);
+        cameraRot = Vector3.Slerp(cameraRot, currentCameraRotation, weaponData.recoilRotationSpeed * Time.deltaTime);
         cameraRecoilHolder.localRotation = Quaternion.Euler(cameraRot);
     }
 
     private void WeaponRotationSway()
     {
-        if (!haveRotationalSway) return;
+        if (!weaponData.haveRotationalSway) return;
 
         // Get weapon-specific base rotation for sway calculations
         Quaternion baseRotation = originRotation;
@@ -283,14 +222,14 @@ public abstract class WeaponBase : MonoBehaviour
             baseRotation = Quaternion.Euler(weaponData.baseViewmodelRotation);
         }
 
-        Quaternion newAdjustedRotationX = Quaternion.AngleAxis(rotationSwayIntensity * mouseX * -1f, Vector3.up);
+        Quaternion newAdjustedRotationX = Quaternion.AngleAxis(weaponData.rotationSwayIntensity * mouseX * -1f, Vector3.up);
         Quaternion targetRotation = baseRotation * newAdjustedRotationX;
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, rotationSwaySmoothness * Time.deltaTime);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, weaponData.rotationSwaySmoothness * Time.deltaTime);
     }
 
     private void WeaponBobbing()
     {
-        if (!haveBobbing) return;
+        if (!weaponData.haveBobbing) return;
 
         // Get weapon-specific base position
         Vector3 basePosition = weaponData ? weaponData.baseViewmodelPosition : Vector3.zero;
@@ -306,9 +245,9 @@ public abstract class WeaponBase : MonoBehaviour
         }
 
         // Calculate delta time based on the player's movement speed
-        float delta = Time.deltaTime * idleSpeed;
-        float velocity = (lastPosition - transform.position).magnitude * walkSpeedMultiplier;
-        delta += Mathf.Clamp(velocity, 0, walkSpeedMax);
+        float delta = Time.deltaTime * weaponData.idleSpeed;
+        float velocity = (lastPosition - transform.position).magnitude * weaponData.walkSpeedMultiplier;
+        delta += Mathf.Clamp(velocity, 0, weaponData.walkSpeedMax);
 
         // Update the sinX and sinY values to create a bobbing effect
         sinX += delta / 2;
@@ -317,7 +256,7 @@ public abstract class WeaponBase : MonoBehaviour
         sinY %= Mathf.PI * 2;
 
         // Adjust the weapon's local position to create the bobbing effect
-        float currentMagnitude = IsADS ? magnitude / aimReduction : magnitude;
+        float currentMagnitude = IsADS ? weaponData.bobbingMagnitude / weaponData.aimReduction : weaponData.bobbingMagnitude;
 
         // Apply bobbing relative to base position instead of Vector3.zero
         transform.localPosition = basePosition + currentMagnitude * Mathf.Sin(sinY) * Vector3.up;
@@ -328,15 +267,15 @@ public abstract class WeaponBase : MonoBehaviour
 
     private void JumpSwayEffect()
     {
-        if (!haveJumpSway || IsADS || playerController == null) return;
+        if (!weaponData.haveJumpSway || IsADS || playerController == null) return;
 
         switch (playerController.IsGrounded())
         {
             case false:
                 // Adjust the weapon's rotation based on the player's jump velocity
                 float yVelocity = playerController.GetVelocity().y;
-                yVelocity = Mathf.Clamp(yVelocity, -weaponMinClamp, weaponMaxClamp);
-                impactForce = -yVelocity * landingIntensity;
+                yVelocity = Mathf.Clamp(yVelocity, -weaponData.weaponMinClamp, weaponData.weaponMaxClamp);
+                impactForce = -yVelocity * weaponData.landingIntensity;
 
                 if (IsADS)
                 {
@@ -345,23 +284,23 @@ public abstract class WeaponBase : MonoBehaviour
 
                 // Update the weapon's local rotation to simulate the jump sway effect
                 transform.localRotation = Quaternion.Lerp(transform.localRotation,
-                    Quaternion.Euler(0f, 0f, yVelocity * jumpIntensity),
-                    Time.deltaTime * jumpSmooth);
+                    Quaternion.Euler(0f, 0f, yVelocity * weaponData.jumpIntensity),
+                    Time.deltaTime * weaponData.jumpSmooth);
                 break;
 
             case true when impactForce >= 0:
                 // If the player is grounded and has impact force, adjust the weapon's rotation accordingly
                 transform.localRotation = Quaternion.Lerp(transform.localRotation,
                     Quaternion.Euler(0, 0, impactForce),
-                    Time.deltaTime * landingSmooth);
-                impactForce -= recoverySpeed * Time.deltaTime;
+                    Time.deltaTime * weaponData.landingSmooth);
+                impactForce -= weaponData.recoverySpeed * Time.deltaTime;
                 break;
 
             case true:
                 // If the player is grounded and there's no impact force, reset the weapon's rotation
                 transform.localRotation = Quaternion.Lerp(transform.localRotation,
                     Quaternion.identity,
-                    Time.deltaTime * landingSmooth);
+                    Time.deltaTime * weaponData.landingSmooth);
                 break;
         }
     }
@@ -391,7 +330,7 @@ public abstract class WeaponBase : MonoBehaviour
         }
 
         // Check if weapon needs cycling
-        if (inputPressed && requiresCycling && !IsCycled && !isCycling)
+        if (inputPressed && weaponData.requiresCycling && !IsCycled && !isCycling)
         {
             StartCycle();
             return;
@@ -433,6 +372,18 @@ public abstract class WeaponBase : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.V) && availableShootingModes.Length > 1)
         {
             CycleFireMode();
+        }
+    }
+
+    protected virtual void HandleInspection()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if (references.weaponAnimator != null)
+            {
+                references.weaponAnimator.enabled = true;
+                references.weaponAnimator.SetTrigger("INSPECT");
+            }
         }
     }
 
@@ -490,7 +441,7 @@ public abstract class WeaponBase : MonoBehaviour
         ApplyRecoilEffects();
 
         // Mark as needing cycle for pump/bolt weapons
-        if (requiresCycling)
+        if (weaponData.requiresCycling)
         {
             IsCycled = false;
         }
@@ -529,13 +480,13 @@ public abstract class WeaponBase : MonoBehaviour
         if (references.weaponAnimator != null)
         {
             references.weaponAnimator.enabled = true;
-            references.weaponAnimator.SetTrigger(cycleAnimation);
+            references.weaponAnimator.SetTrigger(weaponData.cycleAnimation);
         }
 
         // Play cycling sound (pump/bolt sound)
         PlayCycleSound();
 
-        yield return new WaitForSeconds(cycleTime);
+        yield return new WaitForSeconds(weaponData.cycleTime);
 
         // Complete cycle
         IsCycled = true;
@@ -551,52 +502,52 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void ApplyRecoilEffects()
     {
-        float hRecoilValue = UnityEngine.Random.Range(-hRecoil, hRecoil);
+        float hRecoilValue = UnityEngine.Random.Range(-weaponData.hRecoil, weaponData.hRecoil);
 
         if (IsADS)
         {
             // ADS recoil
-            if (haveCameraRecoil)
+            if (weaponData.haveCameraRecoil)
             {
-                currentCameraRotation += new Vector3(-adsFireRecoil.x,
-                    UnityEngine.Random.Range(-adsFireRecoil.y, adsFireRecoil.y),
-                    UnityEngine.Random.Range(-adsFireRecoil.z, adsFireRecoil.z));
+                currentCameraRotation += new Vector3(-weaponData.adsFireRecoil.x,
+                    UnityEngine.Random.Range(-weaponData.adsFireRecoil.y, weaponData.adsFireRecoil.y),
+                    UnityEngine.Random.Range(-weaponData.adsFireRecoil.z, weaponData.adsFireRecoil.z));
             }
 
-            if (haveWeaponRecoil)
+            if (weaponData.haveWeaponRecoil)
             {
-                rotationRecoil += new Vector3(-recoilRotationAds.x,
-                    UnityEngine.Random.Range(-recoilRotationAds.y, recoilRotationAds.y),
-                    UnityEngine.Random.Range(-recoilRotationAds.z, recoilRotationAds.z));
-                positionRecoil += new Vector3(UnityEngine.Random.Range(-recoilKickBackAds.x, recoilKickBackAds.x),
-                    UnityEngine.Random.Range(-recoilKickBackAds.y, recoilKickBackAds.y),
-                    recoilKickBackAds.z);
+                rotationRecoil += new Vector3(-weaponData.recoilRotationAds.x,
+                    UnityEngine.Random.Range(-weaponData.recoilRotationAds.y, weaponData.recoilRotationAds.y),
+                    UnityEngine.Random.Range(-weaponData.recoilRotationAds.z, weaponData.recoilRotationAds.z));
+                positionRecoil += new Vector3(UnityEngine.Random.Range(-weaponData.recoilKickBackAds.x, weaponData.recoilKickBackAds.x),
+                    UnityEngine.Random.Range(-weaponData.recoilKickBackAds.y, weaponData.recoilKickBackAds.y),
+                    weaponData.recoilKickBackAds.z);
             }
 
             // reduced recoil
-            playerController.AddRecoil(hRecoil * 0.5f, vRecoil * 0.5f);
+            playerController.AddRecoil(weaponData.hRecoil * 0.5f, weaponData.vRecoil * 0.5f);
         }
         else
         {
             // Hip fire recoil
-            if (haveCameraRecoil)
+            if (weaponData.haveCameraRecoil)
             {
-                currentCameraRotation += new Vector3(-hipFireRecoil.x,
-                    UnityEngine.Random.Range(-hipFireRecoil.y, hipFireRecoil.y),
-                    UnityEngine.Random.Range(-hipFireRecoil.z, hipFireRecoil.z));
+                currentCameraRotation += new Vector3(-weaponData.hipFireRecoil.x,
+                    UnityEngine.Random.Range(-weaponData.hipFireRecoil.y, weaponData.hipFireRecoil.y),
+                    UnityEngine.Random.Range(-weaponData.hipFireRecoil.z, weaponData.hipFireRecoil.z));
             }
 
-            if (haveWeaponRecoil)
+            if (weaponData.haveWeaponRecoil)
             {
-                rotationRecoil += new Vector3(-recoilRotationHip.x,
-                    UnityEngine.Random.Range(-recoilRotationHip.y, recoilRotationHip.y),
-                    UnityEngine.Random.Range(-recoilRotationHip.z, recoilRotationHip.z));
-                positionRecoil += new Vector3(UnityEngine.Random.Range(-recoilKickBackHip.x, recoilKickBackHip.x),
-                    UnityEngine.Random.Range(-recoilKickBackHip.y, recoilKickBackHip.y),
-                    recoilKickBackHip.z);
+                rotationRecoil += new Vector3(-weaponData.recoilRotationHip.x,
+                    UnityEngine.Random.Range(-weaponData.recoilRotationHip.y, weaponData.recoilRotationHip.y),
+                    UnityEngine.Random.Range(-weaponData.recoilRotationHip.z, weaponData.recoilRotationHip.z));
+                positionRecoil += new Vector3(UnityEngine.Random.Range(-weaponData.recoilKickBackHip.x, weaponData.recoilKickBackHip.x),
+                    UnityEngine.Random.Range(-weaponData.recoilKickBackHip.y, weaponData.recoilKickBackHip.y),
+                    weaponData.recoilKickBackHip.z);
             }
 
-            playerController.AddRecoil(hRecoil, vRecoil);
+            playerController.AddRecoil(weaponData.hRecoil, weaponData.vRecoil);
         }
     }
 
@@ -790,7 +741,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     public void DropMagazine()
     {
-        GameObject magPrefab = weaponData ? weaponData.magazineDropPrefab : magazineDropPrefab;
+        GameObject magPrefab = weaponData ? weaponData.magazineDropPrefab : weaponData.magazineDropPrefab;
         if (magPrefab == null || magazineDropPoint == null) return;
 
         GameObject droppedMag = Instantiate(magPrefab, magazineDropPoint.position, magazineDropPoint.rotation);
@@ -832,7 +783,7 @@ public abstract class WeaponBase : MonoBehaviour
             burstBulletsLeft = weaponData ? weaponData.bulletsPerBurst : 3;
         }
 
-        if (useShellReload)
+        if (weaponData.useShellReload)
         {
             // Shell-by-shell loading for shotguns
             yield return StartCoroutine(ShellReloadCoroutine());
@@ -887,7 +838,7 @@ public abstract class WeaponBase : MonoBehaviour
         // Shell loading logic I showed earlier
         OnReloadStarted?.Invoke(this);
 
-        int maxCapacity = weaponData ? weaponData.magazineSize : maxShellsToLoad;
+        int maxCapacity = weaponData ? weaponData.magazineSize : weaponData.maxShellsToLoad;
 
         while (BulletsLeft < maxCapacity)
         {
@@ -903,12 +854,12 @@ public abstract class WeaponBase : MonoBehaviour
             if (references.weaponAnimator != null)
             {
                 references.weaponAnimator.enabled = true;
-                references.weaponAnimator.SetTrigger(shellLoadAnimation);
+                references.weaponAnimator.SetTrigger(weaponData.shellLoadAnimation);
             }
 
             SoundManager.Instance?.PlayShellLoadSound();
 
-            yield return new WaitForSeconds(shellLoadTime);
+            yield return new WaitForSeconds(weaponData.shellLoadTime);
 
             BulletsLeft++;
             WeaponManager.Instance?.DecreaseTotalAmmo(1, weaponModel);
@@ -1019,7 +970,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void PlayEmptySound()
     {
-        SoundManager.Instance?.EmptyShooting?.Play();
+        SoundManager.Instance?.weaponChannel?.Play();
     }
 
     #endregion Sounds
@@ -1073,7 +1024,7 @@ public abstract class WeaponBase : MonoBehaviour
         else
         {
             // If weapon was unequipped mid-cycle, resume cycling
-            if (requiresCycling && !IsCycled && !isCycling)
+            if (weaponData.requiresCycling && !IsCycled && !isCycling)
             {
                 StartCycle();
             }

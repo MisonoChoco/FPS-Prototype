@@ -174,9 +174,9 @@ public class WeaponPickup : MonoBehaviour
     private void PlayPickupEffects()
     {
         // Play pickup sound
-        if (pickupSound != null && SoundManager.Instance?.ShootingChannel != null)
+        if (pickupSound != null && SoundManager.Instance?.weaponChannel != null)
         {
-            SoundManager.Instance.ShootingChannel.PlayOneShot(pickupSound);
+            SoundManager.Instance.weaponChannel.PlayOneShot(pickupSound);
         }
     }
 

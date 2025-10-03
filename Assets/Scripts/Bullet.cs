@@ -260,6 +260,8 @@ public class EnemyCollisionHandler : CollisionHandler
 
             Debug.Log($"Hit enemy {target.name} for {projectile.Damage} damage!");
 
+            SoundManager.Instance?.PlayEnemyHitmarker();
+
             // Create effects
             bloodEffect.CreateEffect(impactData.Point, impactData.Normal, target);
             explosionEffect.CreateEffect(impactData.Point, impactData.Normal, target);
@@ -326,7 +328,6 @@ public class EnvironmentCollisionHandler : CollisionHandler
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
         bulletHoleEffect.CreateEffect(impactData.Point, impactData.Normal, target);
-        Debug.Log($"Hit {target.tag}: {target.name}");
     }
 }
 
@@ -446,7 +447,7 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         GameObject hitObject = collision.gameObject;
         ImpactData impactData = new ImpactData(collision.contacts[0], hitObject);
 
-       // Debug.Log($"Projectile collided with {hitObject.name} at {impactData.Point}");
+        // Debug.Log($"Projectile collided with {hitObject.name} at {impactData.Point}");
 
         HandleCollision(hitObject, impactData);
     }
