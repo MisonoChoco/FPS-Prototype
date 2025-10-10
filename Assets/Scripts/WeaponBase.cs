@@ -31,6 +31,9 @@ public abstract class WeaponBase : MonoBehaviour
     private bool isCycling = false;
     private Coroutine cycleCoroutine;
 
+    private bool isInspecting = false;
+    private Coroutine inspectCoroutine;
+
     private Vector3 currentCameraRotation;
     private Vector3 cameraRot;
 
@@ -377,14 +380,40 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void HandleInspection()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.I) && !isInspecting)
         {
             if (references.weaponAnimator != null)
             {
-                references.weaponAnimator.enabled = true;
-                references.weaponAnimator.SetTrigger("INSPECT");
+                if (inspectCoroutine != null)
+                    StopCoroutine(inspectCoroutine);
+
+                inspectCoroutine = StartCoroutine(InspectCoroutine());
             }
         }
+    }
+
+    protected virtual IEnumerator InspectCoroutine()
+    {
+        isInspecting = true;
+
+        if (references.weaponAnimator != null)
+        {
+            references.weaponAnimator.ResetTrigger("RELOAD");
+            references.weaponAnimator.ResetTrigger("INSPECT");
+
+            references.weaponAnimator.enabled = true;
+
+            references.weaponAnimator.Play("Inspect", 0, 0f);
+        }
+
+        yield return new WaitForSeconds(weaponData.inspectDuration);
+
+        if (references.weaponAnimator != null)
+        {
+            references.weaponAnimator.enabled = false;
+        }
+
+        isInspecting = false;
     }
 
     protected virtual void UpdateLayerMask()
@@ -982,8 +1011,10 @@ public abstract class WeaponBase : MonoBehaviour
         IsActiveWeapon = active;
         Animator animator = references.weaponAnimator;
 
-        if (animator != null)
+        if (animator != null && !isInspecting)
         {
+            animator.ResetTrigger("RELOAD");
+            animator.ResetTrigger("INSPECT");
             animator.enabled = true;
             Invoke(nameof(DisableAnimator), 0.1f);
         }

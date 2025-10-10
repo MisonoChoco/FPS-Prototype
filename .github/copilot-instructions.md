@@ -1,6 +1,6 @@
 <!-- UNITY CODE ASSIST INSTRUCTIONS START -->
 - Project name: FPS-Prototype
-- Unity version: Unity 6000.2.2f1
+- Unity version: Unity 6000.2.6f2
 - Active game object:
   - Name: M1911 (1)
   - Tag: Untagged

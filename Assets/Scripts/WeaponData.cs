@@ -19,10 +19,11 @@ public class WeaponData : ScriptableObject
 
     public Sprite weaponIcon;
 
-    [Header("Viewmodel Positioning")]
+    [Header("Viewmodel")]
     public Vector3 baseViewmodelPosition = Vector3.zero;
 
     public Vector3 baseViewmodelRotation = Vector3.zero;
+    public float inspectDuration = 12f;
 
     [Header("Combat Stats")]
     public int damage = 25;

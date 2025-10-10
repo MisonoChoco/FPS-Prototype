@@ -490,7 +490,6 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
 
         if (gameObject != null)
         {
-            Debug.Log("Projectile destroyed due to lifetime expiry");
             Deactivate();
         }
     }
