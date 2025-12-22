@@ -10,6 +10,7 @@ public class SoundManager : MonoBehaviour
     public AudioSource entityChannel;
     public AudioSource throwablesChannel;
     public AudioSource musicChannel;
+    public AudioSource playerChannel;
 
     [Header("Weapon Shooting Sounds")]
     public AudioClip AK47Shot;
@@ -18,7 +19,6 @@ public class SoundManager : MonoBehaviour
     public AudioClip ShotgunShot;
     public AudioClip SniperShot;
     public AudioClip emptyGunClick;
-
     public AudioClip enemyHitmarker;
 
     [Header("Weapon Reload Sounds")]
@@ -26,7 +26,6 @@ public class SoundManager : MonoBehaviour
 
     public AudioClip M1911Reload;
     public AudioClip SniperReload;
-
     public AudioClip MagDrop;
 
     [Header("Shell Loading & Cycling Sounds")]
@@ -50,6 +49,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip playerHurt;
 
     public AudioClip playerDie;
+    public AudioClip armorBreak;
 
     [Header("Music")]
     public AudioClip gameOverMusic;
@@ -254,6 +254,15 @@ public class SoundManager : MonoBehaviour
         if (playerDie != null && entityChannel != null)
         {
             entityChannel.PlayOneShot(playerDie);
+        }
+    }
+
+    // NEW: Armor break sound
+    public void PlayArmorBreakSound()
+    {
+        if (armorBreak != null && playerChannel != null)
+        {
+            playerChannel.PlayOneShot(armorBreak);
         }
     }
 

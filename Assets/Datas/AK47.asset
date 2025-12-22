@@ -21,7 +21,7 @@ MonoBehaviour:
   baseViewmodelRotation: {x: 0, y: 0, z: 0}
   inspectDuration: 13
   damage: 21
-  fireRate: 500
+  fireRate: 600
   range: 100
   magazineSize: 30
   reloadTime: 4
@@ -41,21 +41,21 @@ MonoBehaviour:
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 18
-  recoilReturnSpeed: 10
-  hipFireRecoil: {x: 6, y: 6, z: 6}
-  adsFireRecoil: {x: 4, y: 4, z: 4}
-  hRecoil: 0.6
-  vRecoil: 0.5
-  gunRecoilPositionSpeed: 10
-  gunPositionReturnSpeed: 8
-  recoilKickBackHip: {x: 0.055, y: 0.25, z: 0.1}
+  recoilRotationSpeed: 20
+  recoilReturnSpeed: 12.5
+  hipFireRecoil: {x: 4, y: 5, z: 6}
+  adsFireRecoil: {x: 4, y: 5, z: 6}
+  hRecoil: 2.5
+  vRecoil: 5
+  gunRecoilPositionSpeed: 30
+  gunPositionReturnSpeed: 20
+  recoilKickBackHip: {x: 0.1, y: -0.2, z: -0.45}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 10
-  gunRotationReturnSpeed: 24
-  recoilRotationHip: {x: 12, y: 8, z: 10}
+  gunRecoilRotationSpeed: 15
+  gunRotationReturnSpeed: 10
+  recoilRotationHip: {x: 8, y: 0, z: 6}
   recoilRotationAds: {x: 11, y: 7, z: 9}
-  rotationSwayIntensity: 10
+  rotationSwayIntensity: 12
   rotationSwaySmoothness: 2
   jumpIntensity: 5
   weaponMaxClamp: 20

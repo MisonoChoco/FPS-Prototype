@@ -17,8 +17,9 @@ MonoBehaviour:
   gunType: 1
   description: zombie apocalypse classic
   weaponIcon: {fileID: 21300000, guid: 831b5f02ceea97c49abf64e0f940a761, type: 2}
-  baseViewmodelPosition: {x: 0, y: 0, z: 0}
+  baseViewmodelPosition: {x: 0.4, y: 0.1, z: -0.1}
   baseViewmodelRotation: {x: 0, y: 0, z: 0}
+  inspectDuration: 12
   damage: 5
   fireRate: 300
   range: 100
@@ -42,19 +43,19 @@ MonoBehaviour:
   haveJumpSway: 1
   recoilRotationSpeed: 25
   recoilReturnSpeed: 10
-  hipFireRecoil: {x: 15, y: 15, z: 15}
-  adsFireRecoil: {x: 10, y: 10, z: 10}
-  hRecoil: 1
-  vRecoil: 2
-  gunRecoilPositionSpeed: 15
-  gunPositionReturnSpeed: 12
-  recoilKickBackHip: {x: 0.015, y: 0.1, z: 0.15}
+  hipFireRecoil: {x: 15, y: 20, z: 22}
+  adsFireRecoil: {x: 15, y: 20, z: 22}
+  hRecoil: 3
+  vRecoil: 6
+  gunRecoilPositionSpeed: 45
+  gunPositionReturnSpeed: 25
+  recoilKickBackHip: {x: 0.1, y: -0.1, z: -1}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 8
-  gunRotationReturnSpeed: 38
-  recoilRotationHip: {x: 14, y: 9, z: 11}
+  gunRecoilRotationSpeed: 20
+  gunRotationReturnSpeed: 15
+  recoilRotationHip: {x: 60, y: 0, z: 0}
   recoilRotationAds: {x: 12, y: 7, z: 9}
-  rotationSwayIntensity: 10
+  rotationSwayIntensity: 16
   rotationSwaySmoothness: 2
   jumpIntensity: 5
   weaponMaxClamp: 20
@@ -74,7 +75,7 @@ MonoBehaviour:
   burstDelay: 0.1
   projectileType: 0
   pelletsPerShot: 8
-  pelletSpread: 2
+  pelletSpread: 10
   requiresCycling: 1
   cycleTime: 0.8
   cycleAnimation: CYCLE

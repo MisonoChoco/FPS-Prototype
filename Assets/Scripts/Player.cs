@@ -59,10 +59,14 @@ public class HealthConfig
     [SerializeField] private float healthRegenRate = 0f;
     [SerializeField] private float healthRegenDelay = 5f;
 
+    [Header("Armor System")]
+    [SerializeField] private int maxArmor = 100;
+
     public int MaxHealth => maxHealth;
     public bool CanHealAboveMax => canHealAboveMax;
     public float HealthRegenRate => healthRegenRate;
     public float HealthRegenDelay => healthRegenDelay;
+    public int MaxArmor => maxArmor;
 }
 
 [System.Serializable]
@@ -72,6 +76,7 @@ public class PlayerReferences
     public GameObject bloodyVignette;
 
     public TextMeshProUGUI playerHpUI;
+    public TextMeshProUGUI playerArmorUI;
     public GameObject gameOverUI;
 
     [Header("Camera References")]
@@ -135,8 +140,9 @@ public abstract class LivingEntity : MonoBehaviour, IDamageable
 {
     [SerializeField] protected HealthConfig healthConfig;
 
-    protected int currentHealth;
-    protected bool isDead;
+    [SerializeField] protected int currentHealth;
+    [SerializeField] protected int currentArmor;
+    [SerializeField] protected bool isDead;
 
     // IDamageable implementation
     public int CurrentHealth => currentHealth;
@@ -156,6 +162,7 @@ public abstract class LivingEntity : MonoBehaviour, IDamageable
     protected virtual void InitializeHealth()
     {
         currentHealth = healthConfig.MaxHealth;
+        currentArmor = 0;
         isDead = false;
     }
 
@@ -247,7 +254,6 @@ public interface IPlayerController
     void DisableController();
 }
 
-// You would implement this on MouseMovement and PlayerMovement components
 public abstract class PlayerControllerBase : MonoBehaviour, IPlayerController
 {
     public bool IsEnabled { get; protected set; } = true;
@@ -297,9 +303,13 @@ public class Player : ControllableEntity, IHealable, IRespawnable
     // Player-specific events
     public static event Action<int, int> OnHealthChanged;
 
+    public static event Action<int, int> OnArmorChanged;
+
     public static event Action OnPlayerDeath;
 
     public static event Action<int> OnPlayerDamaged;
+
+    public event Action<int> OnArmorAdded;
 
     private Vector3 respawnPosition;
     private Quaternion respawnRotation;
@@ -369,6 +379,50 @@ public class Player : ControllableEntity, IHealable, IRespawnable
 
     #region Health System Override
 
+    protected override int CalculateDamage(int baseDamage, DamageInfo damageInfo)
+    {
+        if (currentArmor > 0)
+        {
+            // Armor absorbs ALL damage until it breaks
+            if (baseDamage <= currentArmor)
+            {
+                // Armor can absorb all damage
+                currentArmor -= baseDamage;
+
+                UpdateArmorUI();
+                OnArmorChanged?.Invoke(currentArmor, healthConfig.MaxArmor);
+
+                Debug.Log($"Armor absorbed {baseDamage} damage. Remaining armor: {currentArmor}");
+
+                // Armor broke exactly
+                if (currentArmor == 0)
+                {
+                    PlayArmorBreakSound();
+                    Debug.Log("Armor plate broken!");
+                }
+
+                return 0; // No damage to health
+            }
+            else
+            {
+                // Armor breaks and remaining damage goes to health
+                int remainingDamage = baseDamage - currentArmor;
+
+                Debug.Log($"Armor absorbed {currentArmor} damage and broke! {remainingDamage} damage to health.");
+
+                currentArmor = 0;
+
+                UpdateArmorUI();
+                OnArmorChanged?.Invoke(currentArmor, healthConfig.MaxArmor);
+                PlayArmorBreakSound();
+
+                return remainingDamage;
+            }
+        }
+
+        return baseDamage;
+    }
+
     protected override void OnDamageReceived(DamageInfo damageInfo)
     {
         base.OnDamageReceived(damageInfo);
@@ -413,6 +467,42 @@ public class Player : ControllableEntity, IHealable, IRespawnable
 
     #endregion Health System Override
 
+    #region Armor System
+
+    public void AddArmor(int armorAmount)
+    {
+        if (isDead || armorAmount <= 0) return;
+
+        int oldArmor = currentArmor;
+        currentArmor = Mathf.Min(healthConfig.MaxArmor, currentArmor + armorAmount);
+
+        int actualArmorAdded = currentArmor - oldArmor;
+        if (actualArmorAdded > 0)
+        {
+            UpdateArmorUI();
+            OnArmorChanged?.Invoke(currentArmor, healthConfig.MaxArmor);
+            OnArmorAdded?.Invoke(actualArmorAdded);
+
+            Debug.Log($"Added {actualArmorAdded} armor. Current: {currentArmor}/{healthConfig.MaxArmor}");
+        }
+    }
+
+    public int GetCurrentArmor() => currentArmor;
+
+    public int GetMaxArmor() => healthConfig.MaxArmor;
+
+    public float GetArmorPercentage() => healthConfig.MaxArmor > 0 ? (float)currentArmor / healthConfig.MaxArmor : 0f;
+
+    private void PlayArmorBreakSound()
+    {
+        if (SoundManager.Instance?.playerChannel != null && SoundManager.Instance.armorBreak != null)
+        {
+            SoundManager.Instance.playerChannel.PlayOneShot(SoundManager.Instance.armorBreak);
+        }
+    }
+
+    #endregion Armor System
+
     #region Respawn System
 
     public void Respawn()
@@ -444,6 +534,7 @@ public class Player : ControllableEntity, IHealable, IRespawnable
 
         UpdateHealthUI();
         OnHealthChanged?.Invoke(currentHealth, MaxHealth);
+        OnArmorChanged?.Invoke(currentArmor, healthConfig.MaxArmor);
         OnRespawned?.Invoke();
 
         Debug.Log("Player respawned");
@@ -464,6 +555,16 @@ public class Player : ControllableEntity, IHealable, IRespawnable
         if (references.playerHpUI != null)
         {
             references.playerHpUI.text = $"Health: {currentHealth}/{MaxHealth}";
+        }
+
+        UpdateArmorUI();
+    }
+
+    private void UpdateArmorUI()
+    {
+        if (references.playerArmorUI != null)
+        {
+            references.playerArmorUI.text = $"Armor: {currentArmor}/{healthConfig.MaxArmor}";
         }
     }
 
@@ -596,15 +697,6 @@ public class Player : ControllableEntity, IHealable, IRespawnable
                 TakeDamage(zombieHand.damage, damageInfo);
             }
         }
-        //else if (other.CompareTag("HealthPack"))
-        //{
-        //    var healthPack = other.GetComponent<HealthPack>();
-        //    if (healthPack != null)
-        //    {
-        //        Heal(healthPack.healAmount);
-        //        Destroy(other.gameObject);
-        //    }
-        //}
     }
 
     #endregion Collision Handling
@@ -630,8 +722,8 @@ public class Player : ControllableEntity, IHealable, IRespawnable
     {
         return GetHealthPercentage() < 0.25f;
     }
-}
 
-#endregion Utility Methods
+    #endregion Utility Methods
+}
 
 #endregion Player Class

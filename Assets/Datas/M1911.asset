@@ -19,6 +19,7 @@ MonoBehaviour:
   weaponIcon: {fileID: 21300000, guid: ee5d848ad03f10640a6cf38f94489bf5, type: 2}
   baseViewmodelPosition: {x: 0.22, y: 0.2, z: -0.2}
   baseViewmodelRotation: {x: 0, y: 0, z: 180}
+  inspectDuration: 12
   damage: 30
   fireRate: 400
   range: 100
@@ -40,21 +41,21 @@ MonoBehaviour:
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 18
-  recoilReturnSpeed: 10
-  hipFireRecoil: {x: 7, y: 7, z: 7}
+  recoilRotationSpeed: 20
+  recoilReturnSpeed: 15
+  hipFireRecoil: {x: 5, y: 7, z: 9}
   adsFireRecoil: {x: 5, y: 5, z: 5}
-  hRecoil: 0.7
-  vRecoil: 0.6
-  gunRecoilPositionSpeed: 11
-  gunPositionReturnSpeed: 9
-  recoilKickBackHip: {x: 0.3, y: 0.1, z: 0.7}
+  hRecoil: 2
+  vRecoil: 4
+  gunRecoilPositionSpeed: 40
+  gunPositionReturnSpeed: 30
+  recoilKickBackHip: {x: 0, y: 0.2, z: -0.1}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 9
-  gunRotationReturnSpeed: 20
-  recoilRotationHip: {x: 10, y: 5, z: 7}
+  gunRecoilRotationSpeed: 20
+  gunRotationReturnSpeed: 15
+  recoilRotationHip: {x: 45, y: 0, z: 0}
   recoilRotationAds: {x: 10, y: 4, z: 6}
-  rotationSwayIntensity: 10
+  rotationSwayIntensity: 20
   rotationSwaySmoothness: 2
   jumpIntensity: 5
   weaponMaxClamp: 20

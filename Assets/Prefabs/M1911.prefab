@@ -457,54 +457,13 @@ MonoBehaviour:
     weaponAnimator: {fileID: 1405736891299541404}
     viewmodelTransform: {fileID: 2192778067471895318}
     cameraTransform: {fileID: 0}
-  weaponModel: 0
-  availableShootingModes: 00000000
-  requiresCycling: 0
-  cycleTime: 0.8
-  cycleAnimation: CYCLE
-  useShellReload: 0
-  shellLoadTime: 0.8
-  maxShellsToLoad: 8
-  shellLoadAnimation: SHELL_LOAD
-  haveCameraRecoil: 1
   cameraRecoilHolder: {fileID: 0}
-  recoilRotationSpeed: 18
-  recoilReturnSpeed: 10
-  hipFireRecoil: {x: 7, y: 7, z: 7}
-  adsFireRecoil: {x: 5, y: 5, z: 5}
-  hRecoil: 0.7
-  vRecoil: 0.6
-  haveWeaponRecoil: 1
   gunPositionHolder: {fileID: 0}
-  gunRecoilPositionSpeed: 11
-  gunPositionReturnSpeed: 9
-  recoilKickBackHip: {x: 0.3, y: 0.1, z: 0.7}
-  recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 9
-  gunRotationReturnSpeed: 20
-  recoilRotationHip: {x: 10, y: 5, z: 7}
-  recoilRotationAds: {x: 10, y: 4, z: 6}
-  haveRotationalSway: 1
-  rotationSwayIntensity: 10
-  rotationSwaySmoothness: 2
-  haveJumpSway: 1
-  jumpIntensity: 5
-  weaponMaxClamp: 20
-  weaponMinClamp: 20
-  jumpSmooth: 15
-  landingIntensity: 5
-  landingSmooth: 15
-  recoverySpeed: 50
-  haveBobbing: 1
-  magnitude: 0.02
-  idleSpeed: 2.5
-  walkSpeedMultiplier: 4.5
-  walkSpeedMax: 6.5
-  aimReduction: 4
-  magazineDropPrefab: {fileID: 8979655581460389549, guid: d126d480254ba314d9a404544543ea53, type: 3}
   magazineDropPoint: {fileID: 1235404710346288846}
   magazineDropForce: {x: 0, y: 0, z: 0}
   magazineDropTorque: 1
+  weaponModel: 0
+  availableShootingModes: 00000000
   magInGun: {fileID: 4849729334492324104}
 --- !u!95 &1405736891299541404
 Animator:
@@ -712,7 +671,7 @@ Transform:
   m_GameObject: {fileID: 3762874874151168393}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0002, y: 0.0995, z: 0.2312}
+  m_LocalPosition: {x: -0.0002, y: 0.0995, z: 0.189}
   m_LocalScale: {x: 0.11999997, y: 0.08000004, z: 0.07200001}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -459,15 +459,15 @@ public abstract class WeaponBase : MonoBehaviour
         BulletsLeft--;
         ReadyToShoot = false;
 
+        // Apply recoil effects
+        ApplyRecoilEffects();
+
         // Create and launch projectile
         Vector3 shootDirection = CalculateShootDirection();
         CreateProjectile(shootDirection);
 
         // Visual and audio effects
         PlayShootingEffects();
-
-        // Apply recoil effects
-        ApplyRecoilEffects();
 
         // Mark as needing cycle for pump/bolt weapons
         if (weaponData.requiresCycling)
@@ -480,7 +480,7 @@ public abstract class WeaponBase : MonoBehaviour
 
         OnWeaponFired?.Invoke(this);
 
-        // Reset shot timing using weaponData fire rate
+        // Reset shot timing
         if (allowReset)
         {
             float fireRate = weaponData ? weaponData.fireRate : 600f;
@@ -630,7 +630,14 @@ public abstract class WeaponBase : MonoBehaviour
     protected virtual Vector3 CalculateShootDirection()
     {
         float range = weaponData ? weaponData.range : 100f;
-        Ray cameraRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        // Use the recoiled camera holder
+        Transform cameraTransform = cameraRecoilHolder != null ? cameraRecoilHolder : playerCamera.transform;
+
+        // Calculate ray from center of recoiled camera
+        Vector3 rayOrigin = cameraTransform.position;
+        Vector3 rayDirection = cameraTransform.forward;
+        Ray cameraRay = new Ray(rayOrigin, rayDirection);
 
         Vector3 targetPoint;
         if (Physics.Raycast(cameraRay, out RaycastHit hit, range))
@@ -639,7 +646,7 @@ public abstract class WeaponBase : MonoBehaviour
         }
         else
         {
-            targetPoint = cameraRay.GetPoint(range);
+            targetPoint = rayOrigin + rayDirection * range;
         }
 
         Vector3 shootDirection = (targetPoint - references.bulletSpawn.position).normalized;

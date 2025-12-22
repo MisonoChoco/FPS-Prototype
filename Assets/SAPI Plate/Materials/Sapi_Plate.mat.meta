@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e7bf04377f556a444891c44037e01024
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 98317
+  packageName: SAPI Body Plate (Game-Ready)
+  packageVersion: 1.2
+  assetPath: Assets/SAPI Plate/Materials/Sapi_Plate.mat
+  uploadId: 359078

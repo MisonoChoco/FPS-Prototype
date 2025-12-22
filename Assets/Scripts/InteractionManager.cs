@@ -1,5 +1,5 @@
 using UnityEngine;
-using Weapon; // Add this using directive to access the namespace
+using Weapon;
 
 public class InteractionManager : MonoBehaviour
 {
@@ -11,10 +11,11 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private LayerMask interactionLayers = -1;
 
     // Current hovered objects
-    public WeaponBase hoveredWeapon = null; // Changed from Weapon to WeaponBase
+    public WeaponBase hoveredWeapon = null;
 
     public AmmoBox hoveredAmmoBox = null;
     public Throwable hoveredThrowable = null;
+    public ItemCore hoveredItem = null; // NEW
 
     // Cache for performance
     private Camera playerCamera;
@@ -75,6 +76,7 @@ public class InteractionManager : MonoBehaviour
             HandleWeaponInteraction(hitObject);
             HandleAmmoInteraction(hitObject);
             HandleThrowableInteraction(hitObject);
+            HandleItemInteraction(hitObject); // NEW
         }
         else
         {
@@ -96,7 +98,6 @@ public class InteractionManager : MonoBehaviour
 
     private void HandleWeaponInteraction(GameObject hitObject)
     {
-        // Look for WeaponBase component
         WeaponBase weapon = hitObject.GetComponent<WeaponBase>();
         if (weapon != null && !weapon.IsActiveWeapon)
         {
@@ -112,10 +113,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (hoveredWeapon == weapon) return;
 
-        // Clear previous weapon
         ClearHoveredWeapon();
-
-        // Set new hovered weapon
         hoveredWeapon = weapon;
 
         var outline = weapon.GetComponent<Outline>();
@@ -160,10 +158,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (hoveredAmmoBox == ammoBox) return;
 
-        // Clear previous ammo box
         ClearHoveredAmmoBox();
-
-        // Set new hovered ammo box
         hoveredAmmoBox = ammoBox;
 
         var outline = ammoBox.GetComponent<Outline>();
@@ -208,10 +203,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (hoveredThrowable == throwable) return;
 
-        // Clear previous throwable
         ClearHoveredThrowable();
-
-        // Set new hovered throwable
         hoveredThrowable = throwable;
 
         var outline = throwable.GetComponent<Outline>();
@@ -237,6 +229,51 @@ public class InteractionManager : MonoBehaviour
 
     #endregion Throwable Interaction
 
+    #region Item Interaction (NEW)
+
+    private void HandleItemInteraction(GameObject hitObject)
+    {
+        ItemCore item = hitObject.GetComponent<ItemCore>();
+        if (item != null && !item.IsActiveItem)
+        {
+            SetHoveredItem(item);
+        }
+        else
+        {
+            ClearHoveredItem();
+        }
+    }
+
+    private void SetHoveredItem(ItemCore item)
+    {
+        if (hoveredItem == item) return;
+
+        ClearHoveredItem();
+        hoveredItem = item;
+
+        var outline = item.GetComponent<Outline>();
+        if (outline != null)
+        {
+            outline.enabled = true;
+            outline.OutlineColor = Color.white; // White outline for items
+        }
+    }
+
+    private void ClearHoveredItem()
+    {
+        if (hoveredItem != null)
+        {
+            var outline = hoveredItem.GetComponent<Outline>();
+            if (outline != null)
+            {
+                outline.enabled = false;
+            }
+            hoveredItem = null;
+        }
+    }
+
+    #endregion Item Interaction (NEW)
+
     #region Interaction Execution
 
     private void TryInteractWithHoveredObject()
@@ -259,6 +296,13 @@ public class InteractionManager : MonoBehaviour
         if (hoveredThrowable != null)
         {
             InteractWithThrowable();
+            return;
+        }
+
+        // Try item interaction (NEW)
+        if (hoveredItem != null)
+        {
+            InteractWithItem();
             return;
         }
     }
@@ -290,8 +334,20 @@ public class InteractionManager : MonoBehaviour
         if (WeaponManager.Instance != null)
         {
             WeaponManager.Instance.PickupThrowable(hoveredThrowable);
-            // WeaponManager will handle destroying the throwable
             ClearHoveredThrowable();
+        }
+    }
+
+    private void InteractWithItem() // NEW
+    {
+        if (PlayerInventory.Instance != null)
+        {
+            bool success = PlayerInventory.Instance.PickupItem(hoveredItem);
+            if (success)
+            {
+                Destroy(hoveredItem.gameObject);
+                ClearHoveredItem();
+            }
         }
     }
 
@@ -304,13 +360,15 @@ public class InteractionManager : MonoBehaviour
         ClearHoveredWeapon();
         ClearHoveredAmmoBox();
         ClearHoveredThrowable();
+        ClearHoveredItem(); // NEW
     }
 
     public bool HasAnyHoveredObject()
     {
         return hoveredWeapon != null ||
                hoveredAmmoBox != null ||
-               hoveredThrowable != null;
+               hoveredThrowable != null ||
+               hoveredItem != null; // NEW
     }
 
     public string GetHoveredObjectInfo()
@@ -328,6 +386,11 @@ public class InteractionManager : MonoBehaviour
         if (hoveredThrowable != null)
         {
             return $"Press F to pickup {hoveredThrowable.throwableType}";
+        }
+
+        if (hoveredItem != null) // NEW
+        {
+            return $"Press F to pickup {hoveredItem.ItemName}";
         }
 
         return "";

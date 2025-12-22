@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fe766f33c555170478510b53c1c4fb40
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 98317
+  packageName: SAPI Body Plate (Game-Ready)
+  packageVersion: 1.2
+  assetPath: Assets/SAPI Plate/Prefabs/Armor_Plate.prefab
+  uploadId: 359078
