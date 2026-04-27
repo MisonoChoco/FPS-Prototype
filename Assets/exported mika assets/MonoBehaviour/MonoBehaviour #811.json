@@ -1,0 +1,51 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": -4625015514251625471
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 3974473159145559767
+  },
+  "m_Name": "",
+  "FollowTarget": {
+    "m_FileID": 0,
+    "m_PathID": 6991331806346640385
+  },
+  "TargetRelativePosition": {
+    "x": -0.3642863,
+    "y": -0.2087132,
+    "z": 0.0
+  },
+  "TargetRelativeRotation": {
+    "x": 0.5000001,
+    "y": -0.49999937,
+    "z": -0.50000006,
+    "w": -0.5000008
+  },
+  "ClampMinOffset": {
+    "x": -0.48,
+    "y": -0.34,
+    "z": -0.27
+  },
+  "ClampMaxOffset": {
+    "x": -0.26,
+    "y": -0.07,
+    "z": 0.27
+  },
+  "FollowPositionPower": 0.1,
+  "FollowRotationPower": 0.07,
+  "FixYRotation": 0,
+  "LocalForward": {
+    "x": 0.0,
+    "y": 1.0000001,
+    "z": 0.0
+  },
+  "InitialRotation": {
+    "x": -0.0,
+    "y": -0.0,
+    "z": -0.0,
+    "w": 1.0
+  }
+}

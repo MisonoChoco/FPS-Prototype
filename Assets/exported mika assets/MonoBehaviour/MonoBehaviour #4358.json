@@ -1,0 +1,21 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 7451700913879645370
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 4701791495040430373
+  },
+  "m_Name": "",
+  "MouthRenderer": {
+    "m_FileID": 0,
+    "m_PathID": 305568105946152122
+  },
+  "MouthMaterialIndex": 3,
+  "MouthDefaultUV": {
+    "x": 0.0,
+    "y": 0.375
+  }
+}

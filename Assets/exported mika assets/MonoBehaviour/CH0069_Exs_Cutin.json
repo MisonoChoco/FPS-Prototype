@@ -1,0 +1,77 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -8804139043950659742
+  },
+  "m_Name": "CH0069_Exs_Cutin",
+  "m_Version": 0,
+  "m_Tracks": [
+    {
+      "m_FileID": 0,
+      "m_PathID": 1323869907954757569
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2236228861714624449
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -3266873921106350143
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -9075455282026123327
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -8719856589214715967
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 6958133988075958209
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -340293852792754239
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2633639665198952385
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2766529828341215169
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -1853416002270466111
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -1781653466259329087
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -952724615810977855
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 1798213498216509377
+    }
+  ],
+  "m_FixedDuration": 5.633333333333334,
+  "m_EditorSettings": {
+    "m_Framerate": 30.0,
+    "m_ScenePreview": 1
+  },
+  "m_DurationMode": 1,
+  "m_MarkerTrack": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  }
+}

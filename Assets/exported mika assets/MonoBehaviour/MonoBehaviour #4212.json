@@ -1,0 +1,35 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": -8901744975841711572
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -438566048978568494
+  },
+  "m_Name": "",
+  "TimelinePositionType": 0,
+  "TimelineFinishType": 2,
+  "SkipCameraChangeAfterFinish": 0,
+  "TimelineCamera": {
+    "m_FileID": 0,
+    "m_PathID": -5069590678658143700
+  },
+  "TimelineLight": {
+    "m_FileID": 0,
+    "m_PathID": -5228793306416141780
+  },
+  "TimelineCharLight": {
+    "m_FileID": 0,
+    "m_PathID": -2540774926022792660
+  },
+  "TimelineAudioListener": {
+    "m_FileID": 0,
+    "m_PathID": 6819458185696717356
+  },
+  "UseRendererMatching": 0,
+  "UseMainLightColor": 0,
+  "TimelineCharacterVisualUpdate": 0,
+  "screenTransitionTime": 0.0
+}

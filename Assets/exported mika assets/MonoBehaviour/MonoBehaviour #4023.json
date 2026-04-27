@@ -1,0 +1,26 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 5065697086832769987
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 2629956427521142719
+  },
+  "m_Name": "",
+  "m_Version": 1,
+  "m_UsePipelineSettings": 1,
+  "m_AdditionalLightsShadowResolutionTier": 2,
+  "m_LightLayerMask": 1,
+  "m_CustomShadowLayers": 0,
+  "m_ShadowLayerMask": 1,
+  "m_LightCookieSize": {
+    "x": 1.0,
+    "y": 1.0
+  },
+  "m_LightCookieOffset": {
+    "x": 0.0,
+    "y": 0.0
+  }
+}

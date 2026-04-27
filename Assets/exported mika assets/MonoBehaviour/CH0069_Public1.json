@@ -1,0 +1,69 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -8804139043950659742
+  },
+  "m_Name": "CH0069_Public1",
+  "m_Version": 0,
+  "m_Tracks": [
+    {
+      "m_FileID": 0,
+      "m_PathID": 805397230951288541
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -6995246792369090851
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -4180016587167609123
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -3682824581730644259
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2529467013405036253
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2513251212705746653
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -693315397006242083
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 6939907993303076573
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -9177547316442542371
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 4616562421506789085
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 3641369638013521629
+    }
+  ],
+  "m_FixedDuration": 0.0,
+  "m_EditorSettings": {
+    "m_Framerate": 30.0,
+    "m_ScenePreview": 1
+  },
+  "m_DurationMode": 0,
+  "m_MarkerTrack": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  }
+}

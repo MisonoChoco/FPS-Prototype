@@ -1,0 +1,26 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 4912549939049090105
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 8046883904887781680
+  },
+  "m_Name": "",
+  "PlaySound": 1,
+  "SoundUniqueId": "BUTTON_CLICK",
+  "Clip": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "onClick": [],
+  "onLongPress": [],
+  "onPress": [],
+  "label": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "contentBlockTypes": []
+}

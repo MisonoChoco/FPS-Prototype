@@ -1,0 +1,20 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -2820975495039158359
+  },
+  "m_Name": "TimeLineAudioMixerSnapshotsController(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)",
+  "AudioMixerSnapshot": {
+    "AudioMixerSnapshot": {
+      "m_FileID": 2,
+      "m_PathID": 834003634083220452
+    },
+    "TimeToReach": 0.0
+  },
+  "DefaultSnapShot": 0
+}

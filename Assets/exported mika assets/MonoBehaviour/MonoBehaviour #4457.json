@@ -1,0 +1,20 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": -9017313601961198653
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -5651817537053302062
+  },
+  "m_Name": "",
+  "cameraConfigData": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "pipelineConfigData": {
+    "m_FileID": 3,
+    "m_PathID": -333297750307778679
+  }
+}

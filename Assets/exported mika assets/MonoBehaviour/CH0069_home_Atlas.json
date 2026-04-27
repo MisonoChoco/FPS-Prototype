@@ -1,0 +1,39 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 5758106410036003515
+  },
+  "m_Name": "CH0069_home_Atlas",
+  "textureLoadingMode": 0,
+  "onDemandTextureLoader": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "atlasFile": {
+    "m_FileID": 2,
+    "m_PathID": -3715260734794331903
+  },
+  "materials": [
+    {
+      "m_FileID": 3,
+      "m_PathID": 577976562416408993
+    },
+    {
+      "m_FileID": 3,
+      "m_PathID": 3510068989473493816
+    },
+    {
+      "m_FileID": 3,
+      "m_PathID": 3996600538116063513
+    },
+    {
+      "m_FileID": 3,
+      "m_PathID": -5915163553769496147
+    }
+  ]
+}

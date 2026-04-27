@@ -1,0 +1,15 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 4358861460871639177
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 460590081893560622
+  },
+  "m_Name": "",
+  "LifeMode": 1,
+  "TimerTypeDuration": 9.0,
+  "ParentIndex": 2
+}

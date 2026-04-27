@@ -1,0 +1,54 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": -7001063378284381245
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -9026714583884634388
+  },
+  "m_Name": "",
+  "fxParentBones": [
+    {
+      "m_FileID": 0,
+      "m_PathID": -388695723671422013
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -5122266073740739645
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2089785921194490819
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 837318477151599555
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 463145961276505027
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 2786820455798864835
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 0
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -4090947991363388477
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -8477614245846647869
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 6878171675748531139
+    }
+  ]
+}

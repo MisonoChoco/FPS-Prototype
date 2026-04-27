@@ -1,0 +1,141 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 7765707188110305836
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 899072315935755860
+  },
+  "m_Name": "",
+  "Floater": {
+    "m_FileID": 0,
+    "m_PathID": 24162738788903468
+  },
+  "BodyBone": {
+    "m_FileID": 0,
+    "m_PathID": 7940139408515082796
+  },
+  "HeadBone": {
+    "m_FileID": 0,
+    "m_PathID": 8202210917187660332
+  },
+  "ShotBone": {
+    "m_FileID": 0,
+    "m_PathID": 8552074039426755116
+  },
+  "Shot2Bone": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "Shot3Bone": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "ExtraBone": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "Extra2Bone": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "Extra3Bone": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "BodyBoneForward": 0,
+  "HeadBoneForward": 0,
+  "ShotBoneForward": 0,
+  "Shot2BoneForward": 0,
+  "Shot3BoneForward": 0,
+  "TurretHorizontal": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "TurretVertical": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "TurretHorizontalForward": 0,
+  "TurretVerticalForward": 0,
+  "DeathShaderAfterAniClip": 1,
+  "DisableDeathShader": 0,
+  "DeathShaderAniOverride": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "AnimationControlOfFormList": [],
+  "PlayableDirector": {
+    "m_FileID": 0,
+    "m_PathID": 8944543788049967660
+  },
+  "NormalAttackSkillPlayableAssetList": [],
+  "PublicSkillPlayableAssetList": [
+    {
+      "m_FileID": 50,
+      "m_PathID": 9195874291061903069
+    }
+  ],
+  "ExSkillPlayableAssetList": [
+    {
+      "m_FileID": 50,
+      "m_PathID": -5905609861402150012
+    }
+  ],
+  "exSkillCutInBindingData": [
+    {
+      "keyList": [
+        0,
+        1,
+        9
+      ],
+      "valueList": [
+        {
+          "localId": -8861607286485767027,
+          "binding": {
+            "m_FileID": 0,
+            "m_PathID": 8156509320200268332
+          }
+        },
+        {
+          "localId": 8560507117742753233,
+          "binding": {
+            "m_FileID": 0,
+            "m_PathID": -6925400878494504404
+          }
+        },
+        {
+          "localId": 1444540529891553685,
+          "binding": {
+            "m_FileID": 0,
+            "m_PathID": -6973227680039294420
+          }
+        }
+      ]
+    }
+  ],
+  "exSkillCutInPlayableAssetList": [
+    {
+      "m_AssetGUID": "66672d58ad65d8c46b38c7ac766878c7",
+      "m_SubObjectName": "",
+      "m_SubObjectType": ""
+    }
+  ],
+  "OPPlayableAsset": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "AppearancePlayableAsset": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "IsCharacterVisualReplacedInFormConversion": 0,
+  "ComponentToDisableInFormConversion": [],
+  "GameObjectToDeactivateInFormConversion": [],
+  "CharacterPrefabToReplaceInFormConversion": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  }
+}

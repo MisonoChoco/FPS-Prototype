@@ -1,0 +1,41 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 5715097508393328874
+  },
+  "m_Name": "CH0069_spr-03",
+  "skeletonDataAsset": {
+    "m_FileID": 0,
+    "m_PathID": -4923989908003099415
+  },
+  "animationName": "",
+  "PlayMode": 1,
+  "FinishMode": 2,
+  "ClipName": "03",
+  "IsTrackMainIdle": 0,
+  "UseDefaultIntroMix": 1,
+  "IntroMix": 0.0,
+  "Loop": 1,
+  "Track": 1,
+  "BlockInteractionOnPlay": 0,
+  "UseDefaultOutroMix": 1,
+  "OutroMix": 0.0,
+  "OutroStartOffset": 0.0,
+  "RandomTimingIntroDelayMode": 0,
+  "IntroDelayDuration": 3.0,
+  "RandomDelayMin": 3.0,
+  "RandomDelayMax": 4.0,
+  "AddRandomLoopMin": 0,
+  "AddRandomLoopMax": 0,
+  "NextClipObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "SyncPlayClipObjects": [],
+  "SoundKeys": []
+}

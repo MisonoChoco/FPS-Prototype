@@ -31,7 +31,6 @@ public class WeaponData : ScriptableObject
     public float fireRate = 600f; // Rounds per minute
     public float range = 100f;
     public int magazineSize = 30;
-    public float reloadTime = 2f;
 
     [Header("Ballistics & Accuracy")]
     public float muzzleVelocity = 400f;
@@ -61,6 +60,7 @@ public class WeaponData : ScriptableObject
     [Header("Camera Recoil Values")]
     public float recoilRotationSpeed = 6f;
 
+    public float recoilRollIntensity = 0.5f;
     public float recoilReturnSpeed = 25f;
     public Vector3 hipFireRecoil = new Vector3(4f, 4f, 4f);
     public Vector3 adsFireRecoil = new Vector3(2f, 2f, 2f);
@@ -134,6 +134,14 @@ public class WeaponData : ScriptableObject
     public AudioClip emptySound;
     public AudioClip switchModeSound;
 
+    [Header("Reload Audio Events")]
+    public AudioClip magOutSound;
+
+    public AudioClip magInSound;
+    public AudioClip boltPullSound;
+    public AudioClip boltBackSound;   // HK/bolt-action only
+    public AudioClip boltForwardSound; // HK/bolt-action only
+
     [Range(0f, 1f)]
     public float audioVolume = 1f;
 
@@ -150,10 +158,22 @@ public class WeaponData : ScriptableObject
     public string shootAnimation = "RECOIL";
 
     public string shootADSAnimation = "RECOIL_ADS";
-    public string reloadAnimation = "RELOAD";
     public string adsEnterAnimation = "enterADS";
     public string adsExitAnimation = "exitADS";
     public string idleAnimation = "Idle";
+
+    [Header("Reload Animation Names")]
+    public string reloadAnimation = "RELOAD";
+
+    public string tacticalReloadAnimation = "RELOAD_TACTICAL";
+    public string lastBulletReloadAnimation = "RELOAD_LASTBULLET";
+    public bool isOpenBolt = false; // true for open bolt guns like some SMGs
+
+    [Header("Reload Timing")]
+    public float reloadTime = 2f;
+
+    public float tacticalReloadTime = 1.5f;
+    public float lastBulletReloadTime = 2.3f;
 
     [Header("Weapon Handling")]
     public float aimSpeed = 8f; // How fast to aim down sights

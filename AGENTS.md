@@ -1,8 +1,8 @@
 <!-- UNITY CODE ASSIST INSTRUCTIONS START -->
 - Project name: FPS-Prototype
-- Unity version: Unity 6000.2.10f1
+- Unity version: Unity 6000.4.0f1
 - Active game object:
-  - Name: WeaponRenderCamera
+  - Name: EventSystem
   - Tag: Untagged
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

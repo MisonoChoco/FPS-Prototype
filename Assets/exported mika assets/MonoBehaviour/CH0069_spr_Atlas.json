@@ -1,0 +1,27 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 5758106410036003515
+  },
+  "m_Name": "CH0069_spr_Atlas",
+  "textureLoadingMode": 0,
+  "onDemandTextureLoader": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "atlasFile": {
+    "m_FileID": 2,
+    "m_PathID": 3893509090128434006
+  },
+  "materials": [
+    {
+      "m_FileID": 4,
+      "m_PathID": -8516984620901886314
+    }
+  ]
+}

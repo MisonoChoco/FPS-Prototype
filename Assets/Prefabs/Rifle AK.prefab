@@ -4711,7 +4711,7 @@ ParticleSystem:
     vectorLabel1_3: W
 --- !u!199 &4540129103479298346
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4757,6 +4757,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -4788,7 +4789,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1 &4999042544885169939
 GameObject:
   m_ObjectHideFlags: 0
@@ -4877,6 +4877,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5331102745130258035
 GameObject:
@@ -4966,6 +4967,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5685932164023762820
 GameObject:
@@ -5055,6 +5057,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5732049630695581004
 GameObject:
@@ -5144,6 +5147,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6021347013635223318
 GameObject:
@@ -5233,6 +5237,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6036600919982118210
 GameObject:
@@ -5322,6 +5327,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6142860869646372402
 GameObject:
@@ -5443,6 +5449,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6791072206137815180
 GameObject:
@@ -5564,6 +5571,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7747006875687263873
 GameObject:
@@ -5653,6 +5661,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7947221175439016640
 GameObject:
@@ -5742,6 +5751,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8277936520801934321
 GameObject:
@@ -5755,6 +5765,7 @@ GameObject:
   - component: {fileID: 6446781609743431600}
   - component: {fileID: 2778912014186288304}
   - component: {fileID: 365186803224831344}
+  - component: {fileID: 4559699640641006238}
   - component: {fileID: 1579957034653108930}
   m_Layer: 6
   m_Name: Rifle AK
@@ -5813,7 +5824,6 @@ MonoBehaviour:
     weaponAnimator: {fileID: 365186803224831344}
     viewmodelTransform: {fileID: 8637291332472225657}
     cameraTransform: {fileID: 0}
-  cameraRecoilHolder: {fileID: 0}
   gunPositionHolder: {fileID: 0}
   magazineDropPoint: {fileID: 4707601953564410102}
   magazineDropForce: {x: -1, y: -0.5, z: 6}
@@ -5864,6 +5874,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4559699640641006238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8277936520801934321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a327c288f95247f40ab31be5a3a78ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponAnimationEvents
+  weaponBase: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!114 &1579957034653108930
 MonoBehaviour:
   m_ObjectHideFlags: 0

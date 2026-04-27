@@ -1,0 +1,20 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 5440314936464702650
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -1610169035019796062
+  },
+  "m_Name": "",
+  "m_IsGlobal": 1,
+  "priority": 0.0,
+  "blendDistance": 0.0,
+  "weight": 0.0,
+  "sharedProfile": {
+    "m_FileID": 3,
+    "m_PathID": 2519443875840603097
+  }
+}

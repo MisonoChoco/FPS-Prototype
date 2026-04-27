@@ -21,10 +21,9 @@ MonoBehaviour:
   baseViewmodelRotation: {x: 0, y: 0, z: 180}
   inspectDuration: 12
   damage: 30
-  fireRate: 400
+  fireRate: 300
   range: 100
   magazineSize: 7
-  reloadTime: 2.5
   muzzleVelocity: 300
   hipSpread: 1
   adsSpread: 0
@@ -41,19 +40,20 @@ MonoBehaviour:
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 20
-  recoilReturnSpeed: 15
-  hipFireRecoil: {x: 5, y: 7, z: 9}
-  adsFireRecoil: {x: 5, y: 5, z: 5}
-  hRecoil: 2
-  vRecoil: 4
-  gunRecoilPositionSpeed: 40
-  gunPositionReturnSpeed: 30
+  recoilRotationSpeed: 40
+  recoilRollIntensity: 3
+  recoilReturnSpeed: 20
+  hipFireRecoil: {x: 1, y: 1.5, z: 0}
+  adsFireRecoil: {x: 0.5, y: 1, z: 0}
+  hRecoil: 1
+  vRecoil: 2
+  gunRecoilPositionSpeed: 50
+  gunPositionReturnSpeed: 40
   recoilKickBackHip: {x: 0, y: 0.2, z: -0.1}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 20
-  gunRotationReturnSpeed: 15
-  recoilRotationHip: {x: 45, y: 0, z: 0}
+  gunRecoilRotationSpeed: 30
+  gunRotationReturnSpeed: 20
+  recoilRotationHip: {x: 60, y: 5, z: 0}
   recoilRotationAds: {x: 10, y: 4, z: 6}
   rotationSwayIntensity: 20
   rotationSwaySmoothness: 2
@@ -85,6 +85,11 @@ MonoBehaviour:
   reloadSound: {fileID: 8300000, guid: 796cdd4a78a1ac0419ea1e3c022957fe, type: 3}
   emptySound: {fileID: 8300000, guid: 91f2502c5acc50f429f59cc4e3c46bd9, type: 3}
   switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
+  magOutSound: {fileID: 0}
+  magInSound: {fileID: 0}
+  boltPullSound: {fileID: 0}
+  boltBackSound: {fileID: 0}
+  boltForwardSound: {fileID: 0}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 1046677776983374096, guid: 53f1328754e99b7459427f98b6f74222, type: 3}
@@ -94,10 +99,16 @@ MonoBehaviour:
   muzzleLightDuration: 0.02
   shootAnimation: RECOIL
   shootADSAnimation: RECOIL_ADS
-  reloadAnimation: RELOAD
   adsEnterAnimation: enterADS
   adsExitAnimation: exitADS
   idleAnimation: Idle
+  reloadAnimation: RELOAD
+  tacticalReloadAnimation: RELOAD_TACTICAL
+  lastBulletReloadAnimation: RELOAD_LASTBULLET
+  isOpenBolt: 0
+  reloadTime: 2.5
+  tacticalReloadTime: 1.5
+  lastBulletReloadTime: 2.3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1

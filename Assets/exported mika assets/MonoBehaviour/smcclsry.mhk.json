@@ -1,0 +1,58 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -2098693889878066192
+  },
+  "m_Name": "TimeLineAudioController(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)(Clone)",
+  "PlaySoundManager": 0,
+  "SyncEndTimeByClipLength": 0,
+  "Audio": 0,
+  "VoiceId": "",
+  "AudioData": {
+    "GroupId": 0,
+    "IgnoreInterruptDelay": 1,
+    "IgnoreInterruptPlay": 1,
+    "IgnoreVelocity": 0,
+    "AudioMixerGroup": {
+      "m_FileID": 2,
+      "m_PathID": -1488460819483178012
+    },
+    "AudioMixerSnapshot": {
+      "AudioMixerSnapshot": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      },
+      "TimeToReach": 0.0
+    },
+    "AudioClips": [
+      {
+        "m_FileID": 3,
+        "m_PathID": 2011965269270680383
+      }
+    ],
+    "CustomCurves": [],
+    "BypassEffects": 0,
+    "BypassListenerEffects": 0,
+    "BypassReverbZones": 0,
+    "Loop": 0,
+    "Priority": 128,
+    "Volume": 0.05,
+    "Pitch": 3.0,
+    "RandomPitchMin": 0,
+    "RandomPitchMax": 0,
+    "Delay": 0.0,
+    "StereoPan": 0.0,
+    "SpatialBlend": 0.0,
+    "ReverbZoneMix": 1.0,
+    "DopplerLevel": 1.0,
+    "Spread": 0.0,
+    "VolumeRolloff": 1,
+    "MinDistance": 1.0,
+    "MaxDistance": 500.0
+  }
+}

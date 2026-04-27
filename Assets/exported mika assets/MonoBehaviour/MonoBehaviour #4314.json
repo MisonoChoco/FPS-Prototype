@@ -1,0 +1,33 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 7451700913879645370
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -4851495284918362547
+  },
+  "m_Name": "",
+  "TransitionSpeed": 4.0,
+  "target": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "headBone": {
+    "m_FileID": 0,
+    "m_PathID": -3703656633929237318
+  },
+  "eyes": [
+    {
+      "m_FileID": 0,
+      "m_PathID": 4064311571664338106
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 8040069529794968762
+    }
+  ],
+  "customMinRotationDegree": -10.0,
+  "customMaxRotationDegree": 0.0
+}

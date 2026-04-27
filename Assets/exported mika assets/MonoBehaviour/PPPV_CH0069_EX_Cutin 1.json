@@ -1,0 +1,26 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 8794198399776653176
+  },
+  "m_Name": "PPPV_CH0069_EX_Cutin 1",
+  "components": [
+    {
+      "m_FileID": 0,
+      "m_PathID": -7789717575002128787
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 6341240639026200173
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 1420092993589706349
+    }
+  ]
+}

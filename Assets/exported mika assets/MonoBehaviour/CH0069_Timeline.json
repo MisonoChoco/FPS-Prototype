@@ -1,0 +1,61 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": -8804139043950659742
+  },
+  "m_Name": "CH0069_Timeline",
+  "m_Version": 0,
+  "m_Tracks": [
+    {
+      "m_FileID": 0,
+      "m_PathID": 8354416268678852435
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -906659204889186477
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -649233218731643053
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -7664638492958724269
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -5014511360894963885
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -68573113297342637
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -4832169695848763565
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": 425541276351065939
+    },
+    {
+      "m_FileID": 0,
+      "m_PathID": -4322285681735176365
+    }
+  ],
+  "m_FixedDuration": 0.0,
+  "m_EditorSettings": {
+    "m_Framerate": 30.0,
+    "m_ScenePreview": 1
+  },
+  "m_DurationMode": 0,
+  "m_MarkerTrack": {
+    "m_FileID": 0,
+    "m_PathID": 2091292770894671699
+  }
+}

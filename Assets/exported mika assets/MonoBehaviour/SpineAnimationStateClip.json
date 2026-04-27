@@ -1,0 +1,31 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 8680798038188923074
+  },
+  "m_Name": "SpineAnimationStateClip",
+  "template": {
+    "animationReference": {
+      "m_FileID": 4,
+      "m_PathID": -2513880151197347454
+    },
+    "loop": 0,
+    "customDuration": 1,
+    "useBlendDuration": 1,
+    "isInitialized": 1,
+    "mixDuration": 0.0,
+    "holdPrevious": 0,
+    "dontPauseWithDirector": 0,
+    "dontEndWithClip": 0,
+    "endMixOutDuration": 0.1,
+    "attachmentThreshold": 0.5,
+    "eventThreshold": 0.5,
+    "drawOrderThreshold": 0.5,
+    "alpha": 1.0
+  }
+}

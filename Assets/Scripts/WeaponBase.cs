@@ -13,7 +13,8 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected WeaponData weaponData; // Main data source
 
     [SerializeField] protected WeaponReferences references;
-    [SerializeField] private Transform cameraRecoilHolder;
+
+    private bool wasFiringLastFrame;
     [SerializeField] private Transform gunPositionHolder;
 
     [Header("Magazine Drop Values")]
@@ -34,12 +35,12 @@ public abstract class WeaponBase : MonoBehaviour
     private bool isInspecting = false;
     private Coroutine inspectCoroutine;
 
-    private Vector3 currentCameraRotation;
-    private Vector3 cameraRot;
+    private FollowCamera.CameraFollow cameraFollow;
 
     private Vector3 rotationRecoil;
     private Vector3 positionRecoil;
     private Vector3 weaponRot;
+    private float lastShotTime = -999f;
 
     private Quaternion originRotation;
     private float mouseX;
@@ -78,6 +79,8 @@ public abstract class WeaponBase : MonoBehaviour
 
     public event Action<WeaponBase, bool> OnADSChanged;
 
+    private bool reloadEventSignaled = false;
+
     // Properties to access WeaponData
     public WeaponData Data => weaponData;
 
@@ -89,8 +92,8 @@ public abstract class WeaponBase : MonoBehaviour
 
     private void Start()
     {
-        cameraRecoilHolder = GameObject.Find("WeaponRenderCamera")?.transform;
         gunPositionHolder = GameObject.Find("WeaponSpawner")?.transform;
+        cameraFollow = UnityEngine.Object.FindAnyObjectByType<FollowCamera.CameraFollow>();
         leftArm = transform.Find("LeftArm")?.gameObject;
         rightArm = transform.Find("RightArm")?.gameObject;
     }
@@ -100,7 +103,7 @@ public abstract class WeaponBase : MonoBehaviour
         Initialize();
 
         // Try to find the Player controller
-        playerController = UnityEngine.Object.FindFirstObjectByType<PlayerController.PlayerController>();
+        playerController = UnityEngine.Object.FindAnyObjectByType<PlayerController.PlayerController>();
     }
 
     protected virtual void Initialize()
@@ -137,10 +140,6 @@ public abstract class WeaponBase : MonoBehaviour
         // Initialize weapon effects
         lastPosition = transform.position;
         if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
-
-        // Set default camera recoil holder if not assigned
-        if (cameraRecoilHolder == null && playerCamera != null)
-            cameraRecoilHolder = playerCamera.transform;
 
         // Set default gun position holder if not assigned
         if (gunPositionHolder == null)
@@ -207,11 +206,12 @@ public abstract class WeaponBase : MonoBehaviour
 
     private void HandleCameraRecoil()
     {
-        if (!weaponData.haveCameraRecoil || cameraRecoilHolder == null) return;
+        if (!weaponData.haveCameraRecoil || cameraFollow == null) return;
 
-        currentCameraRotation = Vector3.Lerp(currentCameraRotation, Vector3.zero, weaponData.recoilReturnSpeed * Time.deltaTime);
-        cameraRot = Vector3.Slerp(cameraRot, currentCameraRotation, weaponData.recoilRotationSpeed * Time.deltaTime);
-        cameraRecoilHolder.localRotation = Quaternion.Euler(cameraRot);
+        float fireInterval = 60f / (weaponData ? weaponData.fireRate : 600f);
+        bool currentlyFiring = (Time.time - lastShotTime) < fireInterval + 0.05f;
+
+        wasFiringLastFrame = currentlyFiring;
     }
 
     private void WeaponRotationSway()
@@ -531,53 +531,31 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void ApplyRecoilEffects()
     {
-        float hRecoilValue = UnityEngine.Random.Range(-weaponData.hRecoil, weaponData.hRecoil);
-
-        if (IsADS)
+        if (weaponData.haveCameraRecoil && cameraFollow != null)
         {
-            // ADS recoil
-            if (weaponData.haveCameraRecoil)
-            {
-                currentCameraRotation += new Vector3(-weaponData.adsFireRecoil.x,
-                    UnityEngine.Random.Range(-weaponData.adsFireRecoil.y, weaponData.adsFireRecoil.y),
-                    UnityEngine.Random.Range(-weaponData.adsFireRecoil.z, weaponData.adsFireRecoil.z));
-            }
-
-            if (weaponData.haveWeaponRecoil)
-            {
-                rotationRecoil += new Vector3(-weaponData.recoilRotationAds.x,
-                    UnityEngine.Random.Range(-weaponData.recoilRotationAds.y, weaponData.recoilRotationAds.y),
-                    UnityEngine.Random.Range(-weaponData.recoilRotationAds.z, weaponData.recoilRotationAds.z));
-                positionRecoil += new Vector3(UnityEngine.Random.Range(-weaponData.recoilKickBackAds.x, weaponData.recoilKickBackAds.x),
-                    UnityEngine.Random.Range(-weaponData.recoilKickBackAds.y, weaponData.recoilKickBackAds.y),
-                    weaponData.recoilKickBackAds.z);
-            }
-
-            // reduced recoil
-            playerController.AddRecoil(weaponData.hRecoil * 0.5f, weaponData.vRecoil * 0.5f);
+            Vector3 kick = IsADS ? weaponData.adsFireRecoil : weaponData.hipFireRecoil;
+            float yawKick = UnityEngine.Random.Range(-kick.y, kick.y) * weaponData.hRecoil;
+            float pitchKick = kick.x * weaponData.vRecoil;
+            float rollKick = UnityEngine.Random.Range(weaponData.recoilRollIntensity * 0.5f, weaponData.recoilRollIntensity) * Mathf.Sign(yawKick);
+            cameraFollow.ApplyRecoilKick(pitchKick, yawKick, rollKick, weaponData.recoilRotationSpeed, weaponData.recoilReturnSpeed);
         }
-        else
+
+        if (weaponData.haveWeaponRecoil)
         {
-            // Hip fire recoil
-            if (weaponData.haveCameraRecoil)
-            {
-                currentCameraRotation += new Vector3(-weaponData.hipFireRecoil.x,
-                    UnityEngine.Random.Range(-weaponData.hipFireRecoil.y, weaponData.hipFireRecoil.y),
-                    UnityEngine.Random.Range(-weaponData.hipFireRecoil.z, weaponData.hipFireRecoil.z));
-            }
+            Vector3 rotRecoil = IsADS ? weaponData.recoilRotationAds : weaponData.recoilRotationHip;
+            Vector3 posRecoil = IsADS ? weaponData.recoilKickBackAds : weaponData.recoilKickBackHip;
 
-            if (weaponData.haveWeaponRecoil)
-            {
-                rotationRecoil += new Vector3(-weaponData.recoilRotationHip.x,
-                    UnityEngine.Random.Range(-weaponData.recoilRotationHip.y, weaponData.recoilRotationHip.y),
-                    UnityEngine.Random.Range(-weaponData.recoilRotationHip.z, weaponData.recoilRotationHip.z));
-                positionRecoil += new Vector3(UnityEngine.Random.Range(-weaponData.recoilKickBackHip.x, weaponData.recoilKickBackHip.x),
-                    UnityEngine.Random.Range(-weaponData.recoilKickBackHip.y, weaponData.recoilKickBackHip.y),
-                    weaponData.recoilKickBackHip.z);
-            }
-
-            playerController.AddRecoil(weaponData.hRecoil, weaponData.vRecoil);
+            rotationRecoil += new Vector3(
+                -rotRecoil.x,
+                UnityEngine.Random.Range(-rotRecoil.y, rotRecoil.y),
+                UnityEngine.Random.Range(-rotRecoil.z, rotRecoil.z));
+            positionRecoil += new Vector3(
+                UnityEngine.Random.Range(-posRecoil.x, posRecoil.x),
+                UnityEngine.Random.Range(-posRecoil.y, posRecoil.y),
+                posRecoil.z);
         }
+
+        lastShotTime = Time.time;
     }
 
     protected virtual bool CanShoot()
@@ -632,7 +610,7 @@ public abstract class WeaponBase : MonoBehaviour
         float range = weaponData ? weaponData.range : 100f;
 
         // Use the recoiled camera holder
-        Transform cameraTransform = cameraRecoilHolder != null ? cameraRecoilHolder : playerCamera.transform;
+        Transform cameraTransform = playerCamera.transform;
 
         // Calculate ray from center of recoiled camera
         Vector3 rayOrigin = cameraTransform.position;
@@ -831,22 +809,22 @@ public abstract class WeaponBase : MonoBehaviour
         }
     }
 
+    // Replace MagazineReloadCoroutine entirely
     protected virtual IEnumerator MagazineReloadCoroutine()
     {
         if (references.weaponAnimator != null)
-        {
             references.weaponAnimator.enabled = true;
-        }
 
-        string reloadAnimation = weaponData ? weaponData.reloadAnimation : "RELOAD";
-        references.weaponAnimator?.SetTrigger(reloadAnimation);
+        string animName = GetReloadAnimationName();
+        references.weaponAnimator?.SetTrigger(animName);
         OnReloadStarted?.Invoke(this);
 
-        float reloadTime = weaponData ? weaponData.reloadTime : 2f;
+        reloadEventSignaled = false;
+        float reloadTime = GetReloadTime();
         float elapsed = 0f;
         bool cancelled = false;
 
-        while (elapsed < reloadTime && !cancelled)
+        while (!reloadEventSignaled && elapsed < reloadTime && !cancelled)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -859,14 +837,10 @@ public abstract class WeaponBase : MonoBehaviour
         }
 
         if (!cancelled)
-        {
             CompleteReload();
-        }
 
         if (references.weaponAnimator != null)
-        {
             references.weaponAnimator.enabled = false;
-        }
     }
 
     protected virtual IEnumerator ShellReloadCoroutine()
@@ -1112,8 +1086,46 @@ public abstract class WeaponBase : MonoBehaviour
         return weaponData ? weaponData.damage : 25;
     }
 
+    public void SignalReloadComplete()
+    {
+        reloadEventSignaled = true;
+    }
+
     #endregion Public API
+
+    #region Getters
+
+    private string GetReloadAnimationName()
+    {
+        if (weaponData == null) return "RELOAD";
+
+        // Last bullet — 1 round chambered, only valid on closed bolt
+        if (BulletsLeft == 1 && !weaponData.isOpenBolt)
+            return weaponData.lastBulletReloadAnimation;
+
+        // Tactical — rounds still in mag
+        if (BulletsLeft > 1)
+            return weaponData.tacticalReloadAnimation;
+
+        // Standard — mag fully empty
+        return weaponData.reloadAnimation;
+    }
+
+    private float GetReloadTime()
+    {
+        if (weaponData == null) return 2f;
+
+        if (BulletsLeft == 1 && !weaponData.isOpenBolt)
+            return weaponData.lastBulletReloadTime;
+
+        if (BulletsLeft > 1)
+            return weaponData.tacticalReloadTime;
+
+        return weaponData.reloadTime;
+    }
 }
+
+#endregion Getters
 
 #region Support Classes
 

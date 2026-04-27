@@ -1,7 +1,15 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="MerryYellow.CodeAssist.Editor.csproj" />
-  <Project Path="Assembly-CSharp-firstpass.csproj" />
-  <Project Path="OccaSoftware.Crosshairs.Editor.csproj" />
+  <Project Path="spine-unity-examples.csproj" />
+  <Project Path="ThryAssemblyDefinition.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="spine-unity-editor.csproj" />
+  <Project Path="spine-csharp.csproj" />
+  <Project Path="spine-unity.csproj" />
+  <Project Path="ThryExternal.csproj" />
+  <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="Poi.Tools.csproj" />
+  <Project Path="spine-unity-examples-editor.csproj" />
+  <Project Path="OccaSoftware.Crosshairs.Editor.csproj" />
 </Solution>
