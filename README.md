@@ -16,7 +16,6 @@ In general, it's an entire core system rewrite.
 # Demo
 https://youtu.be/EcZpdetG4qE
 
-**In progress**
 
 
 
