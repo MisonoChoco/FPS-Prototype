@@ -92,6 +92,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &5631930010674655695
 BoxCollider:
@@ -155,12 +156,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DiscardedMag
   magDropSource: {fileID: 3560131430074985397}
   audioClips:
-  - {fileID: 8300000, guid: bc27ffa830ce98943aa0d642caac3a26, type: 3}
-  - {fileID: 8300000, guid: 74b6f38cd0f1ef841b59d13372dfd3cd, type: 3}
-  - {fileID: 8300000, guid: b86875094d31470428405563cd5f3809, type: 3}
-  - {fileID: 8300000, guid: e1d646dbef037794cac758c7f948a3a3, type: 3}
-  - {fileID: 8300000, guid: c14bcb77a853daa45bd9060ba71197e3, type: 3}
-  playCooldown: 0.5
+  - {fileID: 8300000, guid: 78a2fea944fd0bd4d9d98860a86860fc, type: 3}
+  playCooldown: 1
 --- !u!82 &3560131430074985397
 AudioSource:
   m_ObjectHideFlags: 0
@@ -174,7 +171,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.6
+  m_Volume: 0.4
   m_Pitch: 1
   Loop: 0
   Mute: 0

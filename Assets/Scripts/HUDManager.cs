@@ -33,7 +33,7 @@ public class HUDManager : MonoBehaviour
     public GameObject hitmarkerPrefab;
 
     public Transform hitmarkerContainer;
-    public int hitmarkerPoolSize = 10;
+    public int hitmarkerPoolSize = 30;
     public bool debugHitmarker = true; // Toggle debug logs
     private Queue<GameObject> hitmarkerPool;
     private List<GameObject> activeHitmarkers;
@@ -274,20 +274,15 @@ public class HUDManager : MonoBehaviour
             var weaponInfo = activeWeapon.GetWeaponInfo();
 
             MagazineAmmoUI.text = $"{weaponInfo.BulletsLeft}";
-            TotalAmmoUI.text = $"{WeaponManager.Instance.CheckAmmoLeftFor(weaponInfo.Model)}";
+            TotalAmmoUI.text = $"{WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.Data.ammoType)}";
 
-            WeaponModel model = weaponInfo.Model;
-            AmmoTypeUI.sprite = GetAmmoSprite(model);
-            activeWeaponUI.sprite = GetWeaponSprite(model);
+            AmmoTypeUI.sprite = activeWeapon.Data.ammoIcon ?? emptySlot;
+            activeWeaponUI.sprite = activeWeapon.Data.weaponIcon ?? emptySlot;
 
             if (unActiveWeapon != null)
-            {
-                unActiveWeaponUI.sprite = GetWeaponSprite(unActiveWeapon.weaponModel);
-            }
+                unActiveWeaponUI.sprite = unActiveWeapon.Data.weaponIcon ?? emptySlot;
             else
-            {
                 unActiveWeaponUI.sprite = emptySlot;
-            }
         }
         else
         {
@@ -311,46 +306,6 @@ public class HUDManager : MonoBehaviour
         if (WeaponManager.Instance.tacticalsCount <= 0)
         {
             tacticalUI.sprite = greySlot;
-        }
-    }
-
-    private Sprite GetWeaponSprite(WeaponModel model)
-    {
-        switch (model)
-        {
-            case WeaponModel.HandgunM1911:
-                return Resources.Load<Sprite>("M1911_Weapon");
-
-            case WeaponModel.AK47:
-                return Resources.Load<Sprite>("AK47_Weapon");
-
-            case WeaponModel.Shotgun:
-                return Resources.Load<Sprite>("Shotgun_Weapon");
-
-            case WeaponModel.SniperRifle:
-                return Resources.Load<Sprite>("Sniper_Weapon");
-
-            default:
-                return emptySlot;
-        }
-    }
-
-    private Sprite GetAmmoSprite(WeaponModel model)
-    {
-        switch (model)
-        {
-            case WeaponModel.HandgunM1911:
-                return Resources.Load<Sprite>("Pistol_Ammo");
-
-            case WeaponModel.AK47:
-            case WeaponModel.SniperRifle:
-                return Resources.Load<Sprite>("Rifle_Ammo");
-
-            case WeaponModel.Shotgun:
-                return Resources.Load<Sprite>("Shotgun_Ammo");
-
-            default:
-                return emptySlot;
         }
     }
 

@@ -4,52 +4,40 @@ using UnityEngine.AI;
 public class ZombieChasingState : StateMachineBehaviour
 {
     private NavMeshAgent agent;
-    private Transform Player;
+    private Transform player;
+    private ZombieAudio zombieAudio;
 
     public float chaseSpeed = 6f;
-
-    public float stopChasingDistance = 21;
+    public float stopChasingDistance = 21f;
     public float attackingDistance = 2.5f;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //initial
-        Player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = animator.GetComponent<NavMeshAgent>();
+        zombieAudio = animator.GetComponent<ZombieAudio>();
 
         agent.speed = chaseSpeed;
+        zombieAudio?.RequestChase();
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (SoundManager.Instance.entityChannel.isPlaying == false)
-        {
-            SoundManager.Instance.entityChannel.clip = SoundManager.Instance.zombieChase;
-            SoundManager.Instance.entityChannel.PlayDelayed(3f);
-        }
+        agent.SetDestination(player.position);
+        animator.transform.LookAt(player);
 
-        agent.SetDestination(Player.position);
-        animator.transform.LookAt(Player);
+        float dist = Vector3.Distance(player.position, animator.transform.position);
 
-        float distanceFromPlayer = Vector3.Distance(Player.position, animator.transform.position);
-
-        //check if agent should stop chasing
-        if (distanceFromPlayer > stopChasingDistance)
-        {
+        if (dist > stopChasingDistance)
             animator.SetBool("isChasing", false);
-        }
 
-        //check if agent should attack
-        if (distanceFromPlayer < attackingDistance)
-        {
+        if (dist < attackingDistance)
             animator.SetBool("isAttacking", true);
-        }
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         agent.SetDestination(animator.transform.position);
-
-        SoundManager.Instance.entityChannel.Stop();
+        zombieAudio?.StopChase();
     }
 }

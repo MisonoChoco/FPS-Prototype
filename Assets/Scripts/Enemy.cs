@@ -6,12 +6,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int HP = 100;
     private Animator animator;
     private NavMeshAgent NavAgent;
+    private ZombieAudio zombieAudio;
     public bool isDead;
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         NavAgent = GetComponent<NavMeshAgent>();
+        zombieAudio = GetComponent<ZombieAudio>();
     }
 
     public void TakeDamage(int dmg)
@@ -21,35 +23,35 @@ public class Enemy : MonoBehaviour
         if (HP <= 0)
         {
             isDead = true;
-            int random = Random.Range(0, 2); //0 or 1
-            if (random == 0)
-            {
-                animator.SetTrigger("DieBack");
-            }
-            else
-            {
-                animator.SetTrigger("DieForward");
-            }
-
-            SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.zombieDeath);
+            animator.SetTrigger(Random.Range(0, 2) == 0 ? "DieBack" : "DieForward");
+            zombieAudio?.PlayDeath();
+            SoundManager.Instance?.PlayKillFeedback();
         }
         else
         {
             animator.SetTrigger("DAMAGE");
-
-            SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.zombieHurt);
+            zombieAudio?.PlayHurt();
         }
     }
+
+    // Call these from your AI state machine
+    public void OnStartChasing() => zombieAudio?.RequestChase();
+
+    public void OnStopChasing() => zombieAudio?.StopChase();
+
+    public void OnAttack() => zombieAudio?.PlayAttack();
+
+    public void OnStartWalking() => zombieAudio?.RequestWalk();
+
+    public void OnStopWalking() => zombieAudio?.StopWalk();
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 2.5f);//attacking // stop attacking
-
+        Gizmos.DrawWireSphere(transform.position, 2.5f);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, 15f);//detection for chasing
-
+        Gizmos.DrawWireSphere(transform.position, 15f);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, 18f);//stop chasing
+        Gizmos.DrawWireSphere(transform.position, 18f);
     }
 }

@@ -16,6 +16,8 @@ public interface IProjectile
 
     void Launch(Vector3 direction, float speed);
 
+    void SetDamage(int damage);
+
     void Deactivate();
 
     event Action<IProjectile, Collision> OnImpact;
@@ -39,9 +41,6 @@ public interface IAudioProvider
 public class ProjectileConfig
 {
     [Header("Basic Properties")]
-    public int damage = 25;
-
-    public float speed = 100f;
     public float lifetime = 5f;
 
     [Header("Physics")]
@@ -68,7 +67,8 @@ public class CollisionEffects
     [Header("Audio")]
     public AudioClip impactSound;
 
-    [Range(0f, 1f)] public float volume = 1f;
+    [Range(0f, 1f)]
+    public float volume = 1f;
 
     [Header("Settings")]
     public float effectLifetime = 5f;
@@ -93,7 +93,8 @@ public class ImpactData
         ImpactForce = force;
     }
 
-    public ImpactData(Vector3 point, Vector3 normal, GameObject target, Collider collider = null, float force = 0f)
+    public ImpactData(Vector3 point, Vector3 normal, GameObject target,
+        Collider collider = null, float force = 0f)
     {
         Point = point;
         Normal = normal;
@@ -105,97 +106,35 @@ public class ImpactData
 
 #endregion Data Classes
 
-#region Effect Classes
+#region Static Effect Helper
 
-public abstract class ImpactEffect : MonoBehaviour, IEffectProvider
+public static class EffectHelper
 {
-    [SerializeField] protected CollisionEffects effectData;
-
-    public abstract void CreateEffect(Vector3 position, Vector3 normal, GameObject target = null);
-
-    protected virtual void PlayAudio(Vector3 position)
+    public static void CreateBloodEffect(Vector3 position, Vector3 normal, GameObject target)
     {
-        if (effectData.impactSound != null)
-        {
-            AudioSource.PlayClipAtPoint(effectData.impactSound, position, effectData.volume);
-        }
+        var prefab = GlobalReference.Instance?.BloodSprayEffect;
+        if (prefab == null) return;
+        var fx = UnityEngine.Object.Instantiate(prefab, position, Quaternion.LookRotation(normal));
+        if (target != null) fx.transform.SetParent(target.transform);
+        UnityEngine.Object.Destroy(fx, 5f);
     }
 
-    protected virtual GameObject InstantiateEffect(GameObject prefab, Vector3 position, Vector3 normal, GameObject target)
+    public static void CreateBulletHoleEffect(Vector3 position, Vector3 normal, GameObject target)
     {
-        if (prefab == null) return null;
-
-        var effect = Instantiate(prefab, position, Quaternion.LookRotation(normal));
-
-        if (effectData.parentToTarget && target != null)
-        {
-            effect.transform.SetParent(target.transform);
-        }
-
-        StartCoroutine(DestroyAfterTime(effect, effectData.effectLifetime));
-        return effect;
+        var prefab = GlobalReference.Instance?.bulletImpactEffectPrefab;
+        if (prefab == null) return;
+        var fx = UnityEngine.Object.Instantiate(prefab, position, Quaternion.LookRotation(normal));
+        UnityEngine.Object.Destroy(fx, 5f);
     }
 
-    private IEnumerator DestroyAfterTime(GameObject obj, float time)
+    public static void PlayImpactAudio(AudioClip clip, Vector3 position, float volume = 1f)
     {
-        yield return new WaitForSeconds(time);
-        if (obj != null) Destroy(obj);
+        if (clip != null)
+            AudioSource.PlayClipAtPoint(clip, position, volume);
     }
 }
 
-public class BloodEffect : ImpactEffect
-{
-    public override void CreateEffect(Vector3 position, Vector3 normal, GameObject target = null)
-    {
-        if (GlobalReference.Instance?.BloodSprayEffect == null) return;
-
-        InstantiateEffect(GlobalReference.Instance.BloodSprayEffect, position, normal, target);
-        PlayAudio(position);
-    }
-}
-
-public class BulletHoleEffect : ImpactEffect
-{
-    public override void CreateEffect(Vector3 position, Vector3 normal, GameObject target = null)
-    {
-        if (GlobalReference.Instance?.bulletImpactEffectPrefab == null) return;
-
-        InstantiateEffect(GlobalReference.Instance.bulletImpactEffectPrefab, position, normal, target);
-        PlayAudio(position);
-    }
-}
-
-public class ExplosionEffect : ImpactEffect
-{
-    [SerializeField] private VisualEffect explosionVFX;
-
-    public override void CreateEffect(Vector3 position, Vector3 normal, GameObject target = null)
-    {
-        if (explosionVFX != null)
-        {
-            var vfx = Instantiate(explosionVFX, position, Quaternion.LookRotation(normal));
-
-            // Don't parent VFX to moving objects
-            if (effectData.parentToTarget && target != null &&
-                (target.GetComponent<Rigidbody>()?.isKinematic ?? true))
-            {
-                vfx.transform.SetParent(target.transform);
-            }
-
-            StartCoroutine(DestroyVFXAfterPlay(vfx.gameObject));
-        }
-
-        PlayAudio(position);
-    }
-
-    private IEnumerator DestroyVFXAfterPlay(GameObject vfxObject)
-    {
-        yield return new WaitForSeconds(3f);
-        if (vfxObject != null) Destroy(vfxObject);
-    }
-}
-
-#endregion Effect Classes
+#endregion Static Effect Helper
 
 #region Collision Handlers
 
@@ -203,7 +142,7 @@ public abstract class CollisionHandler
 {
     protected IProjectile projectile;
 
-    public CollisionHandler(IProjectile projectile)
+    protected CollisionHandler(IProjectile projectile)
     {
         this.projectile = projectile;
     }
@@ -215,27 +154,18 @@ public abstract class CollisionHandler
 
 public class EnemyCollisionHandler : CollisionHandler
 {
-    private readonly BloodEffect bloodEffect;
-    private readonly ExplosionEffect explosionEffect;
-
     public EnemyCollisionHandler(IProjectile projectile) : base(projectile)
     {
-        // Initialize effects - in a real implementation, you'd inject these dependencies
-        bloodEffect = new GameObject("BloodEffect").AddComponent<BloodEffect>();
-        explosionEffect = new GameObject("ExplosionEffect").AddComponent<ExplosionEffect>();
     }
 
-    public override bool CanHandle(string tag)
-    {
-        return tag == "Enemy";
-    }
+    public override bool CanHandle(string tag) => tag == "Enemy";
 
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
         var enemy = target.GetComponent<Enemy>();
         if (enemy == null)
         {
-            Debug.LogWarning($"Enemy tagged object {target.name} doesn't have Enemy component!");
+            Debug.LogWarning($"[EnemyCollisionHandler] {target.name} tagged Enemy but has no Enemy component.");
             return;
         }
 
@@ -246,88 +176,51 @@ public class EnemyCollisionHandler : CollisionHandler
                 impactData.Point,
                 -impactData.Normal,
                 (projectile as MonoBehaviour)?.gameObject,
-                DamageType.Bullet
-            );
+                DamageType.Bullet);
 
             if (enemy is IDamageable damageable)
-            {
                 damageable.TakeDamage(projectile.Damage, damageInfo);
-            }
             else
-            {
                 enemy.TakeDamage(projectile.Damage);
-            }
-
-            Debug.Log($"Hit enemy {target.name} for {projectile.Damage} damage!");
 
             SoundManager.Instance?.PlayEnemyHitmarker();
-
-            // Create effects
-            bloodEffect.CreateEffect(impactData.Point, impactData.Normal, target);
-            explosionEffect.CreateEffect(impactData.Point, impactData.Normal, target);
+            EffectHelper.CreateBloodEffect(impactData.Point, impactData.Normal, target);
         }
 
-        // Disable collider if enemy is dead
         if (enemy.isDead)
         {
-            var collider = target.GetComponent<CapsuleCollider>();
-            if (collider != null) collider.enabled = false;
+            SoundManager.Instance?.PlayKillFeedback();
+            target.GetComponent<CapsuleCollider>()?.gameObject.SetActive(false);
         }
     }
 }
 
 public class PlayerCollisionHandler : CollisionHandler
 {
-    private readonly BloodEffect bloodEffect;
-
     public PlayerCollisionHandler(IProjectile projectile) : base(projectile)
     {
-        bloodEffect = new GameObject("BloodEffect").AddComponent<BloodEffect>();
     }
 
-    public override bool CanHandle(string tag)
-    {
-        return tag == "Player";
-    }
+    public override bool CanHandle(string tag) => tag == "Player";
 
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
-        //var player = target.GetComponent<Player>();
-        //if (player != null && !player.IsDead)
-        //{
-        //    var damageInfo = new DamageInfo(
-        //        projectile.Damage,
-        //        impactData.Point,
-        //        -impactData.Normal,
-        //        (projectile as MonoBehaviour)?.gameObject,
-        //        DamageType.Bullet
-        //    );
-
-        //    player.TakeDamage(projectile.Damage, damageInfo);
-        //    bloodEffect.CreateEffect(impactData.Point, impactData.Normal, target);
-
-        //    Debug.Log($"Hit player for {projectile.Damage} damage!");
-        //}
+        // Player damage implementation pending
     }
 }
 
 public class EnvironmentCollisionHandler : CollisionHandler
 {
-    private readonly BulletHoleEffect bulletHoleEffect;
-
     public EnvironmentCollisionHandler(IProjectile projectile) : base(projectile)
     {
-        bulletHoleEffect = new GameObject("BulletHoleEffect").AddComponent<BulletHoleEffect>();
     }
 
-    public override bool CanHandle(string tag)
-    {
-        return tag == "Wall" || tag == "Target" || tag == "Environment";
-    }
+    public override bool CanHandle(string tag) =>
+        tag == "Wall" || tag == "Target" || tag == "Environment";
 
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
-        bulletHoleEffect.CreateEffect(impactData.Point, impactData.Normal, target);
+        EffectHelper.CreateBulletHoleEffect(impactData.Point, impactData.Normal, target);
     }
 }
 
@@ -344,10 +237,12 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
     protected List<CollisionHandler> collisionHandlers;
     protected int penetrationCount = 0;
 
-    // IProjectile implementation
-    public float Speed => config.speed;
+    // Damage is set externally by WeaponBase via SetDamage()
+    // so it always reflects weaponData.damage — never a local inspector value
+    private int _damage = 0;
 
-    public int Damage => config.damage;
+    public float Speed { get; private set; }
+    public int Damage => _damage;
     public bool IsActive { get; protected set; } = true;
 
     public event Action<IProjectile, Collision> OnImpact;
@@ -358,27 +253,20 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         InitializeCollisionHandlers();
     }
 
+    // Start() intentionally does NOT call Launch() —
+    // Launch() is called explicitly by WeaponBase.ConfigureProjectile()
+    // with the correct direction and speed from WeaponData.
+    // Calling it here would override the velocity set by the weapon.
     protected virtual void Start()
     {
-        Launch(transform.forward, config.speed);
         StartCoroutine(DestroyAfterLifetime());
     }
 
     protected virtual void InitializeComponents()
     {
-        projectileRigidbody = GetComponent<Rigidbody>();
-        if (projectileRigidbody == null)
-        {
-            projectileRigidbody = gameObject.AddComponent<Rigidbody>();
-        }
-
-        ConfigureRigidbody();
-    }
-
-    protected virtual void ConfigureRigidbody()
-    {
+        projectileRigidbody = GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
         projectileRigidbody.useGravity = config.useGravity;
-        projectileRigidbody.linearDamping = config.drag; // Updated from linearDamping
+        projectileRigidbody.linearDamping = config.drag;
         projectileRigidbody.mass = config.mass;
     }
 
@@ -392,12 +280,15 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         };
     }
 
+    // Called by WeaponBase.ConfigureProjectile() — sets damage from weaponData
+    public void SetDamage(int damage) => _damage = damage;
+
+    // Called by WeaponBase.ConfigureProjectile() — sets direction and speed from weaponData
     public virtual void Launch(Vector3 direction, float speed)
     {
+        Speed = speed;
         if (projectileRigidbody != null)
-        {
-            projectileRigidbody.linearVelocity = direction.normalized * speed; // Updated from linearVelocity
-        }
+            projectileRigidbody.linearVelocity = direction.normalized * speed;
     }
 
     public virtual void ResetState()
@@ -428,14 +319,8 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         StopAllCoroutines();
 
         var poolable = GetComponent<PoolableProjectile>();
-        if (poolable != null)
-        {
-            poolable.ReturnToPool();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (poolable != null) poolable.ReturnToPool();
+        else Destroy(gameObject);
     }
 
     protected virtual void OnCollisionEnter(Collision collision)
@@ -444,12 +329,10 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
 
         OnImpact?.Invoke(this, collision);
 
-        GameObject hitObject = collision.gameObject;
-        ImpactData impactData = new ImpactData(collision.contacts[0], hitObject);
+        GameObject target = collision.gameObject;
+        ImpactData impactData = new ImpactData(collision.contacts[0], target);
 
-        // Debug.Log($"Projectile collided with {hitObject.name} at {impactData.Point}");
-
-        HandleCollision(hitObject, impactData);
+        HandleCollision(target, impactData);
     }
 
     protected virtual void HandleCollision(GameObject target, ImpactData impactData)
@@ -468,10 +351,10 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
 
     protected virtual void HandlePenetrationOrDestroy(GameObject target)
     {
-        if (config.canPenetrate && CanPenetrateTarget(target) && penetrationCount < config.maxPenetrations)
+        if (config.canPenetrate && CanPenetrateTarget(target) &&
+            penetrationCount < config.maxPenetrations)
         {
             penetrationCount++;
-            Debug.Log($"Projectile penetrated {target.name}. Penetrations: {penetrationCount}/{config.maxPenetrations}");
         }
         else
         {
@@ -479,19 +362,13 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         }
     }
 
-    protected virtual bool CanPenetrateTarget(GameObject target)
-    {
-        return config.penetrableTags.Contains(target.tag);
-    }
+    protected virtual bool CanPenetrateTarget(GameObject target) =>
+        config.penetrableTags.Contains(target.tag);
 
     private IEnumerator DestroyAfterLifetime()
     {
         yield return new WaitForSeconds(config.lifetime);
-
-        if (gameObject != null)
-        {
-            Deactivate();
-        }
+        if (gameObject != null) Deactivate();
     }
 
     protected virtual void OnDrawGizmos()
@@ -507,14 +384,6 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
 
 public class Bullet : ProjectileBase
 {
-    [Header("Bullet Specific")]
-    [SerializeField] private Volume globalVolume;
-
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     protected override void InitializeCollisionHandlers()
     {
         collisionHandlers = new List<CollisionHandler>
@@ -533,7 +402,7 @@ public class Grenade : ProjectileBase
 
     [SerializeField] private float explosionForce = 500f;
     [SerializeField] private float fuseTime = 3f;
-    [SerializeField] private LayerMask explosionLayers = -1;
+    [SerializeField] private LayerMask explosionLayers = ~0;
 
     protected override void Start()
     {
@@ -558,29 +427,21 @@ public class Grenade : ProjectileBase
             {
                 float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
                 float damageMultiplier = 1f - (distance / explosionRadius);
-                int explosionDamage = Mathf.RoundToInt(config.damage * damageMultiplier);
+                int explosionDamage = Mathf.RoundToInt(Damage * damageMultiplier);
 
                 var damageInfo = new DamageInfo(
                     explosionDamage,
                     hitCollider.transform.position,
                     (hitCollider.transform.position - transform.position).normalized,
                     gameObject,
-                    DamageType.Explosion
-                );
+                    DamageType.Explosion);
 
                 damageable.TakeDamage(explosionDamage, damageInfo);
             }
 
-            var rigidbody = hitCollider.GetComponent<Rigidbody>();
-            if (rigidbody != null)
-            {
-                rigidbody.AddExplosionForce(explosionForce, transform.position, explosionRadius);
-            }
+            hitCollider.GetComponent<Rigidbody>()?.AddExplosionForce(
+                explosionForce, transform.position, explosionRadius);
         }
-
-        // Create explosion effect
-        var explosionEffect = GetComponent<ExplosionEffect>();
-        explosionEffect?.CreateEffect(transform.position, Vector3.up);
 
         Deactivate();
     }
@@ -605,9 +466,7 @@ public class BulletEnemyHandler : EnemyCollisionHandler
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
         base.HandleCollision(target, impactData);
-
-        // Additional bullet-specific logic - Invoke events properly
-        BulletImpactEvents.Instance.InvokeEnemyHit(impactData.Point, projectile.Damage);
+        BulletImpactEvents.Instance?.InvokeEnemyHit(impactData.Point, projectile.Damage);
     }
 }
 
@@ -620,9 +479,7 @@ public class BulletPlayerHandler : PlayerCollisionHandler
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
         base.HandleCollision(target, impactData);
-
-        // Additional bullet-specific logic
-        BulletImpactEvents.Instance.InvokePlayerHit(impactData.Point, projectile.Damage);
+        BulletImpactEvents.Instance?.InvokePlayerHit(impactData.Point, projectile.Damage);
     }
 }
 
@@ -636,15 +493,10 @@ public class BulletEnvironmentHandler : EnvironmentCollisionHandler
     {
         base.HandleCollision(target, impactData);
 
-        // Additional bullet-specific logic
         if (target.CompareTag("Wall"))
-        {
-            BulletImpactEvents.Instance.InvokeWallHit(impactData.Point);
-        }
+            BulletImpactEvents.Instance?.InvokeWallHit(impactData.Point);
         else if (target.CompareTag("Target"))
-        {
-            BulletImpactEvents.Instance.InvokeTargetHit(impactData.Point);
-        }
+            BulletImpactEvents.Instance?.InvokeTargetHit(impactData.Point);
     }
 }
 
@@ -666,43 +518,20 @@ public class BulletImpactEvents : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
+        else Destroy(gameObject);
     }
 
-    public void InvokeEnemyHit(Vector3 position, int damage)
-    {
-        OnEnemyHit?.Invoke(position, damage);
-    }
+    public void InvokeEnemyHit(Vector3 position, int damage) => OnEnemyHit?.Invoke(position, damage);
 
-    public void InvokePlayerHit(Vector3 position, int damage)
-    {
-        OnPlayerHit?.Invoke(position, damage);
-    }
+    public void InvokePlayerHit(Vector3 position, int damage) => OnPlayerHit?.Invoke(position, damage);
 
-    public void InvokeWallHit(Vector3 position)
-    {
-        OnWallHit?.Invoke(position);
-    }
+    public void InvokeWallHit(Vector3 position) => OnWallHit?.Invoke(position);
 
-    public void InvokeTargetHit(Vector3 position)
-    {
-        OnTargetHit?.Invoke(position);
-    }
+    public void InvokeTargetHit(Vector3 position) => OnTargetHit?.Invoke(position);
 }
 
 #endregion Events
 
 public enum ProjectileType
-{
-    Bullet,
-    Grenade,
-    Rocket
-}
+{ Bullet, Grenade, Rocket }

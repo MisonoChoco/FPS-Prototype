@@ -88,6 +88,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1534907837037650580
 GameObject:
@@ -142,23 +143,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UniversalWeapon
   weaponData: {fileID: 11400000, guid: 65c35f47fbfba694eadeb4d33b375faa, type: 2}
-  references:
-    projectileType: 0
-    bulletSpawn: {fileID: 5309211677118802178}
-    muzzleFlash: {fileID: 2268311441230534193}
-    muzzleLight: {fileID: 0}
-    ejectionPort: {fileID: 8660938859871484844}
-    shellCasing: {fileID: 8550284322650201004, guid: 2dbd1ae46205a6b48ac87da24b0cfebf, type: 3}
-    weaponAnimator: {fileID: 4765466178503347322}
-    viewmodelTransform: {fileID: 1453968063292498336}
-    cameraTransform: {fileID: 0}
-  cameraRecoilHolder: {fileID: 0}
+  bulletSpawn: {fileID: 5309211677118802178}
+  weaponAnimator: {fileID: 4765466178503347322}
+  muzzleFlash: {fileID: 2268311441230534193}
+  muzzleLight: {fileID: 0}
+  ejectionPort: {fileID: 8660938859871484844}
+  shellCasing: {fileID: 8550284322650201004, guid: 2dbd1ae46205a6b48ac87da24b0cfebf, type: 3}
   gunPositionHolder: {fileID: 0}
   magazineDropPoint: {fileID: 0}
   magazineDropForce: {x: -2, y: -1, z: 1}
   magazineDropTorque: 5
   weaponModel: 3
   availableShootingModes: 00000000
+  leftArm: {fileID: 0}
+  rightArm: {fileID: 0}
   magInGun: {fileID: 0}
 --- !u!65 &1893539074006684616
 BoxCollider:
@@ -189,7 +187,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1534907837037650580}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 22100000, guid: ae5c407e632c83e4c80940188190f4f6, type: 2}
   m_CullingMode: 0
@@ -4932,7 +4930,7 @@ ParticleSystem:
     vectorLabel1_3: W
 --- !u!199 &7240422239086228059
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4978,6 +4976,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -5009,7 +5008,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1 &3711440991141299763
 GameObject:
   m_ObjectHideFlags: 0
@@ -5098,6 +5096,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &4440419366992802217
 GameObject:
@@ -5187,6 +5186,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5885094710129878942
 GameObject:
@@ -5310,6 +5310,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6618239876214890914
 GameObject:
@@ -5430,4 +5431,5 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}

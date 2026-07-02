@@ -1,50 +1,41 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class ZombieAttackState : StateMachineBehaviour
 {
-    private Transform Player;
+    private Transform player;
     private NavMeshAgent agent;
+    private ZombieAudio zombieAudio;
 
     public float stopAttackingDistance = 2.5f;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //initial
-        Player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = animator.GetComponent<NavMeshAgent>();
+        zombieAudio = animator.GetComponent<ZombieAudio>();
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (SoundManager.Instance.entityChannel.isPlaying == false)
-        {
-            SoundManager.Instance.entityChannel.PlayOneShot(SoundManager.Instance.zombieAttack);
-        }
+        zombieAudio?.PlayAttack();
 
         LookAtPlayer();
 
-        //check if agent should stop attacking
-        float distanceFromPlayer = Vector3.Distance(Player.position, animator.transform.position);
-
+        float distanceFromPlayer = Vector3.Distance(player.position, animator.transform.position);
         if (distanceFromPlayer > stopAttackingDistance)
-        {
             animator.SetBool("isAttacking", false);
-        }
     }
 
     private void LookAtPlayer()
     {
-        Vector3 direction = Player.position - agent.transform.position;
-        agent.transform.rotation = Quaternion.LookRotation(direction);
-
-        var yRotation = agent.transform.eulerAngles.y;
-        agent.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        Vector3 direction = player.position - agent.transform.position;
+        agent.transform.rotation = Quaternion.Euler(0,
+            Quaternion.LookRotation(direction).eulerAngles.y, 0);
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        SoundManager.Instance.entityChannel.Stop();
+        // nothing to stop — PlayOneShot handles itself
     }
 }

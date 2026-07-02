@@ -1,7 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Weapon; // Add using directive for the namespace
+using Weapon;
 
 public class WeaponManager : MonoBehaviour
 {
@@ -12,16 +13,18 @@ public class WeaponManager : MonoBehaviour
 
     [SerializeField] private int activeSlotIndex = 0;
 
-    [Header("Ammo Management")]
-    [SerializeField] private Dictionary<WeaponModel, int> totalAmmo = new(); // Changed from Weapon.WeaponModel
+    // Ammo tracked by AmmoType — adding any new weapon using an existing AmmoType
+    // just works, zero code changes needed
+    [Header("Ammo Amounts (by AmmoType)")]
+    [SerializeField] private int ammo_Pistol9mm = 0;
 
-    // Serialize ammo for inspector (since Dictionary isn't serializable)
-    [Header("Ammo Amounts")]
-    [SerializeField] private int totalRifleAmmo = 0;
+    [SerializeField] private int ammo_Rifle556 = 0;
+    [SerializeField] private int ammo_Rifle762 = 0;
+    [SerializeField] private int ammo_Shotgun12Gauge = 0;
+    [SerializeField] private int ammo_SniperRifle = 0;
+    [SerializeField] private int ammo_Special = 0;
 
-    [SerializeField] private int totalPistolAmmo = 0;
-    [SerializeField] private int totalShotgunAmmo = 0;
-    [SerializeField] private int totalSniperAmmo = 0;
+    private Dictionary<AmmoType, int> totalAmmo = new();
 
     [Header("Throwables")]
     [SerializeField] private ThrowableInventory throwableInventory;
@@ -33,7 +36,7 @@ public class WeaponManager : MonoBehaviour
 
     public event Action<WeaponBase> OnWeaponDropped;
 
-    public event Action<WeaponModel, int> OnAmmoChanged; // Changed from Weapon.WeaponModel
+    public event Action<AmmoType, int> OnAmmoChanged;
 
     // Properties
     public WeaponBase CurrentWeapon => GetWeaponInSlot(activeSlotIndex);
@@ -42,12 +45,9 @@ public class WeaponManager : MonoBehaviour
     public int ActiveSlotIndex => activeSlotIndex;
     public bool HasWeaponInActiveSlot => CurrentWeapon != null;
 
-    // Legacy properties for backward compatibility
-    public List<GameObject> weaponSlots_Legacy => new List<GameObject>();
-
     public GameObject activeWeaponSlot => weaponSlots[activeSlotIndex].gameObject;
 
-    // Properties for throwables (for HUDManager compatibility)
+    // Throwable properties
     public int lethalsCount => throwableInventory.lethalsCount;
 
     public int tacticalsCount => throwableInventory.tacticalsCount;
@@ -67,78 +67,50 @@ public class WeaponManager : MonoBehaviour
 
     private void InitializeSingleton()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
     }
 
     private void InitializeSlotsByName()
     {
-        // Use this if the references keep getting lost
         weaponSlots = new Transform[3];
         weaponSlots[0] = GameObject.Find("WeaponSlot1")?.transform;
         weaponSlots[1] = GameObject.Find("WeaponSlot2")?.transform;
         weaponSlots[2] = GameObject.Find("WeaponSlot3")?.transform;
 
         for (int i = 0; i < weaponSlots.Length; i++)
-        {
             if (weaponSlots[i] == null)
-            {
                 Debug.LogError($"Could not find WeaponSlot{i + 1} in scene!");
-            }
-        }
     }
 
     private void InitializeAmmoSystem()
     {
-        // Initialize ammo dictionary with inspector values
-        totalAmmo[WeaponModel.AK47] = totalRifleAmmo; // Changed from Weapon.WeaponModel
-        totalAmmo[WeaponModel.HandgunM1911] = totalPistolAmmo; // Changed from Weapon.WeaponModel
-        totalAmmo[WeaponModel.Shotgun] = totalShotgunAmmo;
-        totalAmmo[WeaponModel.SniperRifle] = totalSniperAmmo;
-        // Add more weapon models as needed
+        // Matches the AmmoType enum exactly — no per-weapon hardcoding
+        totalAmmo[AmmoType.Pistol9mm] = ammo_Pistol9mm;
+        totalAmmo[AmmoType.Rifle556] = ammo_Rifle556;
+        totalAmmo[AmmoType.Rifle762] = ammo_Rifle762;
+        totalAmmo[AmmoType.Shotgun12Gauge] = ammo_Shotgun12Gauge;
+        totalAmmo[AmmoType.SniperRifle] = ammo_SniperRifle;
+        totalAmmo[AmmoType.Special] = ammo_Special;
     }
 
     private void InitializeThrowables()
     {
         if (throwableInventory == null)
-        {
             throwableInventory = new ThrowableInventory();
-        }
     }
 
     private void ValidateSetup()
     {
-        if (weaponSlots == null || weaponSlots.Length == 0)
-        {
-            Debug.LogError("WeaponManager: No weapon slots assigned!");
-            return;
-        }
-
-        // Check each slot individually
         for (int i = 0; i < weaponSlots.Length; i++)
-        {
             if (weaponSlots[i] == null)
-            {
-                Debug.LogError($"WeaponManager: Weapon slot {i} is null! Please assign it in the inspector.");
-            }
-        }
+                Debug.LogError($"WeaponManager: Weapon slot {i} is null!");
 
-        // Ensure we have 3 slots for backward compatibility
         if (weaponSlots.Length != 3)
-        {
-            Debug.LogWarning("WeaponManager: Expected 3 weapon slots for full compatibility");
-        }
+            Debug.LogWarning("WeaponManager: Expected 3 weapon slots.");
     }
 
-    private void Start()
-    {
-        SwitchToSlot(activeSlotIndex);
-    }
+    private void Start() => SwitchToSlot(activeSlotIndex);
 
     #endregion Initialization
 
@@ -152,17 +124,12 @@ public class WeaponManager : MonoBehaviour
 
     private void HandleSlotVisibility()
     {
-        // Add null checks to prevent MissingReferenceException
         for (int i = 0; i < weaponSlots.Length; i++)
         {
-            if (weaponSlots[i] != null && weaponSlots[i].gameObject != null)
-            {
+            if (weaponSlots[i] != null)
                 weaponSlots[i].gameObject.SetActive(i == activeSlotIndex);
-            }
             else
-            {
                 Debug.LogWarning($"WeaponManager: Weapon slot {i} is null or destroyed!");
-            }
         }
     }
 
@@ -178,7 +145,6 @@ public class WeaponManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchToSlot(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchToSlot(2);
 
-        // Mouse wheel switching
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll > 0.1f) SwitchToNextSlot();
         else if (scroll < -0.1f) SwitchToPreviousSlot();
@@ -193,20 +159,13 @@ public class WeaponManager : MonoBehaviour
     private void HandleLethalThrowables()
     {
         if (Input.GetKey(KeyCode.G))
-        {
-            throwableInventory.forceMultiplier += Time.deltaTime;
-            if (throwableInventory.forceMultiplier > throwableInventory.forceMultiplierLimit)
-            {
-                throwableInventory.forceMultiplier = throwableInventory.forceMultiplierLimit;
-            }
-        }
+            throwableInventory.forceMultiplier = Mathf.Min(
+                throwableInventory.forceMultiplier + Time.deltaTime,
+                throwableInventory.forceMultiplierLimit);
 
         if (Input.GetKeyUp(KeyCode.G))
         {
-            if (throwableInventory.lethalsCount > 0)
-            {
-                ThrowLethal();
-            }
+            if (throwableInventory.lethalsCount > 0) ThrowLethal();
             throwableInventory.forceMultiplier = 0;
         }
     }
@@ -214,20 +173,13 @@ public class WeaponManager : MonoBehaviour
     private void HandleTacticalThrowables()
     {
         if (Input.GetKey(KeyCode.Q))
-        {
-            throwableInventory.forceMultiplier += Time.deltaTime;
-            if (throwableInventory.forceMultiplier > throwableInventory.forceMultiplierLimit)
-            {
-                throwableInventory.forceMultiplier = throwableInventory.forceMultiplierLimit;
-            }
-        }
+            throwableInventory.forceMultiplier = Mathf.Min(
+                throwableInventory.forceMultiplier + Time.deltaTime,
+                throwableInventory.forceMultiplierLimit);
 
         if (Input.GetKeyUp(KeyCode.Q))
         {
-            if (throwableInventory.tacticalsCount > 0)
-            {
-                ThrowTactical();
-            }
+            if (throwableInventory.tacticalsCount > 0) ThrowTactical();
             throwableInventory.forceMultiplier = 0;
         }
     }
@@ -236,135 +188,75 @@ public class WeaponManager : MonoBehaviour
 
     #region Weapon Management
 
-    // New method for WeaponBase
     public bool PickupWeapon(WeaponBase weapon)
     {
-        if (weapon == null)
-        {
-            Debug.LogWarning("WeaponManager: Attempted to pickup null weapon");
-            return false;
-        }
-
+        if (weapon == null) { Debug.LogWarning("WeaponManager: Null weapon pickup"); return false; }
         return AddWeaponToActiveSlot(weapon);
     }
 
-    // Legacy method for old Weapon class - convert to WeaponBase
     public void PickupWeapon(GameObject weaponGameObject)
     {
         if (weaponGameObject == null) return;
-
         WeaponBase weaponBase = weaponGameObject.GetComponent<WeaponBase>();
-        if (weaponBase != null)
-        {
-            PickupWeapon(weaponBase);
-            return;
-        }
-
-        // If no WeaponBase found, log warning
-        Debug.LogWarning($"WeaponManager: GameObject {weaponGameObject.name} doesn't have WeaponBase component");
+        if (weaponBase != null) PickupWeapon(weaponBase);
+        else Debug.LogWarning($"WeaponManager: {weaponGameObject.name} has no WeaponBase");
     }
 
     private bool AddWeaponToActiveSlot(WeaponBase newWeapon)
     {
-        // Drop current weapon if slot is occupied
-        WeaponBase currentWeapon = GetWeaponInSlot(activeSlotIndex);
-        if (currentWeapon != null)
-        {
-            DropWeaponFromSlot(activeSlotIndex, newWeapon.transform.position);
-        }
-
-        // Add new weapon to slot
+        WeaponBase current = GetWeaponInSlot(activeSlotIndex);
+        if (current != null) DropWeaponFromSlot(activeSlotIndex, newWeapon.transform.position);
         return AddWeaponToSlot(newWeapon, activeSlotIndex);
     }
 
     private bool AddWeaponToSlot(WeaponBase weapon, int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= weaponSlots.Length)
-        {
-            Debug.LogError($"WeaponManager: Invalid slot index {slotIndex}");
-            return false;
-        }
+        { Debug.LogError($"WeaponManager: Invalid slot {slotIndex}"); return false; }
 
         Transform slot = weaponSlots[slotIndex];
-        if (slot == null)
-        {
-            Debug.LogError($"WeaponManager: Weapon slot {slotIndex} is null");
-            return false;
-        }
+        if (slot == null) { Debug.LogError($"WeaponManager: Slot {slotIndex} is null"); return false; }
 
-        // Setup weapon transform
         weapon.transform.SetParent(slot, false);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
-
-        // Configure weapon state
         weapon.SetActiveWeapon(slotIndex == activeSlotIndex);
 
-        // Disable outline for active weapon
         var outline = weapon.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = false;
-        }
+        if (outline != null) outline.enabled = false;
 
         OnWeaponPickedUp?.Invoke(weapon);
-        Debug.Log($"Weapon {weapon.weaponModel} added to slot {slotIndex}");
-
         return true;
     }
 
     public bool DropWeaponFromSlot(int slotIndex, Vector3 dropPosition)
     {
         WeaponBase weapon = GetWeaponInSlot(slotIndex);
-        if (weapon == null) return false;
-
-        return DropWeapon(weapon, dropPosition);
+        return weapon != null && DropWeapon(weapon, dropPosition);
     }
 
-    public bool DropCurrentWeapon(Vector3 dropPosition)
-    {
-        return DropWeaponFromSlot(activeSlotIndex, dropPosition);
-    }
+    public bool DropCurrentWeapon(Vector3 dropPosition) =>
+        DropWeaponFromSlot(activeSlotIndex, dropPosition);
 
     private bool DropWeapon(WeaponBase weapon, Vector3 dropPosition)
     {
         if (weapon == null) return false;
-
-        // Deactivate weapon
         weapon.SetActiveWeapon(false);
-
-        // Reset transform
         weapon.transform.SetParent(null);
         weapon.transform.position = dropPosition;
         weapon.transform.rotation = Quaternion.identity;
 
-        // Re-enable outline for pickup
         var outline = weapon.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = true;
-        }
+        if (outline != null) outline.enabled = true;
 
         OnWeaponDropped?.Invoke(weapon);
-        Debug.Log($"Dropped weapon {weapon.weaponModel}");
-
         return true;
     }
 
     public WeaponBase GetWeaponInSlot(int slotIndex)
     {
-        if (slotIndex < 0 || slotIndex >= weaponSlots.Length)
-        {
-            Debug.LogWarning($"WeaponManager: Invalid slot index {slotIndex}");
-            return null;
-        }
-
-        if (weaponSlots[slotIndex] == null)
-        {
-            Debug.LogWarning($"WeaponManager: Weapon slot {slotIndex} is null");
-            return null;
-        }
-
+        if (slotIndex < 0 || slotIndex >= weaponSlots.Length) return null;
+        if (weaponSlots[slotIndex] == null) return null;
         return weaponSlots[slotIndex].GetComponentInChildren<WeaponBase>();
     }
 
@@ -372,132 +264,78 @@ public class WeaponManager : MonoBehaviour
 
     #region Slot Switching
 
-    public void SwitchActiveSlot(int slotNumber)
-    {
-        SwitchToSlot(slotNumber);
-    }
-
     public void SwitchToSlot(int slotIndex)
     {
-        if (!IsValidSlotIndex(slotIndex)) return;
-        if (slotIndex == activeSlotIndex) return;
+        if (!IsValidSlotIndex(slotIndex) || slotIndex == activeSlotIndex) return;
 
-        // Deactivate current weapon
-        WeaponBase currentWeapon = CurrentWeapon;
-        if (currentWeapon != null)
-        {
-            currentWeapon.SetActiveWeapon(false);
-        }
-
-        // Switch slot
+        CurrentWeapon?.SetActiveWeapon(false);
         activeSlotIndex = slotIndex;
 
-        // Activate new weapon
         WeaponBase newWeapon = CurrentWeapon;
         if (newWeapon != null)
         {
             newWeapon.SetActiveWeapon(true);
+            StartCoroutine(EnableWeaponAnimatorDelayed(newWeapon));
         }
 
         OnWeaponSwitched?.Invoke(newWeapon);
-        Debug.Log($"Switched to slot {slotIndex} - {(newWeapon?.weaponModel.ToString() ?? "Empty")}");
     }
 
-    public void SwitchToNextSlot()
+    private IEnumerator EnableWeaponAnimatorDelayed(WeaponBase weapon)
     {
-        int nextSlot = (activeSlotIndex + 1) % weaponSlots.Length;
-        SwitchToSlot(nextSlot);
+        yield return new WaitForSecondsRealtime(0.4f);
+        if (weapon != null && weapon.IsActiveWeapon)
+            weapon.EnableAnimator();
     }
 
-    public void SwitchToPreviousSlot()
-    {
-        int prevSlot = (activeSlotIndex - 1 + weaponSlots.Length) % weaponSlots.Length;
-        SwitchToSlot(prevSlot);
-    }
+    public void SwitchToNextSlot() => SwitchToSlot((activeSlotIndex + 1) % weaponSlots.Length);
 
-    private bool IsValidSlotIndex(int slotIndex)
-    {
-        return slotIndex >= 0 && slotIndex < weaponSlots.Length;
-    }
+    public void SwitchToPreviousSlot() => SwitchToSlot((activeSlotIndex - 1 + weaponSlots.Length) % weaponSlots.Length);
+
+    public void SwitchActiveSlot(int slotNumber) => SwitchToSlot(slotNumber);
+
+    private bool IsValidSlotIndex(int i) => i >= 0 && i < weaponSlots.Length;
 
     #endregion Slot Switching
 
     #region Ammo Management
 
-    public void PickupAmmo(AmmoBox ammoBox)
+    // All ammo methods now use AmmoType — WeaponBase passes weaponData.ammoType
+    public void DecreaseTotalAmmo(int amount, AmmoType ammoType)
     {
-        if (ammoBox == null) return;
-
-        switch (ammoBox.ammoType)
-        {
-            case AmmoBox.AmmoType.PistolAmmo:
-                totalPistolAmmo += ammoBox.ammoAmount;
-                totalAmmo[WeaponModel.HandgunM1911] = totalPistolAmmo; // Changed from Weapon.WeaponModel
-                break;
-
-            case AmmoBox.AmmoType.RifleAmmo:
-                totalRifleAmmo += ammoBox.ammoAmount;
-                totalAmmo[WeaponModel.AK47] = totalRifleAmmo; // Changed from Weapon.WeaponModel
-                break;
-
-            case AmmoBox.AmmoType.ShotgunAmmo:
-                totalShotgunAmmo += ammoBox.ammoAmount;
-                totalAmmo[WeaponModel.Shotgun] = totalShotgunAmmo;
-                break;
-        }
-
-        OnAmmoChanged?.Invoke(ConvertAmmoTypeToWeaponModel(ammoBox.ammoType), ammoBox.ammoAmount);
-        Debug.Log($"Picked up {ammoBox.ammoAmount} {ammoBox.ammoType} ammo");
+        if (!totalAmmo.ContainsKey(ammoType)) return;
+        totalAmmo[ammoType] = Mathf.Max(0, totalAmmo[ammoType] - amount);
+        SyncInspectorAmmoFields();
+        OnAmmoChanged?.Invoke(ammoType, totalAmmo[ammoType]);
     }
 
-    public void DecreaseTotalAmmo(int bulletsToDecrease, WeaponModel thisWeaponModel) // Changed parameter type
+    public int CheckAmmoLeftFor(AmmoType ammoType)
     {
-        switch (thisWeaponModel)
-        {
-            case WeaponModel.AK47: // Changed from Weapon.WeaponModel
-                totalRifleAmmo -= bulletsToDecrease;
-                totalAmmo[WeaponModel.AK47] = totalRifleAmmo;
-                break;
-
-            case WeaponModel.HandgunM1911: // Changed from Weapon.WeaponModel
-                totalPistolAmmo -= bulletsToDecrease;
-                totalAmmo[WeaponModel.HandgunM1911] = totalPistolAmmo;
-                break;
-
-            case WeaponModel.Shotgun:
-                totalShotgunAmmo -= bulletsToDecrease;
-                totalAmmo[WeaponModel.Shotgun] = totalShotgunAmmo;
-                break;
-        }
-
-        OnAmmoChanged?.Invoke(thisWeaponModel, GetAmmoCount(thisWeaponModel));
+        return totalAmmo.TryGetValue(ammoType, out int count) ? count : 0;
     }
 
-    public int CheckAmmoLeftFor(WeaponModel thisWeaponModel) // Changed parameter type
+    public bool PickupAmmo(AmmoBox ammoBox)
     {
-        return GetAmmoCount(thisWeaponModel);
+        if (ammoBox == null) return false;
+
+        if (!totalAmmo.ContainsKey(ammoBox.ammoType))
+            totalAmmo[ammoBox.ammoType] = 0;
+
+        totalAmmo[ammoBox.ammoType] += ammoBox.ammoAmount;
+        SyncInspectorAmmoFields();
+        OnAmmoChanged?.Invoke(ammoBox.ammoType, totalAmmo[ammoBox.ammoType]);
+        return true;
     }
 
-    public int GetAmmoCount(WeaponModel weaponModel) // Changed parameter type
+    // Keeps inspector fields in sync so you can see live values in editor
+    private void SyncInspectorAmmoFields()
     {
-        return weaponModel switch
-        {
-            WeaponModel.AK47 => totalRifleAmmo, // Changed from Weapon.WeaponModel
-            WeaponModel.HandgunM1911 => totalPistolAmmo, // Changed from Weapon.WeaponModel
-            WeaponModel.Shotgun => totalShotgunAmmo,
-            _ => 0
-        };
-    }
-
-    private WeaponModel ConvertAmmoTypeToWeaponModel(AmmoBox.AmmoType ammoType) // Changed return type
-    {
-        return ammoType switch
-        {
-            AmmoBox.AmmoType.PistolAmmo => WeaponModel.HandgunM1911, // Changed from Weapon.WeaponModel
-            AmmoBox.AmmoType.RifleAmmo => WeaponModel.AK47, // Changed from Weapon.WeaponModel
-            AmmoBox.AmmoType.ShotgunAmmo => WeaponModel.AK47, // Placeholder until shotgun implemented
-            _ => WeaponModel.HandgunM1911 // Changed from Weapon.WeaponModel
-        };
+        ammo_Pistol9mm = totalAmmo.GetValueOrDefault(AmmoType.Pistol9mm);
+        ammo_Rifle556 = totalAmmo.GetValueOrDefault(AmmoType.Rifle556);
+        ammo_Rifle762 = totalAmmo.GetValueOrDefault(AmmoType.Rifle762);
+        ammo_Shotgun12Gauge = totalAmmo.GetValueOrDefault(AmmoType.Shotgun12Gauge);
+        ammo_SniperRifle = totalAmmo.GetValueOrDefault(AmmoType.SniperRifle);
+        ammo_Special = totalAmmo.GetValueOrDefault(AmmoType.Special);
     }
 
     #endregion Ammo Management
@@ -511,45 +349,33 @@ public class WeaponManager : MonoBehaviour
         switch (throwable.throwableType)
         {
             case Throwable.ThrowableType.Frag:
-                if (throwableInventory.equippedLethal == throwable.throwableType || throwableInventory.equippedLethal == Throwable.ThrowableType.None)
+                if (throwableInventory.equippedLethal == throwable.throwableType ||
+                    throwableInventory.equippedLethal == Throwable.ThrowableType.None)
                 {
                     throwableInventory.equippedLethal = throwable.throwableType;
-
                     if (throwableInventory.lethalsCount < throwableInventory.maxLethal)
                     {
-                        throwableInventory.lethalsCount += 1;
+                        throwableInventory.lethalsCount++;
                         if (InteractionManager.Instance?.hoveredThrowable?.gameObject == throwable.gameObject)
-                        {
                             InteractionManager.Instance.hoveredThrowable = null;
-                        }
                         Destroy(throwable.gameObject);
                         HUDManager.Instance?.UpdateThrowablesUI();
-                    }
-                    else
-                    {
-                        Debug.Log("Lethal capacity exceeded");
                     }
                 }
                 break;
 
             case Throwable.ThrowableType.Smoke:
-                if (throwableInventory.equippedTactical == throwable.throwableType || throwableInventory.equippedTactical == Throwable.ThrowableType.None)
+                if (throwableInventory.equippedTactical == throwable.throwableType ||
+                    throwableInventory.equippedTactical == Throwable.ThrowableType.None)
                 {
                     throwableInventory.equippedTactical = throwable.throwableType;
-
                     if (throwableInventory.tacticalsCount < throwableInventory.maxTactical)
                     {
-                        throwableInventory.tacticalsCount += 1;
+                        throwableInventory.tacticalsCount++;
                         if (InteractionManager.Instance?.hoveredThrowable?.gameObject == throwable.gameObject)
-                        {
                             InteractionManager.Instance.hoveredThrowable = null;
-                        }
                         Destroy(throwable.gameObject);
                         HUDManager.Instance?.UpdateThrowablesUI();
-                    }
-                    else
-                    {
-                        Debug.Log("Tactical capacity exceeded");
                     }
                 }
                 break;
@@ -558,101 +384,67 @@ public class WeaponManager : MonoBehaviour
 
     private void ThrowLethal()
     {
-        GameObject lethalPrefab = GetThrowablePrefab(throwableInventory.equippedLethal);
-        if (lethalPrefab == null) return;
-
-        GameObject throwable = Instantiate(lethalPrefab, throwableInventory.throwableSpawn.position, Camera.main.transform.rotation);
-        Rigidbody rb = throwable.GetComponent<Rigidbody>();
-
-        if (rb != null)
-        {
-            float throwForce = throwableInventory.throwForce * throwableInventory.forceMultiplier;
-            rb.AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
-        }
-
-        Throwable throwableComponent = throwable.GetComponent<Throwable>();
-        if (throwableComponent != null)
-        {
-            throwableComponent.hasbeenThrown = true;
-        }
-
-        throwableInventory.lethalsCount -= 1;
-
+        GameObject prefab = GetThrowablePrefab(throwableInventory.equippedLethal);
+        if (prefab == null) return;
+        SpawnThrowable(prefab);
+        throwableInventory.lethalsCount--;
         if (throwableInventory.lethalsCount <= 0)
-        {
             throwableInventory.equippedLethal = Throwable.ThrowableType.None;
-        }
-
         HUDManager.Instance?.UpdateThrowablesUI();
     }
 
     private void ThrowTactical()
     {
-        GameObject tacticalPrefab = GetThrowablePrefab(throwableInventory.equippedTactical);
-        if (tacticalPrefab == null) return;
-
-        GameObject throwable = Instantiate(tacticalPrefab, throwableInventory.throwableSpawn.position, Camera.main.transform.rotation);
-        Rigidbody rb = throwable.GetComponent<Rigidbody>();
-
-        if (rb != null)
-        {
-            float throwForce = throwableInventory.throwForce * throwableInventory.forceMultiplier;
-            rb.AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
-        }
-
-        Throwable throwableComponent = throwable.GetComponent<Throwable>();
-        if (throwableComponent != null)
-        {
-            throwableComponent.hasbeenThrown = true;
-        }
-
-        throwableInventory.tacticalsCount -= 1;
-
+        GameObject prefab = GetThrowablePrefab(throwableInventory.equippedTactical);
+        if (prefab == null) return;
+        SpawnThrowable(prefab);
+        throwableInventory.tacticalsCount--;
         if (throwableInventory.tacticalsCount <= 0)
-        {
             throwableInventory.equippedTactical = Throwable.ThrowableType.None;
-        }
-
         HUDManager.Instance?.UpdateThrowablesUI();
     }
 
-    private GameObject GetThrowablePrefab(Throwable.ThrowableType throwableType)
+    private void SpawnThrowable(GameObject prefab)
     {
-        return throwableType switch
-        {
-            Throwable.ThrowableType.Frag => throwableInventory.fragPrefab,
-            Throwable.ThrowableType.Smoke => throwableInventory.smokePrefab,
-            _ => null
-        };
+        GameObject throwable = Instantiate(prefab,
+            throwableInventory.throwableSpawn.position,
+            Camera.main.transform.rotation);
+
+        Rigidbody rb = throwable.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.AddForce(Camera.main.transform.forward *
+                throwableInventory.throwForce * throwableInventory.forceMultiplier,
+                ForceMode.Impulse);
+
+        var tc = throwable.GetComponent<Throwable>();
+        if (tc != null) tc.hasbeenThrown = true;
     }
+
+    private GameObject GetThrowablePrefab(Throwable.ThrowableType type) => type switch
+    {
+        Throwable.ThrowableType.Frag => throwableInventory.fragPrefab,
+        Throwable.ThrowableType.Smoke => throwableInventory.smokePrefab,
+        _ => null
+    };
 
     #endregion Throwable System
 
     #region Public API
 
-    public WeaponInfo GetCurrentWeaponInfo()
-    {
-        return CurrentWeapon?.GetWeaponInfo();
-    }
+    public WeaponInfo GetCurrentWeaponInfo() => CurrentWeapon?.GetWeaponInfo();
 
     public bool HasAnyWeapon()
     {
         for (int i = 0; i < weaponSlots.Length; i++)
-        {
             if (GetWeaponInSlot(i) != null) return true;
-        }
         return false;
     }
 
-    public ThrowableInventory GetThrowableInventory()
-    {
-        return throwableInventory;
-    }
+    public ThrowableInventory GetThrowableInventory() => throwableInventory;
 
     #endregion Public API
 }
 
-// Throwable inventory data class matching your existing pattern
 [System.Serializable]
 public class ThrowableInventory
 {

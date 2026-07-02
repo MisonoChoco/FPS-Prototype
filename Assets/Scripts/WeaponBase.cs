@@ -1,23 +1,28 @@
-﻿#region Weapon Base (References WeaponData) CORE LOGIC IMPORTANT
+﻿#region Weapon Base
 
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Audio;
 using Weapon;
 
 public abstract class WeaponBase : MonoBehaviour
 {
     [Header("Configuration")]
-    [SerializeField] protected WeaponData weaponData; // Main data source
+    [SerializeField] protected WeaponData weaponData;
 
-    [SerializeField] protected WeaponReferences references;
+    [Header("Scene References")]
+    [SerializeField] protected Transform bulletSpawn;
 
-    private bool wasFiringLastFrame;
+    [SerializeField] protected Animator weaponAnimator;
+    [SerializeField] protected ParticleSystem muzzleFlash;
+    [SerializeField] protected GameObject muzzleLight;
+    [SerializeField] protected Transform ejectionPort;
+    [SerializeField] protected GameObject shellCasing;
+
+    [Header("Gun Position")]
     [SerializeField] private Transform gunPositionHolder;
 
-    [Header("Magazine Drop Values")]
+    [Header("Magazine Drop")]
     public Transform magazineDropPoint;
 
     public Vector3 magazineDropForce = new Vector3(-2f, -1f, 1f);
@@ -28,31 +33,43 @@ public abstract class WeaponBase : MonoBehaviour
 
     public Weapon.ShootingMode[] availableShootingModes = { Weapon.ShootingMode.Semi };
 
+    // Cycling
     public bool IsCycled { get; private set; } = true;
+
     private bool isCycling = false;
     private Coroutine cycleCoroutine;
 
+    // Inspection
     private bool isInspecting = false;
+
     private Coroutine inspectCoroutine;
 
+    // Camera
     private FollowCamera.CameraFollow cameraFollow;
 
+    // Weapon recoil
     private Vector3 rotationRecoil;
+
     private Vector3 positionRecoil;
     private Vector3 weaponRot;
     private float lastShotTime = -999f;
 
+    // Sway
     private Quaternion originRotation;
+
     private float mouseX;
     private float mouseY;
 
+    // Jump sway
     private float impactForce = 0;
 
+    // Bobbing
     private float sinY = 0f;
+
     private float sinX = 0f;
     private Vector3 lastPosition;
 
-    // State
+    // ── State ────────────────────────────────────────────────────
     public bool IsActiveWeapon { get; set; }
 
     public bool IsADS { get; protected set; }
@@ -61,7 +78,13 @@ public abstract class WeaponBase : MonoBehaviour
     public int BulletsLeft { get; protected set; }
     public Weapon.ShootingMode CurrentShootingMode { get; protected set; }
 
-    // Internal state
+    // ── Spread ───────────────────────────────────────────────────
+    private float currentSpread;
+
+    private float accumulatedSpread;
+    public float CurrentSpread => currentSpread;
+
+    // ── Internal ─────────────────────────────────────────────────
     protected bool isShooting;
 
     protected bool allowReset = true;
@@ -70,7 +93,7 @@ public abstract class WeaponBase : MonoBehaviour
     protected Coroutine burstCoroutine;
     protected Camera playerCamera;
 
-    // Events
+    // ── Events ───────────────────────────────────────────────────
     public event Action<WeaponBase> OnWeaponFired;
 
     public event Action<WeaponBase> OnReloadStarted;
@@ -81,28 +104,29 @@ public abstract class WeaponBase : MonoBehaviour
 
     private bool reloadEventSignaled = false;
 
-    // Properties to access WeaponData
+    // ── Properties ───────────────────────────────────────────────
     public WeaponData Data => weaponData;
 
-    private GameObject leftArm;
-    private GameObject rightArm;
-
-    // Reference to player controller for movement state
+    [SerializeField] private GameObject leftArm;
+    [SerializeField] private GameObject rightArm;
     private PlayerController.PlayerController playerController;
+
+    // ─────────────────────────────────────────────────────────────
 
     private void Start()
     {
         gunPositionHolder = GameObject.Find("WeaponSpawner")?.transform;
         cameraFollow = UnityEngine.Object.FindAnyObjectByType<FollowCamera.CameraFollow>();
-        leftArm = transform.Find("LeftArm")?.gameObject;
-        rightArm = transform.Find("RightArm")?.gameObject;
+        foreach (Transform t in GetComponentsInChildren<Transform>(true))
+        {
+            if (t.name == "LeftArm") leftArm = t.gameObject;
+            if (t.name == "RightArm") rightArm = t.gameObject;
+        }
     }
 
     protected virtual void Awake()
     {
         Initialize();
-
-        // Try to find the Player controller
         playerController = UnityEngine.Object.FindAnyObjectByType<PlayerController.PlayerController>();
     }
 
@@ -118,48 +142,40 @@ public abstract class WeaponBase : MonoBehaviour
             reloadCoroutine = null;
         }
 
-        if (weaponData != null)
+        if (weaponData == null)
         {
-            weaponModel = weaponData.weaponModel;
-            availableShootingModes = weaponData.availableShootingModes;
-            CurrentShootingMode = weaponData.defaultShootingMode;
-            BulletsLeft = weaponData.magazineSize;
-            burstBulletsLeft = weaponData.bulletsPerBurst;
+            Debug.LogError($"[WeaponBase] WeaponData is null on {gameObject.name}! Weapon disabled.");
+            enabled = false;
+            return;
         }
-        else
-        {
-            Debug.LogError($"WeaponData is null on weapon {gameObject.name}! Please assign a WeaponData ScriptableObject.");
-            BulletsLeft = 30;
-            CurrentShootingMode = availableShootingModes[0];
-            burstBulletsLeft = 3;
-        }
+
+        weaponModel = weaponData.weaponModel;
+        availableShootingModes = weaponData.availableShootingModes;
+        CurrentShootingMode = weaponData.defaultShootingMode;
+        BulletsLeft = weaponData.magazineSize;
+        burstBulletsLeft = weaponData.bulletsPerBurst;
+        currentSpread = weaponData.hipSpread;
+        accumulatedSpread = weaponData.hipSpread;
 
         playerCamera = Camera.main;
         ValidateReferences();
 
-        // Initialize weapon effects
+        if (weaponAnimator != null)
+            weaponAnimator.enabled = false;
+
         lastPosition = transform.position;
         if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
-
-        // Set default gun position holder if not assigned
-        if (gunPositionHolder == null)
-            gunPositionHolder = transform;
-
-        // Store the ADJUSTED rotation as origin for sway
+        if (gunPositionHolder == null) gunPositionHolder = transform;
         if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
     }
 
     protected virtual void ValidateReferences()
     {
-        if (references.bulletSpawn == null)
-        {
-            Debug.LogError($"Bullet spawn not set on weapon {gameObject.name}!");
-        }
+        if (bulletSpawn == null)
+            Debug.LogError($"[WeaponBase] bulletSpawn not assigned on {gameObject.name}!");
 
-        if (references.weaponAnimator == null)
-        {
-            references.weaponAnimator = GetComponent<Animator>();
-        }
+        if (weaponAnimator == null)
+            weaponAnimator = GetComponent<Animator>();
     }
 
     protected virtual void Update()
@@ -168,8 +184,7 @@ public abstract class WeaponBase : MonoBehaviour
 
         HandleInput();
         UpdateLayerMask();
-
-        // Handle weapon effects
+        UpdateSpread();
         HandleWeaponRecoil();
         HandleCameraRecoil();
         WeaponRotationSway();
@@ -185,22 +200,25 @@ public abstract class WeaponBase : MonoBehaviour
         HandleInspection();
         HandleFireModeSwitch();
 
-        // Update mouse input for sway
         mouseX = Input.GetAxis("Mouse X");
         mouseY = Input.GetAxis("Mouse Y");
     }
 
-    #region Weapon Effects System
+    #region Weapon Effects
 
     private void HandleWeaponRecoil()
     {
         if (!weaponData.haveWeaponRecoil || gunPositionHolder == null) return;
 
-        rotationRecoil = Vector3.Lerp(rotationRecoil, Vector3.zero, weaponData.gunRotationReturnSpeed * Time.deltaTime);
-        positionRecoil = Vector3.Lerp(positionRecoil, Vector3.zero, weaponData.gunPositionReturnSpeed * Time.deltaTime);
+        rotationRecoil = Vector3.Lerp(rotationRecoil, Vector3.zero,
+            weaponData.gunRotationReturnSpeed * Time.deltaTime);
+        positionRecoil = Vector3.Lerp(positionRecoil, Vector3.zero,
+            weaponData.gunPositionReturnSpeed * Time.deltaTime);
 
-        gunPositionHolder.localPosition = Vector3.Slerp(gunPositionHolder.localPosition, positionRecoil, weaponData.gunRecoilPositionSpeed * Time.deltaTime);
-        weaponRot = Vector3.Slerp(weaponRot, rotationRecoil, weaponData.gunRecoilRotationSpeed * Time.deltaTime);
+        gunPositionHolder.localPosition = Vector3.Slerp(gunPositionHolder.localPosition,
+            positionRecoil, weaponData.gunRecoilPositionSpeed * Time.deltaTime);
+        weaponRot = Vector3.Slerp(weaponRot, rotationRecoil,
+            weaponData.gunRecoilRotationSpeed * Time.deltaTime);
         gunPositionHolder.localRotation = Quaternion.Euler(weaponRot);
     }
 
@@ -208,63 +226,51 @@ public abstract class WeaponBase : MonoBehaviour
     {
         if (!weaponData.haveCameraRecoil || cameraFollow == null) return;
 
-        float fireInterval = 60f / (weaponData ? weaponData.fireRate : 600f);
+        float fireInterval = 60f / weaponData.fireRate;
         bool currentlyFiring = (Time.time - lastShotTime) < fireInterval + 0.05f;
-
-        wasFiringLastFrame = currentlyFiring;
+        cameraFollow.SetFiringState(currentlyFiring);
     }
 
     private void WeaponRotationSway()
     {
         if (!weaponData.haveRotationalSway) return;
 
-        // Get weapon-specific base rotation for sway calculations
-        Quaternion baseRotation = originRotation;
-        if (weaponData != null && weaponData.baseViewmodelRotation != Vector3.zero)
-        {
-            baseRotation = Quaternion.Euler(weaponData.baseViewmodelRotation);
-        }
+        Quaternion baseRotation = weaponData.baseViewmodelRotation != Vector3.zero
+            ? Quaternion.Euler(weaponData.baseViewmodelRotation)
+            : originRotation;
 
-        Quaternion newAdjustedRotationX = Quaternion.AngleAxis(weaponData.rotationSwayIntensity * mouseX * -1f, Vector3.up);
-        Quaternion targetRotation = baseRotation * newAdjustedRotationX;
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, weaponData.rotationSwaySmoothness * Time.deltaTime);
+        Quaternion swayRot = Quaternion.AngleAxis(weaponData.rotationSwayIntensity * mouseX * -1f, Vector3.up);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation,
+            baseRotation * swayRot, weaponData.rotationSwaySmoothness * Time.deltaTime);
     }
 
     private void WeaponBobbing()
     {
         if (!weaponData.haveBobbing) return;
 
-        // Get weapon-specific base position
-        Vector3 basePosition = weaponData ? weaponData.baseViewmodelPosition : Vector3.zero;
+        Vector3 basePosition = weaponData.baseViewmodelPosition;
 
-        // Skip bobbing if not grounded
-        if (playerController != null)
+        if (playerController != null && !playerController.IsGrounded())
         {
-            if (!playerController.IsGrounded())
-            {
-                transform.localPosition = Vector3.Lerp(transform.localPosition, basePosition, Time.deltaTime);
-                return;
-            }
+            transform.localPosition = Vector3.Lerp(transform.localPosition, basePosition, Time.deltaTime);
+            return;
         }
 
-        // Calculate delta time based on the player's movement speed
         float delta = Time.deltaTime * weaponData.idleSpeed;
         float velocity = (lastPosition - transform.position).magnitude * weaponData.walkSpeedMultiplier;
         delta += Mathf.Clamp(velocity, 0, weaponData.walkSpeedMax);
 
-        // Update the sinX and sinY values to create a bobbing effect
         sinX += delta / 2;
         sinY += delta;
         sinX %= Mathf.PI * 2;
         sinY %= Mathf.PI * 2;
 
-        // Adjust the weapon's local position to create the bobbing effect
-        float currentMagnitude = IsADS ? weaponData.bobbingMagnitude / weaponData.aimReduction : weaponData.bobbingMagnitude;
+        float mag = IsADS
+            ? weaponData.bobbingMagnitude / weaponData.aimReduction
+            : weaponData.bobbingMagnitude;
 
-        // Apply bobbing relative to base position instead of Vector3.zero
-        transform.localPosition = basePosition + currentMagnitude * Mathf.Sin(sinY) * Vector3.up;
-        transform.localPosition += currentMagnitude * Mathf.Sin(sinX) * Vector3.right;
-
+        transform.localPosition = basePosition + mag * Mathf.Sin(sinY) * Vector3.up;
+        transform.localPosition += mag * Mathf.Sin(sinX) * Vector3.right;
         lastPosition = transform.position;
     }
 
@@ -275,24 +281,16 @@ public abstract class WeaponBase : MonoBehaviour
         switch (playerController.IsGrounded())
         {
             case false:
-                // Adjust the weapon's rotation based on the player's jump velocity
                 float yVelocity = playerController.GetVelocity().y;
                 yVelocity = Mathf.Clamp(yVelocity, -weaponData.weaponMinClamp, weaponData.weaponMaxClamp);
                 impactForce = -yVelocity * weaponData.landingIntensity;
-
-                if (IsADS)
-                {
-                    yVelocity = Mathf.Max(yVelocity, 0);
-                }
-
-                // Update the weapon's local rotation to simulate the jump sway effect
+                if (IsADS) yVelocity = Mathf.Max(yVelocity, 0);
                 transform.localRotation = Quaternion.Lerp(transform.localRotation,
                     Quaternion.Euler(0f, 0f, yVelocity * weaponData.jumpIntensity),
                     Time.deltaTime * weaponData.jumpSmooth);
                 break;
 
             case true when impactForce >= 0:
-                // If the player is grounded and has impact force, adjust the weapon's rotation accordingly
                 transform.localRotation = Quaternion.Lerp(transform.localRotation,
                     Quaternion.Euler(0, 0, impactForce),
                     Time.deltaTime * weaponData.landingSmooth);
@@ -300,26 +298,18 @@ public abstract class WeaponBase : MonoBehaviour
                 break;
 
             case true:
-                // If the player is grounded and there's no impact force, reset the weapon's rotation
                 transform.localRotation = Quaternion.Lerp(transform.localRotation,
-                    Quaternion.identity,
-                    Time.deltaTime * weaponData.landingSmooth);
+                    Quaternion.identity, Time.deltaTime * weaponData.landingSmooth);
                 break;
         }
     }
 
-    #endregion Weapon Effects System
+    #endregion Weapon Effects
 
     protected virtual void HandleAiming()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            EnterADS();
-        }
-        else if (Input.GetMouseButtonUp(1))
-        {
-            ExitADS();
-        }
+        if (Input.GetMouseButtonDown(1)) EnterADS();
+        else if (Input.GetMouseButtonUp(1)) ExitADS();
     }
 
     protected virtual void HandleShooting()
@@ -332,7 +322,6 @@ public abstract class WeaponBase : MonoBehaviour
             return;
         }
 
-        // Check if weapon needs cycling
         if (inputPressed && weaponData.requiresCycling && !IsCycled && !isCycling)
         {
             StartCycle();
@@ -348,7 +337,10 @@ public abstract class WeaponBase : MonoBehaviour
         {
             isShooting = false;
         }
-        else playerController.AddRecoil(0f, 0f);
+        else
+        {
+            playerController?.AddRecoil(0f, 0f);
+        }
     }
 
     protected virtual bool GetShootingInput()
@@ -365,71 +357,45 @@ public abstract class WeaponBase : MonoBehaviour
     protected virtual void HandleReloading()
     {
         if (Input.GetKeyDown(KeyCode.R) && CanReload())
-        {
             StartReload();
-        }
     }
 
     protected virtual void HandleFireModeSwitch()
     {
         if (Input.GetKeyDown(KeyCode.V) && availableShootingModes.Length > 1)
-        {
             CycleFireMode();
-        }
     }
 
     protected virtual void HandleInspection()
     {
-        if (Input.GetKeyDown(KeyCode.I) && !isInspecting)
+        if (Input.GetKeyDown(KeyCode.I) && !isInspecting && weaponAnimator != null)
         {
-            if (references.weaponAnimator != null)
-            {
-                if (inspectCoroutine != null)
-                    StopCoroutine(inspectCoroutine);
-
-                inspectCoroutine = StartCoroutine(InspectCoroutine());
-            }
+            if (inspectCoroutine != null) StopCoroutine(inspectCoroutine);
+            inspectCoroutine = StartCoroutine(InspectCoroutine());
         }
     }
 
     protected virtual IEnumerator InspectCoroutine()
     {
         isInspecting = true;
-
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.ResetTrigger("RELOAD");
-            references.weaponAnimator.ResetTrigger("INSPECT");
-
-            references.weaponAnimator.enabled = true;
-
-            references.weaponAnimator.Play("Inspect", 0, 0f);
-        }
-
+        weaponAnimator?.ResetTrigger("RELOAD");
+        weaponAnimator?.ResetTrigger("INSPECT");
+        weaponAnimator?.Play("Inspect", 0, 0f);
         yield return new WaitForSeconds(weaponData.inspectDuration);
-
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.enabled = false;
-        }
-
         isInspecting = false;
     }
 
     protected virtual void UpdateLayerMask()
     {
-        int targetLayer = IsActiveWeapon ? LayerMask.NameToLayer("WeaponRender") : LayerMask.NameToLayer("Default");
+        int targetLayer = IsActiveWeapon
+            ? LayerMask.NameToLayer("WeaponRender")
+            : LayerMask.NameToLayer("Default");
 
         foreach (Transform child in transform)
-        {
             child.gameObject.layer = targetLayer;
-        }
 
         var outline = GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = !IsActiveWeapon;
-        }
+        if (outline != null) outline.enabled = !IsActiveWeapon;
     }
 
     #region Aiming
@@ -459,33 +425,20 @@ public abstract class WeaponBase : MonoBehaviour
         BulletsLeft--;
         ReadyToShoot = false;
 
-        // Apply recoil effects
         ApplyRecoilEffects();
+        BuildSpread();
 
-        // Create and launch projectile
-        Vector3 shootDirection = CalculateShootDirection();
-        CreateProjectile(shootDirection);
-
-        // Visual and audio effects
+        CreateProjectile(CalculateShootDirection());
         PlayShootingEffects();
 
-        // Mark as needing cycle for pump/bolt weapons
-        if (weaponData.requiresCycling)
-        {
-            IsCycled = false;
-        }
+        if (weaponData.requiresCycling) IsCycled = false;
 
-        // Handle shooting mode specific logic
         HandleShootingMode();
-
         OnWeaponFired?.Invoke(this);
 
-        // Reset shot timing
         if (allowReset)
         {
-            float fireRate = weaponData ? weaponData.fireRate : 600f;
-            float fireDelay = 60f / fireRate;
-            Invoke(nameof(ResetShot), fireDelay);
+            Invoke(nameof(ResetShot), 60f / weaponData.fireRate);
             allowReset = false;
         }
     }
@@ -493,10 +446,7 @@ public abstract class WeaponBase : MonoBehaviour
     protected virtual void StartCycle()
     {
         if (isCycling || IsCycled) return;
-
-        if (cycleCoroutine != null)
-            StopCoroutine(cycleCoroutine);
-
+        if (cycleCoroutine != null) StopCoroutine(cycleCoroutine);
         cycleCoroutine = StartCoroutine(CycleCoroutine());
     }
 
@@ -505,28 +455,14 @@ public abstract class WeaponBase : MonoBehaviour
         isCycling = true;
         ReadyToShoot = false;
 
-        // Enable animator and play cycle animation
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.enabled = true;
-            references.weaponAnimator.SetTrigger(weaponData.cycleAnimation);
-        }
-
-        // Play cycling sound (pump/bolt sound)
+        weaponAnimator?.SetTrigger(weaponData.cycleAnimation);
         PlayCycleSound();
 
         yield return new WaitForSeconds(weaponData.cycleTime);
 
-        // Complete cycle
         IsCycled = true;
         isCycling = false;
         ReadyToShoot = true;
-
-        // Disable animator
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.enabled = false;
-        }
     }
 
     protected virtual void ApplyRecoilEffects()
@@ -536,8 +472,10 @@ public abstract class WeaponBase : MonoBehaviour
             Vector3 kick = IsADS ? weaponData.adsFireRecoil : weaponData.hipFireRecoil;
             float yawKick = UnityEngine.Random.Range(-kick.y, kick.y) * weaponData.hRecoil;
             float pitchKick = kick.x * weaponData.vRecoil;
-            float rollKick = UnityEngine.Random.Range(weaponData.recoilRollIntensity * 0.5f, weaponData.recoilRollIntensity) * Mathf.Sign(yawKick);
-            cameraFollow.ApplyRecoilKick(pitchKick, yawKick, rollKick, weaponData.recoilRotationSpeed, weaponData.recoilReturnSpeed);
+            float rollKick = UnityEngine.Random.Range(weaponData.recoilRollIntensity * 0.5f,
+                              weaponData.recoilRollIntensity) * Mathf.Sign(yawKick);
+            cameraFollow.ApplyRecoilKick(pitchKick, yawKick, rollKick,
+                weaponData.recoilRotationSpeed, weaponData.recoilReturnSpeed);
         }
 
         if (weaponData.haveWeaponRecoil)
@@ -558,103 +496,66 @@ public abstract class WeaponBase : MonoBehaviour
         lastShotTime = Time.time;
     }
 
-    protected virtual bool CanShoot()
-    {
-        return ReadyToShoot && BulletsLeft > 0 && !IsReloading;
-    }
+    protected virtual bool CanShoot() =>
+        ReadyToShoot && BulletsLeft > 0 && !IsReloading;
 
     protected virtual void CreateProjectile(Vector3 direction)
     {
         if (ProjectileFactory.Instance == null)
         {
-            Debug.LogError("ProjectileFactory instance not found!");
+            Debug.LogError("[WeaponBase] ProjectileFactory not found!");
             return;
         }
 
-        ProjectileType projectileType = weaponData ? weaponData.projectileType : references.projectileType;
-        int pelletsToFire = weaponData ? weaponData.pelletsPerShot : 1;
-
-        for (int i = 0; i < pelletsToFire; i++)
+        for (int i = 0; i < weaponData.pelletsPerShot; i++)
         {
-            Vector3 pelletDirection = direction;
-
-            if (pelletsToFire > 1 && weaponData)
-            {
-                pelletDirection = ApplySpread(direction, weaponData.pelletSpread);
-            }
+            Vector3 pelletDir = weaponData.pelletsPerShot > 1
+                ? ApplySpread(direction, weaponData.pelletSpread)
+                : direction;
 
             var projectile = ProjectileFactory.Instance.CreateProjectile(
-                projectileType,
-                references.bulletSpawn.position,
-                Quaternion.LookRotation(pelletDirection)
-            );
+                weaponData.projectileType,
+                bulletSpawn.position,
+                Quaternion.LookRotation(pelletDir));
 
             if (projectile != null)
-            {
-                ConfigureProjectile(projectile, pelletDirection);
-            }
+                ConfigureProjectile(projectile, pelletDir);
         }
     }
 
     protected virtual void ConfigureProjectile(IProjectile projectile, Vector3 direction)
     {
-        if (projectile is ProjectileBase projectileBase)
+        if (projectile is ProjectileBase pb)
         {
-            float muzzleVelocity = weaponData ? weaponData.muzzleVelocity : 400f;
-            projectileBase.Launch(direction, muzzleVelocity);
+            pb.SetDamage(weaponData.damage);
+            pb.Launch(direction, weaponData.muzzleVelocity);
         }
     }
 
     protected virtual Vector3 CalculateShootDirection()
     {
-        float range = weaponData ? weaponData.range : 100f;
+        Ray cameraRay = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
 
-        // Use the recoiled camera holder
-        Transform cameraTransform = playerCamera.transform;
+        Vector3 targetPoint = Physics.Raycast(cameraRay, out RaycastHit hit, weaponData.range)
+            ? hit.point
+            : cameraRay.origin + cameraRay.direction * weaponData.range;
 
-        // Calculate ray from center of recoiled camera
-        Vector3 rayOrigin = cameraTransform.position;
-        Vector3 rayDirection = cameraTransform.forward;
-        Ray cameraRay = new Ray(rayOrigin, rayDirection);
-
-        Vector3 targetPoint;
-        if (Physics.Raycast(cameraRay, out RaycastHit hit, range))
-        {
-            targetPoint = hit.point;
-        }
-        else
-        {
-            targetPoint = rayOrigin + rayDirection * range;
-        }
-
-        Vector3 shootDirection = (targetPoint - references.bulletSpawn.position).normalized;
-
-        float spreadAmount = IsADS ?
-            (weaponData ? weaponData.adsSpread : 0.5f) :
-            (weaponData ? weaponData.hipSpread : 2f);
-
-        shootDirection = ApplySpread(shootDirection, spreadAmount);
-
-        return shootDirection;
+        return ApplySpread((targetPoint - bulletSpawn.position).normalized, currentSpread);
     }
 
     protected virtual Vector3 ApplySpread(Vector3 direction, float spreadAmount)
     {
-        float spreadX = UnityEngine.Random.Range(-spreadAmount, spreadAmount);
-        float spreadY = UnityEngine.Random.Range(-spreadAmount, spreadAmount);
-
-        Vector3 spread = new Vector3(spreadX, spreadY, 0f);
-        return (direction + spread * 0.1f).normalized;
+        float dev = spreadAmount * weaponData.bulletSpreadScale;
+        return (direction + new Vector3(
+            UnityEngine.Random.Range(-dev, dev),
+            UnityEngine.Random.Range(-dev, dev),
+            0f)).normalized;
     }
 
     protected virtual void HandleShootingMode()
     {
-        switch (CurrentShootingMode)
-        {
-            case Weapon.ShootingMode.Burst:
-                HandleBurstMode();
-                break;
-        }
+        if (CurrentShootingMode == Weapon.ShootingMode.Burst)
+            HandleBurstMode();
     }
 
     protected virtual void HandleBurstMode()
@@ -663,72 +564,53 @@ public abstract class WeaponBase : MonoBehaviour
 
         if (burstBulletsLeft > 0 && BulletsLeft > 0)
         {
-            if (burstCoroutine != null)
-                StopCoroutine(burstCoroutine);
-
+            if (burstCoroutine != null) StopCoroutine(burstCoroutine);
             burstCoroutine = StartCoroutine(BurstFireCoroutine());
         }
         else
         {
-            burstBulletsLeft = weaponData ? weaponData.bulletsPerBurst : 3;
+            burstBulletsLeft = weaponData.bulletsPerBurst;
         }
     }
 
     protected virtual IEnumerator BurstFireCoroutine()
     {
-        float burstDelay = weaponData ? weaponData.burstDelay : 0.1f;
-        yield return new WaitForSeconds(burstDelay);
-
-        if (BulletsLeft > 0)
-        {
-            FireWeapon();
-        }
+        yield return new WaitForSeconds(weaponData.burstDelay);
+        if (BulletsLeft > 0) FireWeapon();
     }
 
     protected virtual void PlayShootingEffects()
     {
-        if (references.muzzleFlash != null)
-        {
-            references.muzzleFlash.Play();
-        }
-
-        if (references.muzzleLight != null)
-        {
-            StartCoroutine(FlashMuzzleLight());
-        }
-
+        muzzleFlash?.Play();
+        if (muzzleLight != null) StartCoroutine(FlashMuzzleLight());
         EjectShell();
-        SoundManager.Instance?.PlayShootingSound(weaponModel);
+        SoundManager.Instance?.PlayShootingSound(weaponData.shootSound);
     }
 
     protected virtual IEnumerator FlashMuzzleLight()
     {
-        if (references.muzzleLight != null)
-        {
-            references.muzzleLight.SetActive(true);
-            float duration = weaponData ? weaponData.muzzleLightDuration : 0.02f;
-            yield return new WaitForSeconds(duration);
-            references.muzzleLight.SetActive(false);
-        }
+        muzzleLight.SetActive(true);
+        yield return new WaitForSeconds(weaponData.muzzleLightDuration);
+        muzzleLight.SetActive(false);
     }
 
     protected virtual void EjectShell()
     {
-        if (references.shellCasing != null && references.ejectionPort != null)
+        if (shellCasing == null || ejectionPort == null) return;
+
+        GameObject shell = Instantiate(shellCasing, ejectionPort.position, ejectionPort.rotation);
+        Rigidbody shellRb = shell.GetComponent<Rigidbody>();
+
+        if (shellRb != null)
         {
-            GameObject shell = Instantiate(references.shellCasing, references.ejectionPort.position, references.ejectionPort.rotation);
-
-            Rigidbody shellRb = shell.GetComponent<Rigidbody>();
-            if (shellRb != null)
-            {
-                Vector3 ejectionForce = references.ejectionPort.right * UnityEngine.Random.Range(2f, 4f) +
-                                       references.ejectionPort.up * UnityEngine.Random.Range(1f, 2f);
-                shellRb.AddForce(ejectionForce, ForceMode.Impulse);
-                shellRb.AddTorque(UnityEngine.Random.insideUnitSphere * 10f, ForceMode.Impulse);
-            }
-
-            Destroy(shell, 5f);
+            shellRb.AddForce(
+                ejectionPort.right * UnityEngine.Random.Range(2f, 4f) +
+                ejectionPort.up * UnityEngine.Random.Range(1f, 2f),
+                ForceMode.Impulse);
+            shellRb.AddTorque(UnityEngine.Random.insideUnitSphere * 10f, ForceMode.Impulse);
         }
+
+        Destroy(shell, 5f);
     }
 
     protected virtual void ResetShot()
@@ -739,50 +621,55 @@ public abstract class WeaponBase : MonoBehaviour
 
     #endregion Shooting
 
-    #region Reloading
+    #region Spread
 
-    protected virtual bool CanReload()
+    private void UpdateSpread()
     {
-        int magSize = weaponData ? weaponData.magazineSize : 30;
-        bool canReload = !IsReloading &&
-                         BulletsLeft < magSize &&
-                         HasAmmoAvailable();
+        float baseSpread = IsADS ? weaponData.adsSpread : weaponData.hipSpread;
+        bool recoveryAllowed = (Time.time - lastShotTime) > weaponData.spreadRecoveryDelay;
 
-        return canReload;
+        if (recoveryAllowed)
+            accumulatedSpread = Mathf.MoveTowards(accumulatedSpread, baseSpread,
+                weaponData.spreadRecoveryRate * Time.deltaTime);
+
+        currentSpread = IsADS ? weaponData.adsSpread : accumulatedSpread;
     }
 
-    [SerializeField] private Transform magInGun; // assign in prefab inspector
+    private void BuildSpread()
+    {
+        accumulatedSpread = Mathf.Min(
+            accumulatedSpread + weaponData.spreadPerShot,
+            weaponData.hipSpread + weaponData.spreadMax);
+    }
+
+    #endregion Spread
+
+    #region Reloading
+
+    protected virtual bool CanReload() =>
+        !IsReloading && BulletsLeft < weaponData.magazineSize && HasAmmoAvailable();
+
+    [SerializeField] private Transform magInGun;
 
     public void DropMagazine()
     {
-        GameObject magPrefab = weaponData ? weaponData.magazineDropPrefab : weaponData.magazineDropPrefab;
-        if (magPrefab == null || magazineDropPoint == null) return;
+        if (weaponData.magazineDropPrefab == null || magazineDropPoint == null) return;
 
-        GameObject droppedMag = Instantiate(magPrefab, magazineDropPoint.position, magazineDropPoint.rotation);
+        GameObject mag = Instantiate(weaponData.magazineDropPrefab,
+            magazineDropPoint.position, magazineDropPoint.rotation);
 
-        // Add physics
-        var rb = droppedMag.GetComponent<Rigidbody>();
-        if (rb == null) rb = droppedMag.AddComponent<Rigidbody>();
-
-        // Apply realistic drop forces
-        Vector3 worldDropForce = magazineDropPoint.TransformDirection(magazineDropForce);
-        rb.AddForce(worldDropForce, ForceMode.Impulse);
+        var rb = mag.GetComponent<Rigidbody>() ?? mag.AddComponent<Rigidbody>();
+        rb.AddForce(magazineDropPoint.TransformDirection(magazineDropForce), ForceMode.Impulse);
         rb.AddTorque(UnityEngine.Random.insideUnitSphere * magazineDropTorque, ForceMode.Impulse);
-
-        // Cleanup
-        Destroy(droppedMag, 10f);
+        Destroy(mag, 10f);
     }
 
-    protected virtual bool HasAmmoAvailable()
-    {
-        return WeaponManager.Instance?.CheckAmmoLeftFor(weaponModel) > 0;
-    }
+    protected virtual bool HasAmmoAvailable() =>
+        WeaponManager.Instance?.CheckAmmoLeftFor(weaponData.ammoType) > 0;
 
     protected virtual void StartReload()
     {
-        if (reloadCoroutine != null)
-            StopCoroutine(reloadCoroutine);
-
+        if (reloadCoroutine != null) StopCoroutine(reloadCoroutine);
         reloadCoroutine = StartCoroutine(ReloadCoroutine());
     }
 
@@ -794,90 +681,55 @@ public abstract class WeaponBase : MonoBehaviour
         if (burstCoroutine != null)
         {
             StopCoroutine(burstCoroutine);
-            burstBulletsLeft = weaponData ? weaponData.bulletsPerBurst : 3;
+            burstBulletsLeft = weaponData.bulletsPerBurst;
         }
 
         if (weaponData.useShellReload)
-        {
-            // Shell-by-shell loading for shotguns
             yield return StartCoroutine(ShellReloadCoroutine());
-        }
         else
-        {
-            // Magazine reload system
             yield return StartCoroutine(MagazineReloadCoroutine());
-        }
     }
 
-    // Replace MagazineReloadCoroutine entirely
     protected virtual IEnumerator MagazineReloadCoroutine()
     {
-        if (references.weaponAnimator != null)
-            references.weaponAnimator.enabled = true;
-
-        string animName = GetReloadAnimationName();
-        references.weaponAnimator?.SetTrigger(animName);
+        // Trigger animation — WeaponAnimationEvents.MagIn() / BoltPull() signals completion
+        weaponAnimator?.SetTrigger(GetReloadAnimationName());
         OnReloadStarted?.Invoke(this);
 
         reloadEventSignaled = false;
-        float reloadTime = GetReloadTime();
-        float elapsed = 0f;
-        bool cancelled = false;
 
-        while (!reloadEventSignaled && elapsed < reloadTime && !cancelled)
+        // Wait purely for animation event — no timer
+        while (!reloadEventSignaled)
         {
             if (Input.GetMouseButtonDown(0))
             {
                 CancelReload();
-                cancelled = true;
                 yield break;
             }
-            elapsed += Time.deltaTime;
             yield return null;
         }
 
-        if (!cancelled)
-            CompleteReload();
-
-        if (references.weaponAnimator != null)
-            references.weaponAnimator.enabled = false;
+        CompleteReload();
     }
 
     protected virtual IEnumerator ShellReloadCoroutine()
     {
-        // Shell loading logic I showed earlier
         OnReloadStarted?.Invoke(this);
 
-        int maxCapacity = weaponData ? weaponData.magazineSize : weaponData.maxShellsToLoad;
-
-        while (BulletsLeft < maxCapacity)
+        while (BulletsLeft < weaponData.magazineSize)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                CancelReload();
-                yield break;
-            }
+            if (Input.GetMouseButtonDown(0)) { CancelReload(); yield break; }
 
-            int availableAmmo = WeaponManager.Instance?.CheckAmmoLeftFor(weaponModel) ?? 0;
-            if (availableAmmo <= 0) break;
+            int available = WeaponManager.Instance?.CheckAmmoLeftFor(weaponData.ammoType) ?? 0;
+            if (available <= 0) break;
 
-            if (references.weaponAnimator != null)
-            {
-                references.weaponAnimator.enabled = true;
-                references.weaponAnimator.SetTrigger(weaponData.shellLoadAnimation);
-            }
-
+            weaponAnimator?.SetTrigger(weaponData.shellLoadAnimation);
             SoundManager.Instance?.PlayShellLoadSound();
 
             yield return new WaitForSeconds(weaponData.shellLoadTime);
 
             BulletsLeft++;
-            WeaponManager.Instance?.DecreaseTotalAmmo(1, weaponModel);
-
-            if (references.weaponAnimator != null)
-            {
-                references.weaponAnimator.enabled = false;
-            }
+            WeaponManager.Instance?.DecreaseTotalAmmo(1, weaponData.ammoType);
         }
 
         ReadyToShoot = true;
@@ -890,20 +742,11 @@ public abstract class WeaponBase : MonoBehaviour
         IsReloading = false;
         ReadyToShoot = true;
 
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.enabled = true;
+        weaponAnimator?.ResetTrigger("RELOAD");
+        weaponAnimator?.Play("Idle", -1, 0f);
+        weaponAnimator?.Update(0f);
 
-            // Force idle state
-            references.weaponAnimator.SetTrigger("RELOAD"); // Stop current
-            references.weaponAnimator.Play("Idle", -1, 0f); // Jump to idle at 0% progress
-            references.weaponAnimator.Update(0f);
-
-            references.weaponAnimator.enabled = false;
-        }
-
-        SoundManager.Instance?.StopReloadSound(weaponModel);
-        Debug.Log("Reload cancelled");
+        SoundManager.Instance?.StopReloadSound();
     }
 
     protected virtual void CompleteReload()
@@ -911,14 +754,12 @@ public abstract class WeaponBase : MonoBehaviour
         ReadyToShoot = true;
         IsReloading = false;
 
-        int magSize = weaponData ? weaponData.magazineSize : 30;
-        int bulletsNeeded = magSize - BulletsLeft;
-        int availableAmmo = WeaponManager.Instance?.CheckAmmoLeftFor(weaponModel) ?? 0;
-        int bulletsToReload = Mathf.Min(bulletsNeeded, availableAmmo);
+        int needed = weaponData.magazineSize - BulletsLeft;
+        int available = WeaponManager.Instance?.CheckAmmoLeftFor(weaponData.ammoType) ?? 0;
+        int toReload = Mathf.Min(needed, available);
 
-        BulletsLeft += bulletsToReload;
-        WeaponManager.Instance?.DecreaseTotalAmmo(bulletsToReload, weaponModel);
-
+        BulletsLeft += toReload;
+        WeaponManager.Instance?.DecreaseTotalAmmo(toReload, weaponData.ammoType);
         OnReloadCompleted?.Invoke(this);
     }
 
@@ -933,16 +774,10 @@ public abstract class WeaponBase : MonoBehaviour
         IsReloading = false;
         ReadyToShoot = true;
 
-        // Reset animator to default pose
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.enabled = true;
-            references.weaponAnimator.Rebind(); // This resets to bind pose
-            references.weaponAnimator.Update(0f);
-            references.weaponAnimator.enabled = false;
-        }
+        weaponAnimator?.Rebind();
+        weaponAnimator?.Update(0f);
 
-        SoundManager.Instance?.StopReloadSound(weaponModel);
+        SoundManager.Instance?.StopReloadSound();
     }
 
     #endregion Reloading
@@ -952,36 +787,21 @@ public abstract class WeaponBase : MonoBehaviour
     protected virtual void CycleFireMode()
     {
         int currentIndex = Array.IndexOf(availableShootingModes, CurrentShootingMode);
-        int nextIndex = (currentIndex + 1) % availableShootingModes.Length;
-        CurrentShootingMode = availableShootingModes[nextIndex];
-
-        Debug.Log($"Fire mode changed to: {CurrentShootingMode}");
+        CurrentShootingMode = availableShootingModes[(currentIndex + 1) % availableShootingModes.Length];
+        Debug.Log($"[WeaponBase] Fire mode: {CurrentShootingMode}");
     }
 
     #endregion Fire Mode
 
     #region Sounds
 
-    protected virtual void PlayCycleSound()
-    {
-        // Play randomized shell loading/pumping sounds
-        SoundManager.Instance?.PlayCycleSound(weaponModel);
-    }
+    protected virtual void PlayCycleSound() => SoundManager.Instance?.PlayCycleSound(weaponData.cycleSounds);
 
-    protected virtual void PlayReloadSound()
-    {
-        SoundManager.Instance?.PlayReloadSound(weaponModel);
-    }
+    protected virtual void PlayReloadSound() => SoundManager.Instance?.PlayReloadSound(weaponData.reloadSound);
 
-    protected virtual void PlayShellLoadSound()
-    {
-        SoundManager.Instance?.PlayShellLoadSound();
-    }
+    protected virtual void PlayShellLoadSound() => SoundManager.Instance?.PlayShellLoadSound();
 
-    protected virtual void PlayEmptySound()
-    {
-        SoundManager.Instance?.weaponChannel?.Play();
-    }
+    protected virtual void PlayEmptySound() => SoundManager.Instance?.weaponChannel?.Play();
 
     #endregion Sounds
 
@@ -990,22 +810,19 @@ public abstract class WeaponBase : MonoBehaviour
     public virtual void SetActiveWeapon(bool active)
     {
         IsActiveWeapon = active;
-        Animator animator = references.weaponAnimator;
-
-        if (animator != null && !isInspecting)
-        {
-            animator.ResetTrigger("RELOAD");
-            animator.ResetTrigger("INSPECT");
-            animator.enabled = true;
-            Invoke(nameof(DisableAnimator), 0.1f);
-        }
 
         if (leftArm != null) leftArm.SetActive(active);
         if (rightArm != null) rightArm.SetActive(active);
 
         if (!active)
         {
-            // Stop cycling when unequipping
+            if (weaponAnimator != null)
+                weaponAnimator.enabled = false;
+
+            rotationRecoil = Vector3.zero;
+            positionRecoil = Vector3.zero;
+            cameraFollow?.ResetRecoil();
+
             if (cycleCoroutine != null)
             {
                 StopCoroutine(cycleCoroutine);
@@ -1013,41 +830,17 @@ public abstract class WeaponBase : MonoBehaviour
                 isCycling = false;
             }
 
-            // Force cleanup when weapon is deactivated
-            if (IsReloading)
-            {
-                ForceStopReload();
-            }
+            if (IsReloading) ForceStopReload();
 
-            // DEACTIVATION CODE
             isShooting = false;
-
-            if (IsADS)
-            {
-                ExitADS();
-            }
+            if (IsADS) ExitADS();
 
             GetComponent<Outline>().enabled = false;
-            if (animator != null)
-            {
-                animator.enabled = false;
-            }
         }
         else
         {
-            // If weapon was unequipped mid-cycle, resume cycling
             if (weaponData.requiresCycling && !IsCycled && !isCycling)
-            {
                 StartCycle();
-            }
-        }
-    }
-
-    private void DisableAnimator()
-    {
-        if (references.weaponAnimator != null)
-        {
-            references.weaponAnimator.enabled = false;
         }
     }
 
@@ -1056,175 +849,45 @@ public abstract class WeaponBase : MonoBehaviour
         return new WeaponInfo
         {
             Model = weaponModel,
-            Damage = weaponData ? weaponData.damage : 25,
-            FireRate = weaponData ? weaponData.fireRate : 600f,
-            Range = weaponData ? weaponData.range : 100f,
+            Damage = weaponData.damage,
+            FireRate = weaponData.fireRate,
+            Range = weaponData.range,
             BulletsLeft = BulletsLeft,
-            MagSize = weaponData ? weaponData.magazineSize : 30,
+            MagSize = weaponData.magazineSize,
             CurrentFireMode = CurrentShootingMode,
             AvailableFireModes = availableShootingModes,
             IsReloading = IsReloading,
             IsADS = IsADS,
-            WeaponName = weaponData ? weaponData.weaponName : "Unknown Weapon",
-            AmmoType = weaponData ? weaponData.ammoType : AmmoType.Rifle556,
-            Rarity = weaponData ? weaponData.rarity : WeaponRarity.Common
+            WeaponName = weaponData.weaponName,
+            AmmoType = weaponData.ammoType,
+            Rarity = weaponData.rarity
         };
     }
 
-    public virtual void RefillAmmo()
-    {
-        int magSize = weaponData ? weaponData.magazineSize : 30;
-        BulletsLeft = magSize;
-    }
+    public virtual void RefillAmmo() => BulletsLeft = weaponData.magazineSize;
 
-    public virtual float GetDamageAtDistance(float distance)
-    {
-        if (weaponData != null)
-        {
-            return weaponData.GetDamageAtDistance(distance);
-        }
-        return weaponData ? weaponData.damage : 25;
-    }
+    public virtual float GetDamageAtDistance(float distance) => weaponData.GetDamageAtDistance(distance);
 
-    public void SignalReloadComplete()
+    public void SignalReloadComplete() => reloadEventSignaled = true;
+
+    public void EnableAnimator()
     {
-        reloadEventSignaled = true;
+        if (weaponAnimator != null)
+            weaponAnimator.enabled = true;
     }
 
     #endregion Public API
 
-    #region Getters
+    #region Helpers
 
     private string GetReloadAnimationName()
     {
-        if (weaponData == null) return "RELOAD";
-
-        // Last bullet — 1 round chambered, only valid on closed bolt
-        if (BulletsLeft == 1 && !weaponData.isOpenBolt)
-            return weaponData.lastBulletReloadAnimation;
-
-        // Tactical — rounds still in mag
-        if (BulletsLeft > 1)
-            return weaponData.tacticalReloadAnimation;
-
-        // Standard — mag fully empty
+        if (BulletsLeft == 1 && !weaponData.isOpenBolt) return weaponData.lastBulletReloadAnimation;
+        if (BulletsLeft > 1) return weaponData.tacticalReloadAnimation;
         return weaponData.reloadAnimation;
     }
 
-    private float GetReloadTime()
-    {
-        if (weaponData == null) return 2f;
-
-        if (BulletsLeft == 1 && !weaponData.isOpenBolt)
-            return weaponData.lastBulletReloadTime;
-
-        if (BulletsLeft > 1)
-            return weaponData.tacticalReloadTime;
-
-        return weaponData.reloadTime;
-    }
+    #endregion Helpers
 }
-
-#endregion Getters
-
-#region Support Classes
-
-namespace Weapon
-{
-    [System.Serializable]
-    public class WeaponInfo
-    {
-        public WeaponModel Model;
-        public string WeaponName;
-        public int Damage;
-        public float FireRate;
-        public float Range;
-        public int BulletsLeft;
-        public int MagSize;
-        public ShootingMode CurrentFireMode;
-        public ShootingMode[] AvailableFireModes;
-        public bool IsReloading;
-        public bool IsADS;
-        public AmmoType AmmoType;
-        public WeaponRarity Rarity;
-    }
-
-    public enum WeaponModel
-    {
-        HandgunM1911,
-        AK47,
-        M4A1,
-        Shotgun,
-        SniperRifle
-    }
-
-    public enum ShootingMode
-    {
-        Semi,
-        Burst,
-        Auto
-    }
-
-    public enum GunType
-    {
-        MagFed,
-        RoundFed,
-        Knife
-    }
-}
-
-#endregion Support Classes
-
-#region Weapon Configuration
-
-[System.Serializable]
-public class WeaponStats
-{
-    [Header("Basic Properties")]
-    public int damage = 25;
-
-    public float fireRate = 600f;
-    public float range = 100f;
-    public float reloadTime = 2f;
-    public int magSize = 30;
-
-    [Header("Ballistics")]
-    public float muzzleVelocity = 400f;
-
-    public float hipSpread = 2f;
-    public float adsSpread = 0.5f;
-    public bool useGravity = false;
-
-    [Header("Burst Mode")]
-    public int bulletsPerBurst = 3;
-
-    public float burstDelay = 0.1f;
-}
-
-[System.Serializable]
-public class WeaponReferences
-{
-    [Header("Projectile")]
-    public ProjectileType projectileType = ProjectileType.Bullet;
-
-    public Transform bulletSpawn;
-
-    [Header("Effects")]
-    public ParticleSystem muzzleFlash;
-
-    public GameObject muzzleLight;
-    public Transform ejectionPort;
-    public GameObject shellCasing;
-
-    [Header("Animation")]
-    public Animator weaponAnimator;
-
-    [Header("Recoil References")]
-    public Transform viewmodelTransform;
-
-    public Transform cameraTransform;
-}
-
-#endregion Weapon Configuration
 
 #endregion

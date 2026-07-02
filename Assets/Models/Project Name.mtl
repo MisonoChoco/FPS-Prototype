@@ -1,0 +1,12 @@
+newmtl lambert5SG_5f0a707f-573c-49a7-9465-7c33dc6eff0f
+Kd 0.660 0.660 0.660
+d 1.000
+newmtl lambert4SG_8ed8a46b-369b-4b19-81ba-9d118f755b26
+Kd 0.000 0.000 0.000
+d 1.000
+newmtl Mesh material 1_5b14c558-6f33-439c-99bc-7aa8f5b9112b
+Kd 1.000 0.847 0.659
+d 1.000
+newmtl Mesh material_de9d6f2f-8d10-40be-aded-8c1dded36455
+Kd 1.000 0.847 0.659
+d 1.000

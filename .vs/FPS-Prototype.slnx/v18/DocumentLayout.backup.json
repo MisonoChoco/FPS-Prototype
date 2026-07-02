@@ -3,20 +3,80 @@
   "WorkspaceRootPath": "E:\\UNITIES\\FPS-Prototype\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\zombiepatrollingstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\zombiepatrollingstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\zombiechasingstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\zombiechasingstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\zombieattackstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\zombieattackstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\zombieaudio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\zombieaudio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\zombieaudiomanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\zombieaudiomanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\zombie.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\zombie.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\soundmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\soundmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\weaponbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weaponbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\camerafollow\\sakanfar productions\\scripts\\camerafollow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\camerafollow\\sakanfar productions\\scripts\\camerafollow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\weaponuniversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weaponuniversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\hudmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\hudmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\weapondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weapondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\weaponuniversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weaponuniversal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\camerafollow\\sakanfar productions\\scripts\\camerafollow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\camerafollow\\sakanfar productions\\scripts\\camerafollow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\crosshaircontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\crosshaircontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\animationevents.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\animationevents.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\weaponmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\weaponmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\ammobox.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\ammobox.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\throwable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\throwable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|e:\\unities\\fps-prototype\\assets\\scripts\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,11 +90,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 19,
               "Title": "Player.cs",
               "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Player.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Player.cs",
@@ -42,60 +102,247 @@
               "RelativeToolTip": "Assets\\Scripts\\Player.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAJIAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-01T13:12:50.359Z",
+              "WhenOpened": "2026-06-23T07:56:25.348Z",
               "IsPinned": true
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 12,
               "Title": "WeaponData.cs",
               "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponData.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponData.cs",
               "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponData.cs",
               "RelativeToolTip": "Assets\\Scripts\\WeaponData.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAIwDoAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAABQAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-21T07:52:50.925Z",
+              "WhenOpened": "2026-06-23T07:56:25.387Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ZombieAudioManager.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieAudioManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ZombieAudioManager.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieAudioManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ZombieAudioManager.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAAADwAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T11:37:59.844Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CameraFollow.cs",
-              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
-              "RelativeDocumentMoniker": "Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
-              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
-              "RelativeToolTip": "Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
-              "ViewState": "AgIAACIBAAAAAAAAAAAkwCYBAAARAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "ZombieAudio.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieAudio.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ZombieAudio.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieAudio.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ZombieAudio.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAIA1wEwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-18T14:20:05.136Z",
+              "WhenOpened": "2026-07-02T11:37:49.945Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Zombie.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Zombie.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Zombie.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Zombie.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Zombie.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T11:35:01.076Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "WeaponBase.cs",
-              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponBase.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponBase.cs",
-              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponBase.cs",
-              "RelativeToolTip": "Assets\\Scripts\\WeaponBase.cs",
-              "ViewState": "AgIAABACAAAAAAAAAAAkwBoCAABWAAAAAAAAAA==",
+              "Title": "ZombiePatrollingState.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombiePatrollingState.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ZombiePatrollingState.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombiePatrollingState.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ZombiePatrollingState.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAAAQwDAAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-16T09:52:03.044Z",
+              "WhenOpened": "2026-07-02T11:29:35.932Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "ZombieAttackState.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieAttackState.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ZombieAttackState.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieAttackState.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ZombieAttackState.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAhwCgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T11:29:24.808Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ZombieChasingState.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieChasingState.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ZombieChasingState.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\ZombieChasingState.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ZombieChasingState.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAAwCoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T11:28:49.743Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Enemy.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Enemy.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Enemy.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Enemy.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Enemy.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAQwC8AAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-02T11:21:50.878Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "AmmoBox.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\AmmoBox.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AmmoBox.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\AmmoBox.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AmmoBox.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-27T09:59:09.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Bullet.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Bullet.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Bullet.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Bullet.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Bullet.cs",
+              "ViewState": "AgIAALQAAAAAAAAAAAAgwL8AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-27T02:57:55.5Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Throwable.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Throwable.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Throwable.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\Throwable.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Throwable.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAswFQAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-26T12:49:53.956Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "WeaponManager.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponManager.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\WeaponManager.cs",
+              "ViewState": "AgIAAF4BAAAAAAAAAAAuwGcBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-25T16:07:16.896Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "HUDManager.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\HUDManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\HUDManager.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\HUDManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\HUDManager.cs",
+              "ViewState": "AgIAADIBAAAAAAAAAAAAADgBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-23T08:11:20.214Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "CrosshairController.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\CrosshairController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\CrosshairController.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\CrosshairController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\CrosshairController.cs",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAuwG0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-23T07:56:25.358Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SoundManager.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\SoundManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SoundManager.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\SoundManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SoundManager.cs",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAhwIUAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-23T07:56:25.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "AnimationEvents.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\AnimationEvents.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\AnimationEvents.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\AnimationEvents.cs",
+              "RelativeToolTip": "Assets\\Scripts\\AnimationEvents.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAuwCoAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-23T07:56:25.379Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CameraFollow.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
+              "RelativeDocumentMoniker": "Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
+              "RelativeToolTip": "Assets\\cameraFollow\\Sakanfar Productions\\Scripts\\CameraFollow.cs",
+              "ViewState": "AgIAACwBAAAAAAAAAAAuwDkBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-23T07:56:25.397Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "WeaponBase.cs",
+              "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponBase.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponBase.cs",
+              "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponBase.cs",
+              "RelativeToolTip": "Assets\\Scripts\\WeaponBase.cs",
+              "ViewState": "AgIAABkCAAAAAAAAAAAAABQCAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-23T07:56:25.405Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "WeaponUniversal.cs",
               "DocumentMoniker": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponUniversal.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\WeaponUniversal.cs",
               "ToolTip": "E:\\UNITIES\\FPS-Prototype\\Assets\\Scripts\\WeaponUniversal.cs",
               "RelativeToolTip": "Assets\\Scripts\\WeaponUniversal.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAAAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-16T09:47:24.482Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-23T07:56:25.416Z"
             }
           ]
         }

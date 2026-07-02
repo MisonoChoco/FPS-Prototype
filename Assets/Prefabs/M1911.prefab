@@ -88,6 +88,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1673055001057796108
 GameObject:
@@ -177,6 +178,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &2343581796876248102
 GameObject:
@@ -266,7 +268,39 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2674578287382554260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2919112883173662295}
+  m_Layer: 0
+  m_Name: Casing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2919112883173662295
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2674578287382554260}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.0129, y: 0.1036, z: 0.072}
+  m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2192778067471895318}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2940096833195294591
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +421,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &2954377986082800035
 GameObject:
@@ -401,6 +436,7 @@ GameObject:
   - component: {fileID: 1405736891299541404}
   - component: {fileID: 4116274173408124048}
   - component: {fileID: 4785570434010781172}
+  - component: {fileID: 1309118328600262822}
   m_Layer: 6
   m_Name: M1911
   m_TagString: Untagged
@@ -432,6 +468,7 @@ Transform:
   - {fileID: 1973094375457734787}
   - {fileID: 275825317165871129}
   - {fileID: 1235404710346288846}
+  - {fileID: 2919112883173662295}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1839161829546094777
@@ -447,23 +484,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UniversalWeapon
   weaponData: {fileID: 11400000, guid: e0080cdd5ac65a944aa06ce8c4e27adb, type: 2}
-  references:
-    projectileType: 0
-    bulletSpawn: {fileID: 6988109739819662707}
-    muzzleFlash: {fileID: 463724243045301352}
-    muzzleLight: {fileID: 0}
-    ejectionPort: {fileID: 2138972896071450174}
-    shellCasing: {fileID: 1046677776983374096, guid: 53f1328754e99b7459427f98b6f74222, type: 3}
-    weaponAnimator: {fileID: 1405736891299541404}
-    viewmodelTransform: {fileID: 2192778067471895318}
-    cameraTransform: {fileID: 0}
-  cameraRecoilHolder: {fileID: 0}
+  bulletSpawn: {fileID: 6988109739819662707}
+  weaponAnimator: {fileID: 1405736891299541404}
+  muzzleFlash: {fileID: 463724243045301352}
+  muzzleLight: {fileID: 0}
+  ejectionPort: {fileID: 2919112883173662295}
+  shellCasing: {fileID: 1046677776983374096, guid: 53f1328754e99b7459427f98b6f74222, type: 3}
   gunPositionHolder: {fileID: 0}
   magazineDropPoint: {fileID: 1235404710346288846}
   magazineDropForce: {x: 0, y: 0, z: 0}
   magazineDropTorque: 1
   weaponModel: 0
   availableShootingModes: 00000000
+  leftArm: {fileID: 0}
+  rightArm: {fileID: 0}
   magInGun: {fileID: 4849729334492324104}
 --- !u!95 &1405736891299541404
 Animator:
@@ -478,7 +512,7 @@ Animator:
   m_Controller: {fileID: 22100000, guid: bcc8b9b8885c2124aaaed8a43554d7d7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -526,6 +560,19 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &1309118328600262822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2954377986082800035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a327c288f95247f40ab31be5a3a78ef5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponAnimationEvents
+  weaponBase: {fileID: 0}
 --- !u!1 &3352942384817220023
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,6 +661,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3487263938575251950
 GameObject:
@@ -766,6 +814,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &4783879719768657719
 GameObject:
@@ -855,6 +904,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &6953854462580748456
 GameObject:
@@ -5567,7 +5617,7 @@ ParticleSystem:
     vectorLabel1_3: W
 --- !u!199 &7392546366728748936
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5613,6 +5663,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -5644,7 +5695,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1 &7213084565792947465
 GameObject:
   m_ObjectHideFlags: 0
@@ -5733,6 +5783,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8190099100526702885
 GameObject:
@@ -5822,4 +5873,5 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}

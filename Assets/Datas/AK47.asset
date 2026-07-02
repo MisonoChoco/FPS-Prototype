@@ -17,16 +17,22 @@ MonoBehaviour:
   gunType: 0
   description: legendary
   weaponIcon: {fileID: 21300000, guid: 2ef11f94006f3a74fa737f41532c963b, type: 2}
+  ammoIcon: {fileID: 21300000, guid: c9590392e78644b419b2623a50cd8001, type: 2}
   baseViewmodelPosition: {x: 0.4, y: -0.44, z: -0.4}
   baseViewmodelRotation: {x: 0, y: 0, z: 0}
   inspectDuration: 13
-  damage: 21
+  damage: 22
   fireRate: 550
   range: 100
-  magazineSize: 30
+  magazineSize: 25
   muzzleVelocity: 400
-  hipSpread: 1.5
-  adsSpread: 0
+  hipSpread: 10
+  adsSpread: 0.5
+  spreadPerShot: 4
+  spreadMax: 40
+  spreadRecoveryRate: 50
+  spreadRecoveryDelay: 0.3
+  bulletSpreadScale: 0.003
   useGravity: 1
   dropOffStart: 50
   dropOffEnd: 100
@@ -40,15 +46,15 @@ MonoBehaviour:
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 10
-  recoilRollIntensity: 3
-  recoilReturnSpeed: 20
-  hipFireRecoil: {x: 10, y: 5, z: 0}
-  adsFireRecoil: {x: 2.5, y: 1.2, z: 0}
+  recoilRotationSpeed: 20
+  recoilRollIntensity: 4
+  recoilReturnSpeed: 5
+  hipFireRecoil: {x: 2, y: 1, z: 0}
+  adsFireRecoil: {x: 1, y: 0.5, z: 0}
   hRecoil: 1
   vRecoil: 1.25
   gunRecoilPositionSpeed: 40
-  gunPositionReturnSpeed: 20
+  gunPositionReturnSpeed: 10
   recoilKickBackHip: {x: 0.05, y: -0.1, z: -0.5}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
   gunRecoilRotationSpeed: -15
@@ -81,13 +87,18 @@ MonoBehaviour:
   cycleAnimation: CYCLE
   cycleSounds: []
   magazineDropPrefab: {fileID: 1919992424398036836, guid: 0bdd831cc991d1c468dbdcdb381ee6b9, type: 3}
-  shootSound: {fileID: 8300000, guid: ad72d2aa6b54bab4fa77754d10e02cdc, type: 3}
-  reloadSound: {fileID: 8300000, guid: ff2d8fff2c42a4143b78bd9a89f42597, type: 3}
+  shootSound: {fileID: 8300000, guid: fae457cc4c56d234cbad2d162cf146f0, type: 3}
+  reloadSound: {fileID: 0}
   emptySound: {fileID: 8300000, guid: 85bf5b2769362e147842ec4d7afd8b08, type: 3}
   switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
+  reloadRaiseSound: {fileID: 8300000, guid: 839e80738a1b0c94c823cda5e6840c97, type: 3}
+  reloadEndSound: {fileID: 8300000, guid: 8fb11b4f87d932e4c97d57d8514395ce, type: 3}
   magOutSound: {fileID: 0}
   magInSound: {fileID: 0}
-  boltPullSound: {fileID: 0}
+  emptyMagOutSound: {fileID: 8300000, guid: e931bbbf584ad6546bb15051a5bd9f47, type: 3}
+  emptyMagInSound: {fileID: 8300000, guid: 7168dfae0bf6f66409f8889b01d74623, type: 3}
+  magHitSound: {fileID: 8300000, guid: 0e9439048ce4833449b12d2832014aae, type: 3}
+  boltChamberSound: {fileID: 8300000, guid: b434736c6632d42429e9277262de0a74, type: 3}
   boltBackSound: {fileID: 0}
   boltForwardSound: {fileID: 0}
   audioVolume: 1
@@ -106,14 +117,11 @@ MonoBehaviour:
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
   isOpenBolt: 0
-  reloadTime: 4
-  tacticalReloadTime: 1.5
-  lastBulletReloadTime: 2.3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1
   recoilPattern: {x: 0, y: 1, z: -0.5}
-  ammoType: 1
+  ammoType: 2
   maxAmmoReserve: 240
   infiniteAmmo: 0
   rarity: 0

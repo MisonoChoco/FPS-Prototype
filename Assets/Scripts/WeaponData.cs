@@ -18,6 +18,7 @@ public class WeaponData : ScriptableObject
     public string description = "A standard weapon";
 
     public Sprite weaponIcon;
+    public Sprite ammoIcon;
 
     [Header("Viewmodel")]
     public Vector3 baseViewmodelPosition = Vector3.zero;
@@ -37,7 +38,15 @@ public class WeaponData : ScriptableObject
 
     public float hipSpread = 2f;
     public float adsSpread = 0.5f;
+    public float spreadPerShot = 0.5f;    // buildup added per shot fired
+    public float spreadMax = 8f;          // hard cap
+    public float spreadRecoveryRate = 4f; // units per second recovery
+    public float spreadRecoveryDelay = 0.15f; // seconds after last shot before recovery starts
+    public float bulletSpreadScale = 0.003f; // converts spread units → actual bullet deviation
+
+    [Header("Damage Drop-Off")]
     public bool useGravity = false;
+
     public float dropOffStart = 50f; // Distance where damage starts dropping
     public float dropOffEnd = 100f; // Distance where damage reaches minimum
     public float minDamageMultiplier = 0.3f; // Minimum damage as percentage of base damage
@@ -135,10 +144,15 @@ public class WeaponData : ScriptableObject
     public AudioClip switchModeSound;
 
     [Header("Reload Audio Events")]
-    public AudioClip magOutSound;
+    public AudioClip reloadRaiseSound;
 
+    public AudioClip reloadEndSound;
+    public AudioClip magOutSound;
     public AudioClip magInSound;
-    public AudioClip boltPullSound;
+    public AudioClip emptyMagOutSound;
+    public AudioClip emptyMagInSound;
+    public AudioClip magHitSound;
+    public AudioClip boltChamberSound;
     public AudioClip boltBackSound;   // HK/bolt-action only
     public AudioClip boltForwardSound; // HK/bolt-action only
 
@@ -168,12 +182,6 @@ public class WeaponData : ScriptableObject
     public string tacticalReloadAnimation = "RELOAD_TACTICAL";
     public string lastBulletReloadAnimation = "RELOAD_LASTBULLET";
     public bool isOpenBolt = false; // true for open bolt guns like some SMGs
-
-    [Header("Reload Timing")]
-    public float reloadTime = 2f;
-
-    public float tacticalReloadTime = 1.5f;
-    public float lastBulletReloadTime = 2.3f;
 
     [Header("Weapon Handling")]
     public float aimSpeed = 8f; // How fast to aim down sights
@@ -205,7 +213,6 @@ public class WeaponData : ScriptableObject
         magazineSize = Mathf.Max(1, magazineSize);
         damage = Mathf.Max(1, damage);
         fireRate = Mathf.Max(1f, fireRate);
-        reloadTime = Mathf.Max(0.1f, reloadTime);
         range = Mathf.Max(1f, range);
         dropOffEnd = Mathf.Max(dropOffStart, dropOffEnd);
 
@@ -244,6 +251,42 @@ public class WeaponData : ScriptableObject
 }
 
 #region Supporting Enums
+
+namespace Weapon
+{
+    public enum WeaponModel
+    {
+        HandgunM1911,
+        AK47,
+        MCX,
+        Shotgun,
+        SniperRifle
+    }
+
+    public enum ShootingMode
+    { Semi, Burst, Auto }
+
+    public enum GunType
+    { MagFed, RoundFed, Knife }
+
+    [System.Serializable]
+    public class WeaponInfo
+    {
+        public WeaponModel Model;
+        public string WeaponName;
+        public int Damage;
+        public float FireRate;
+        public float Range;
+        public int BulletsLeft;
+        public int MagSize;
+        public ShootingMode CurrentFireMode;
+        public ShootingMode[] AvailableFireModes;
+        public bool IsReloading;
+        public bool IsADS;
+        public AmmoType AmmoType;
+        public WeaponRarity Rarity;
+    }
+}
 
 public enum AmmoType
 {

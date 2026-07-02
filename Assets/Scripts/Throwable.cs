@@ -61,50 +61,39 @@ public class Throwable : MonoBehaviour
 
     private void SmokeGrenadeEffect()
     {
-        {
-            //visual effect
-            GameObject smokeEffect = GlobalReference.Instance.SmokeExplosionEffect;
-            Instantiate(smokeEffect, transform.position, transform.rotation);
+        GameObject smokeEffect = GlobalReference.Instance.SmokeExplosionEffect;
+        Instantiate(smokeEffect, transform.position, transform.rotation);
 
-            //Sound
-            SoundManager.Instance.throwablesChannel.PlayOneShot(SoundManager.Instance.grenadeSound);
+        SoundManager.Instance.PlaySmokeSound();
 
-            //physical effect
-            Collider[] colliders = Physics.OverlapSphere(transform.position, dmgRadius);
-            foreach (Collider objectInRange in colliders)
-            {
-                Rigidbody rb = objectInRange.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    //smoking here...
-                }
-            }
-        }
-    }
-
-    private void GrenadeEffect()
-    {
-        //visual effect
-        GameObject fragEffect = GlobalReference.Instance.FragExplosionEffect;
-        Instantiate(fragEffect, transform.position, transform.rotation);
-
-        //Sound
-        SoundManager.Instance.throwablesChannel.PlayOneShot(SoundManager.Instance.grenadeSound);
-
-        //physical effect
         Collider[] colliders = Physics.OverlapSphere(transform.position, dmgRadius);
         foreach (Collider objectInRange in colliders)
         {
             Rigidbody rb = objectInRange.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.AddExplosionForce(explosionForce, transform.position, dmgRadius);
+                // smoking here...
             }
+        }
+    }
 
-            if (objectInRange.gameObject.GetComponent<Enemy>())
-            {
-                objectInRange.gameObject.GetComponent<Enemy>().TakeDamage(100);
-            }
+    private void GrenadeEffect()
+    {
+        GameObject fragEffect = GlobalReference.Instance.FragExplosionEffect;
+        Instantiate(fragEffect, transform.position, transform.rotation);
+
+        SoundManager.Instance.PlayGrenadeSound();
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, dmgRadius);
+        foreach (Collider objectInRange in colliders)
+        {
+            Rigidbody rb = objectInRange.GetComponent<Rigidbody>();
+            if (rb != null)
+                rb.AddExplosionForce(explosionForce, transform.position, dmgRadius);
+
+            Enemy enemy = objectInRange.GetComponent<Enemy>();
+            if (enemy != null)
+                enemy.TakeDamage(100);
         }
     }
 }

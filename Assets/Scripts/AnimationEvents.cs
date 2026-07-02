@@ -16,7 +16,22 @@ public class WeaponAnimationEvents : MonoBehaviour
         SoundManager.Instance?.weaponChannel?.PlayOneShot(clip);
     }
 
+    //reload done, ammo count immediately
+    public void ReloadCompleted()
+    {
+        weaponBase?.SignalReloadComplete();
+    }
+
     // ── Reload audio events ──────────────────────────────────────
+    public void ReloadRaise()
+    {
+        PlayClip(weaponBase?.Data?.reloadRaiseSound);
+    }
+
+    public void ReloadEnd()
+    {
+        PlayClip(weaponBase?.Data?.reloadEndSound);
+    }
 
     public void MagOut()
     {
@@ -26,15 +41,26 @@ public class WeaponAnimationEvents : MonoBehaviour
     public void MagIn()
     {
         PlayClip(weaponBase?.Data?.magInSound);
-        // Tactical reload completes here — mag is seated, bullet count updates
-        weaponBase?.SignalReloadComplete();
     }
 
-    public void BoltPull()
+    public void EmptyMagOut()
     {
-        PlayClip(weaponBase?.Data?.boltPullSound);
-        // Empty reload and last bullet reload complete here — round is chambered
-        weaponBase?.SignalReloadComplete();
+        PlayClip(weaponBase?.Data?.emptyMagOutSound);
+    }
+
+    public void EmptyMagIn()
+    {
+        PlayClip(weaponBase?.Data?.emptyMagInSound);
+    }
+
+    public void MagHit()
+    {
+        PlayClip(weaponBase?.Data?.magHitSound);
+    }
+
+    public void BoltChamber()
+    {
+        PlayClip(weaponBase?.Data?.boltChamberSound);
     }
 
     // ── HK / bolt-action events ──────────────────────────────────
@@ -47,7 +73,5 @@ public class WeaponAnimationEvents : MonoBehaviour
     public void BoltForward()
     {
         PlayClip(weaponBase?.Data?.boltForwardSound);
-        // For HK/bolt-action, completion is on bolt going forward, not pull
-        weaponBase?.SignalReloadComplete();
     }
 }

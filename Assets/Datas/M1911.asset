@@ -17,16 +17,22 @@ MonoBehaviour:
   gunType: 0
   description: pistul
   weaponIcon: {fileID: 21300000, guid: ee5d848ad03f10640a6cf38f94489bf5, type: 2}
-  baseViewmodelPosition: {x: 0.22, y: 0.2, z: -0.2}
-  baseViewmodelRotation: {x: 0, y: 0, z: 180}
+  ammoIcon: {fileID: 21300000, guid: 54717d5faf98270438bef86b0e7b1d2f, type: 2}
+  baseViewmodelPosition: {x: 0.3, y: 0.15, z: -0.15}
+  baseViewmodelRotation: {x: 0, y: 0, z: 0}
   inspectDuration: 12
   damage: 30
   fireRate: 300
   range: 100
   magazineSize: 7
   muzzleVelocity: 300
-  hipSpread: 1
+  hipSpread: 8
   adsSpread: 0
+  spreadPerShot: 6
+  spreadMax: 35
+  spreadRecoveryRate: 50
+  spreadRecoveryDelay: 0.5
+  bulletSpreadScale: 0.003
   useGravity: 1
   dropOffStart: 50
   dropOffEnd: 100
@@ -41,7 +47,7 @@ MonoBehaviour:
   haveBobbing: 1
   haveJumpSway: 1
   recoilRotationSpeed: 40
-  recoilRollIntensity: 3
+  recoilRollIntensity: 5
   recoilReturnSpeed: 20
   hipFireRecoil: {x: 1, y: 1.5, z: 0}
   adsFireRecoil: {x: 0.5, y: 1, z: 0}
@@ -85,9 +91,14 @@ MonoBehaviour:
   reloadSound: {fileID: 8300000, guid: 796cdd4a78a1ac0419ea1e3c022957fe, type: 3}
   emptySound: {fileID: 8300000, guid: 91f2502c5acc50f429f59cc4e3c46bd9, type: 3}
   switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
+  reloadRaiseSound: {fileID: 0}
+  reloadEndSound: {fileID: 0}
   magOutSound: {fileID: 0}
   magInSound: {fileID: 0}
-  boltPullSound: {fileID: 0}
+  emptyMagOutSound: {fileID: 0}
+  emptyMagInSound: {fileID: 0}
+  magHitSound: {fileID: 0}
+  boltChamberSound: {fileID: 0}
   boltBackSound: {fileID: 0}
   boltForwardSound: {fileID: 0}
   audioVolume: 1
@@ -106,9 +117,6 @@ MonoBehaviour:
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
   isOpenBolt: 0
-  reloadTime: 2.5
-  tacticalReloadTime: 1.5
-  lastBulletReloadTime: 2.3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1
