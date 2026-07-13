@@ -93,14 +93,14 @@ MonoBehaviour:
   switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
   reloadRaiseSound: {fileID: 8300000, guid: 839e80738a1b0c94c823cda5e6840c97, type: 3}
   reloadEndSound: {fileID: 8300000, guid: 8fb11b4f87d932e4c97d57d8514395ce, type: 3}
-  magOutSound: {fileID: 0}
-  magInSound: {fileID: 0}
+  magOutSound: {fileID: 8300000, guid: 7572161d6dea3104bba7d0f00543a101, type: 3}
+  magInSound: {fileID: 8300000, guid: eee7aa8036b07cd439566ab68351df7c, type: 3}
   emptyMagOutSound: {fileID: 8300000, guid: e931bbbf584ad6546bb15051a5bd9f47, type: 3}
   emptyMagInSound: {fileID: 8300000, guid: 7168dfae0bf6f66409f8889b01d74623, type: 3}
   magHitSound: {fileID: 8300000, guid: 0e9439048ce4833449b12d2832014aae, type: 3}
   boltChamberSound: {fileID: 8300000, guid: b434736c6632d42429e9277262de0a74, type: 3}
-  boltBackSound: {fileID: 0}
-  boltForwardSound: {fileID: 0}
+  boltBackSound: {fileID: 8300000, guid: e34862dc60cb3b746a14265b77ccb8d3, type: 3}
+  boltForwardSound: {fileID: 8300000, guid: e04fc25e7ee564d4d896f09fc408ec27, type: 3}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 0}

@@ -26,6 +26,7 @@ public class Enemy : MonoBehaviour
             animator.SetTrigger(Random.Range(0, 2) == 0 ? "DieBack" : "DieForward");
             zombieAudio?.PlayDeath();
             SoundManager.Instance?.PlayKillFeedback();
+            KillFeedManager.Instance?.AddKill(gameObject.name);
         }
         else
         {

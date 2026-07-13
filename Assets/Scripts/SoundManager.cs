@@ -83,12 +83,6 @@ public class SoundManager : MonoBehaviour
             weaponChannel.PlayOneShot(ShellLoadSounds[randomIndex]);
     }
 
-    public void PlayEmptyGunSound()
-    {
-        if (emptyGunClick != null && weaponChannel != null)
-            weaponChannel.PlayOneShot(emptyGunClick);
-    }
-
     public void PlayKillFeedback()
     {
         if (killFeedbackSound != null && playerChannel != null)

@@ -21,6 +21,7 @@ public class HUDManager : MonoBehaviour
 
     public Image unActiveWeaponUI;
     public Image unActiveWeaponUI2;
+    public TextMeshProUGUI CurrentItemText;
 
     [Header("Throwables")]
     public Image lethalUI;
@@ -275,6 +276,7 @@ public class HUDManager : MonoBehaviour
 
             MagazineAmmoUI.text = $"{weaponInfo.BulletsLeft}";
             TotalAmmoUI.text = $"{WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.Data.ammoType)}";
+            CurrentItemText.text = activeWeapon.Data.weaponName;
 
             AmmoTypeUI.sprite = activeWeapon.Data.ammoIcon ?? emptySlot;
             activeWeaponUI.sprite = activeWeapon.Data.weaponIcon ?? emptySlot;
@@ -288,6 +290,7 @@ public class HUDManager : MonoBehaviour
         {
             MagazineAmmoUI.text = "";
             TotalAmmoUI.text = "";
+            CurrentItemText.text = "";
             AmmoTypeUI.sprite = emptySlot;
             activeWeaponUI.sprite = emptySlot;
             unActiveWeaponUI.sprite = emptySlot;

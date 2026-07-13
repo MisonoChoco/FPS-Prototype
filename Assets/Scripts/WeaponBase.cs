@@ -801,7 +801,15 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void PlayShellLoadSound() => SoundManager.Instance?.PlayShellLoadSound();
 
-    protected virtual void PlayEmptySound() => SoundManager.Instance?.weaponChannel?.Play();
+    private float lastEmptySoundTime = -999f;
+    private float emptySoundCooldown = 0.1f;
+
+    protected virtual void PlayEmptySound()
+    {
+        if (Time.time - lastEmptySoundTime < emptySoundCooldown) return;
+        lastEmptySoundTime = Time.time;
+        SoundManager.Instance?.PlayShootingSound(weaponData.emptySound);
+    }
 
     #endregion Sounds
 
