@@ -815,7 +815,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     #region Public API
 
-    public virtual void SetActiveWeapon(bool active)
+    public virtual void SetActiveWeapon(bool active, bool isFirstPickup = false)
     {
         IsActiveWeapon = active;
 
@@ -847,6 +847,26 @@ public abstract class WeaponBase : MonoBehaviour
         }
         else
         {
+            EnableAnimator();
+
+            if (weaponAnimator != null)
+            {
+                // Reset common state triggers to avoid overlapping animations
+                weaponAnimator.ResetTrigger("RELOAD");
+                weaponAnimator.ResetTrigger("INSPECT");
+
+                if (isFirstPickup)
+                {
+                    // Trigger your "First Equip" animation (e.g., pulling back charging handle on pickup)
+                    weaponAnimator.SetTrigger("FIRSTEQUIP");
+                }
+                else
+                {
+                    // Trigger your standard "Switch / Draw" animation
+                    weaponAnimator.SetTrigger("SWITCH");
+                }
+            }
+
             if (weaponData.requiresCycling && !IsCycled && !isCycling)
                 StartCycle();
         }

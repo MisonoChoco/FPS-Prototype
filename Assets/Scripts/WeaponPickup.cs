@@ -221,7 +221,7 @@ public class WeaponPickup : MonoBehaviour
 
         return weaponComponent.weaponModel switch
         {
-            Weapon.WeaponModel.HandgunM1911 => "M1911 Pistol",
+            Weapon.WeaponModel.M1911 => "M1911 Pistol",
             Weapon.WeaponModel.AK47 => "AK-47 Rifle",
             _ => weaponComponent.weaponModel.ToString()
         };

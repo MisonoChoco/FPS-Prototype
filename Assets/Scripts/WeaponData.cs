@@ -11,7 +11,7 @@ public class WeaponData : ScriptableObject
     [Header("Basic Information")]
     public string weaponName = "Default Weapon";
 
-    public WeaponModel weaponModel = WeaponModel.HandgunM1911;
+    public WeaponModel weaponModel = WeaponModel.M1911;
     public GunType gunType = GunType.MagFed;
 
     [TextArea(2, 4)]
@@ -191,7 +191,7 @@ public class WeaponData : ScriptableObject
     public Vector3 recoilPattern = new Vector3(0, 1, -0.5f); // X=horizontal, Y=vertical, Z=rotational
 
     [Header("Ammo Configuration")]
-    public AmmoType ammoType = AmmoType.Rifle556;
+    public AmmoType ammoType;
 
     public int maxAmmoReserve = 240; // Maximum reserve ammo
     public bool infiniteAmmo = false;
@@ -256,11 +256,16 @@ namespace Weapon
 {
     public enum WeaponModel
     {
-        HandgunM1911,
+        M1911,
         AK47,
         MCX,
         Shotgun,
-        SniperRifle
+        AWM,
+        M4,
+        Deagle,
+        MP5,
+        M14,
+        AKM
     }
 
     public enum ShootingMode
@@ -290,12 +295,17 @@ namespace Weapon
 
 public enum AmmoType
 {
-    Pistol9mm,
-    Rifle556,
-    Rifle762,
-    Shotgun12Gauge,
-    SniperRifle,
-    Special
+    LongRifle22,
+    Parabellum9mm,
+    ACP45,
+    NATO556,
+    Soviet762,
+    LapuaMagnum338,
+    Gauge12,
+    Winchester308,
+    ActionExpress50,
+    BMG50,
+    Rocket
 }
 
 public enum WeaponRarity

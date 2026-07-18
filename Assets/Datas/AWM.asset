@@ -26,12 +26,12 @@ MonoBehaviour:
   range: 200
   magazineSize: 5
   muzzleVelocity: 1200
-  hipSpread: 5
+  hipSpread: 25
   adsSpread: 0
-  spreadPerShot: 6
-  spreadMax: 50
-  spreadRecoveryRate: 40
-  spreadRecoveryDelay: 0.4
+  spreadPerShot: 40
+  spreadMax: 60
+  spreadRecoveryRate: 30
+  spreadRecoveryDelay: 0.35
   bulletSpreadScale: 0.003
   useGravity: 1
   dropOffStart: 50
@@ -46,19 +46,19 @@ MonoBehaviour:
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 6
-  recoilRollIntensity: 0.5
-  recoilReturnSpeed: 25
-  hipFireRecoil: {x: 4, y: 4, z: 4}
-  adsFireRecoil: {x: 2, y: 2, z: 2}
-  hRecoil: 0.215
-  vRecoil: 0.221
-  gunRecoilPositionSpeed: 8
-  gunPositionReturnSpeed: 10
-  recoilKickBackHip: {x: 0.015, y: 0, z: 0.05}
+  recoilRotationSpeed: 35
+  recoilRollIntensity: 12.5
+  recoilReturnSpeed: 3
+  hipFireRecoil: {x: 5, y: 2.5, z: 0}
+  adsFireRecoil: {x: 2, y: 2, z: 0}
+  hRecoil: 2
+  vRecoil: 6
+  gunRecoilPositionSpeed: 40
+  gunPositionReturnSpeed: 4
+  recoilKickBackHip: {x: 0.12, y: 0.22, z: -0.88}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 8
-  gunRotationReturnSpeed: 38
+  gunRecoilRotationSpeed: 20
+  gunRotationReturnSpeed: 10
   recoilRotationHip: {x: 10, y: 5, z: 7}
   recoilRotationAds: {x: 10, y: 4, z: 6}
   rotationSwayIntensity: 10
@@ -87,7 +87,7 @@ MonoBehaviour:
   cycleAnimation: CYCLE
   cycleSounds: []
   magazineDropPrefab: {fileID: 0}
-  shootSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 53ea1251c8b337946b719bfcf37b41e4, type: 3}
   reloadSound: {fileID: 0}
   emptySound: {fileID: 0}
   switchModeSound: {fileID: 0}

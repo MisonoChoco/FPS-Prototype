@@ -21,8 +21,8 @@ MonoBehaviour:
   baseViewmodelPosition: {x: 0.32, y: -0.01, z: 0.25}
   baseViewmodelRotation: {x: 0.5, y: 0, z: 0}
   inspectDuration: 12
-  damage: 18
-  fireRate: 685
+  damage: 16
+  fireRate: 825
   range: 100
   magazineSize: 30
   muzzleVelocity: 400
@@ -99,8 +99,8 @@ MonoBehaviour:
   emptyMagInSound: {fileID: 8300000, guid: ecb8057fb8646804cb69bf4308d4d99c, type: 3}
   magHitSound: {fileID: 8300000, guid: 431efbd7a09bbd14f9b455842b6ca2f2, type: 3}
   boltChamberSound: {fileID: 8300000, guid: 50584df474926fc429b22ea138100d8b, type: 3}
-  boltBackSound: {fileID: 0}
-  boltForwardSound: {fileID: 0}
+  boltBackSound: {fileID: 8300000, guid: 1995392dd75f0ff468ed915a65afb020, type: 3}
+  boltForwardSound: {fileID: 8300000, guid: c2ed1500d2bcc2643b993da62413bb51, type: 3}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 0}

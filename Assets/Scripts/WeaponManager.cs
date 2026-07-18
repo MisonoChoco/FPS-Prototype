@@ -86,12 +86,12 @@ public class WeaponManager : MonoBehaviour
     private void InitializeAmmoSystem()
     {
         // Matches the AmmoType enum exactly — no per-weapon hardcoding
-        totalAmmo[AmmoType.Pistol9mm] = ammo_Pistol9mm;
-        totalAmmo[AmmoType.Rifle556] = ammo_Rifle556;
-        totalAmmo[AmmoType.Rifle762] = ammo_Rifle762;
-        totalAmmo[AmmoType.Shotgun12Gauge] = ammo_Shotgun12Gauge;
-        totalAmmo[AmmoType.SniperRifle] = ammo_SniperRifle;
-        totalAmmo[AmmoType.Special] = ammo_Special;
+        totalAmmo[AmmoType.Parabellum9mm] = ammo_Pistol9mm;
+        totalAmmo[AmmoType.NATO556] = ammo_Rifle556;
+        totalAmmo[AmmoType.Soviet762] = ammo_Rifle762;
+        totalAmmo[AmmoType.Gauge12] = ammo_Shotgun12Gauge;
+        totalAmmo[AmmoType.Winchester308] = ammo_SniperRifle;
+        totalAmmo[AmmoType.ActionExpress50] = ammo_Special;
     }
 
     private void InitializeThrowables()
@@ -220,7 +220,8 @@ public class WeaponManager : MonoBehaviour
         weapon.transform.SetParent(slot, false);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
-        weapon.SetActiveWeapon(slotIndex == activeSlotIndex);
+        bool isCurrentActiveSlot = (slotIndex == activeSlotIndex);
+        weapon.SetActiveWeapon(isCurrentActiveSlot, isFirstPickup: isCurrentActiveSlot);
 
         var outline = weapon.GetComponent<Outline>();
         if (outline != null) outline.enabled = false;
@@ -274,7 +275,7 @@ public class WeaponManager : MonoBehaviour
         WeaponBase newWeapon = CurrentWeapon;
         if (newWeapon != null)
         {
-            newWeapon.SetActiveWeapon(true);
+            newWeapon.SetActiveWeapon(true, isFirstPickup: false);
             StartCoroutine(EnableWeaponAnimatorDelayed(newWeapon));
         }
 
@@ -283,7 +284,7 @@ public class WeaponManager : MonoBehaviour
 
     private IEnumerator EnableWeaponAnimatorDelayed(WeaponBase weapon)
     {
-        yield return new WaitForSecondsRealtime(0.4f);
+        yield return new WaitForSecondsRealtime(0.05f);
         if (weapon != null && weapon.IsActiveWeapon)
             weapon.EnableAnimator();
     }
@@ -330,12 +331,12 @@ public class WeaponManager : MonoBehaviour
     // Keeps inspector fields in sync so you can see live values in editor
     private void SyncInspectorAmmoFields()
     {
-        ammo_Pistol9mm = totalAmmo.GetValueOrDefault(AmmoType.Pistol9mm);
-        ammo_Rifle556 = totalAmmo.GetValueOrDefault(AmmoType.Rifle556);
-        ammo_Rifle762 = totalAmmo.GetValueOrDefault(AmmoType.Rifle762);
-        ammo_Shotgun12Gauge = totalAmmo.GetValueOrDefault(AmmoType.Shotgun12Gauge);
-        ammo_SniperRifle = totalAmmo.GetValueOrDefault(AmmoType.SniperRifle);
-        ammo_Special = totalAmmo.GetValueOrDefault(AmmoType.Special);
+        ammo_Pistol9mm = totalAmmo.GetValueOrDefault(AmmoType.Parabellum9mm);
+        ammo_Rifle556 = totalAmmo.GetValueOrDefault(AmmoType.NATO556);
+        ammo_Rifle762 = totalAmmo.GetValueOrDefault(AmmoType.Soviet762);
+        ammo_Shotgun12Gauge = totalAmmo.GetValueOrDefault(AmmoType.Gauge12);
+        ammo_SniperRifle = totalAmmo.GetValueOrDefault(AmmoType.Winchester308);
+        ammo_Special = totalAmmo.GetValueOrDefault(AmmoType.ActionExpress50);
     }
 
     #endregion Ammo Management

@@ -1,21 +1,21 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="ThryAssemblyDefinition.csproj" />
   <Project Path="MerryYellow.CodeAssist.Editor.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.2D.Runtime.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.Editor.csproj" />
-  <Project Path="ThryAssemblyDefinition.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.Editor.Tests.csproj" />
   <Project Path="spine-unity-editor.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.Runtime.csproj" />
   <Project Path="spine-csharp.csproj" />
   <Project Path="spine-unity.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.2D.Editor.Overrides.csproj" />
-  <Project Path="ThryExternal.csproj" />
-  <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="Poi.Tools.csproj" />
+  <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="OccaSoftware.Crosshairs.Editor.csproj" />
+  <Project Path="ThryExternal.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.Runtime.Tests.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Unity.RenderPipeline.Universal.ShaderLibrary.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.Shaders.csproj" />
-  <Project Path="OccaSoftware.Crosshairs.Editor.csproj" />
 </Solution>

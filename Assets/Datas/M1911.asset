@@ -31,7 +31,7 @@ MonoBehaviour:
   spreadPerShot: 6
   spreadMax: 35
   spreadRecoveryRate: 50
-  spreadRecoveryDelay: 0.5
+  spreadRecoveryDelay: 0.25
   bulletSpreadScale: 0.003
   useGravity: 1
   dropOffStart: 50
