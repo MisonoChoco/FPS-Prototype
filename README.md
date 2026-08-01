@@ -1,20 +1,19 @@
 # Notes
-similar to HDRP Fps shooter with zombie, but with more features and entirely reworked.
+Similar to HDRP FPS shooter with zombies, but with more features and entirely reworked.
 Include better viewmodel, better bullet handling, improved overall visuals, new animations, etc.
 In general, it's an entire core system rewrite.
 
 # Feature
-- Bullet is spawned and handled by Object Pooling
-- OOP-implemented and Data-driven codes, assisting in adding future weapons or making balancing changes much more easily
-- Easy to learn gameplay, smooth animations.
+- Most stuff is spawned and handled by Object Pooling.
+- OOP-implemented and data-driven code, assisting in adding/updating future weapons or making balancing changes much more easily.
+- Easy-to-learn gameplay, smooth animations.
+- Inspired by a lot of very well-known games out there.
 
 # Struggle
-- Animations are a bit janky.
-- Shotgun pellets fire logic isn't working properly.
-- Minor UI issue.
+- IRL Schedules.
 
 # Demo
-https://youtu.be/EcZpdetG4qE
+~~https://youtu.be/EcZpdetG4qE~~ outdated, the new version is literally different from this lmao
 
 
 
