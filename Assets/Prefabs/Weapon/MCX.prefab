@@ -240,6 +240,9 @@ MonoBehaviour:
   magazineDropPoint: {fileID: 4201132067829113218}
   magazineDropForce: {x: 4, y: 1, z: 3}
   magazineDropTorque: 0.5
+  lastMagazineDropPoint: {fileID: 4201132067829113218}
+  lastMagazineDropForce: {x: -4, y: -1, z: 3}
+  lastMagazineDropTorque: 0.25
   weaponModel: 2
   availableShootingModes: 0200000000000000
   leftArm: {fileID: 0}
@@ -8968,7 +8971,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2761890848208861910
 Transform:
   m_ObjectHideFlags: 0

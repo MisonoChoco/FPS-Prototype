@@ -9893,7 +9893,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 3.8333333
-    functionName: MagOut
+    functionName: TacMagOut
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -9907,7 +9907,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 9
-    functionName: MagIn
+    functionName: TacMagIn
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -13,5 +13,5 @@ AssetOrigin:
   productId: 115488
   packageName: Quick Outline
   packageVersion: 1.1
-  assetPath: Assets/QuickOutline/Resources/Shaders/OutlineMask.shader
+  assetPath: Assets/Shaders/OutlineMask.shader
   uploadId: 485303

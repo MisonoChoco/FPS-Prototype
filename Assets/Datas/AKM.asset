@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AKM
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   weaponName: AKM
-  weaponModel: 1
+  weaponModel: 12
   gunType: 0
   description: Modernized AK47
   weaponIcon: {fileID: 0}
@@ -75,8 +75,8 @@ MonoBehaviour:
   walkSpeedMultiplier: 4
   walkSpeedMax: 6
   aimReduction: 4
-  availableShootingModes: 00000000
-  defaultShootingMode: 0
+  availableShootingModes: 0000000002000000
+  defaultShootingMode: 2
   bulletsPerBurst: 3
   burstDelay: 0.1
   projectileType: 0
@@ -87,20 +87,27 @@ MonoBehaviour:
   cycleAnimation: CYCLE
   cycleSounds: []
   magazineDropPrefab: {fileID: 0}
-  shootSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 6fceee683e2d8544db546640c78bf76d, type: 3}
   reloadSound: {fileID: 0}
   emptySound: {fileID: 0}
   switchModeSound: {fileID: 0}
   reloadRaiseSound: {fileID: 0}
+  reloadRattleSound: {fileID: 0}
   reloadEndSound: {fileID: 0}
   magOutSound: {fileID: 0}
   magInSound: {fileID: 0}
   emptyMagOutSound: {fileID: 0}
   emptyMagInSound: {fileID: 0}
   magHitSound: {fileID: 0}
+  emptyReloadRaiseSound: {fileID: 0}
+  emptyReloadRattleSound: {fileID: 0}
+  emptyReloadEndSound: {fileID: 0}
+  emptyMagHitSound: {fileID: 0}
   boltChamberSound: {fileID: 0}
   boltBackSound: {fileID: 0}
   boltForwardSound: {fileID: 0}
+  switchUpSound: {fileID: 0}
+  switchDownSound: {fileID: 0}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 0}
@@ -117,11 +124,16 @@ MonoBehaviour:
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
   isOpenBolt: 0
+  switchUpAnimation: SWITCHUP
+  switchDownAnimation: SWITCHDOWN
+  firstEquipAnimation: FIRSTEQUIP
+  switchDownTimeout: 0.5
+  switchUpTimeout: 0.5
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1
   recoilPattern: {x: 0, y: 1, z: -0.5}
-  ammoType: 1
+  ammoType: 4
   maxAmmoReserve: 240
   infiniteAmmo: 0
   rarity: 0

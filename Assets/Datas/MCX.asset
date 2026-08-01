@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a03385b920477804bae1691b40ab229b, type: 3}
   m_Name: MCX
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  weaponName: Em Xi Ack
-  weaponModel: 2
+  weaponName: SIG MCX
+  weaponModel: 4
   gunType: 0
   description: tacticool
   weaponIcon: {fileID: 21300000, guid: d1ab480fc8868134890bb952e10982ff, type: 2}
@@ -26,12 +26,12 @@ MonoBehaviour:
   range: 100
   magazineSize: 30
   muzzleVelocity: 400
-  hipSpread: 7
+  hipSpread: 8
   adsSpread: 0.5
   spreadPerShot: 3
   spreadMax: 35
-  spreadRecoveryRate: 50
-  spreadRecoveryDelay: 0.5
+  spreadRecoveryRate: 45
+  spreadRecoveryDelay: 0.4
   bulletSpreadScale: 0.003
   useGravity: 1
   dropOffStart: 50
@@ -53,8 +53,8 @@ MonoBehaviour:
   adsFireRecoil: {x: 0.75, y: 0.5, z: 0}
   hRecoil: 1
   vRecoil: 1.5
-  gunRecoilPositionSpeed: 30
-  gunPositionReturnSpeed: 15
+  gunRecoilPositionSpeed: 25
+  gunPositionReturnSpeed: 10
   recoilKickBackHip: {x: 0.035, y: -0.05, z: -0.25}
   recoilKickBackAds: {x: 0.025, y: 0, z: -0.1}
   gunRecoilRotationSpeed: -10
@@ -87,20 +87,27 @@ MonoBehaviour:
   cycleAnimation: CYCLE
   cycleSounds: []
   magazineDropPrefab: {fileID: 2975772731521528104, guid: 63d5691d78cbc36468d77675c8699441, type: 3}
-  shootSound: {fileID: 8300000, guid: d72b8740805d4aa4183fff64a791eba8, type: 3}
+  shootSound: {fileID: 8300000, guid: 67a465db4db3f7c4c89c10c8613a83ab, type: 3}
   reloadSound: {fileID: 0}
   emptySound: {fileID: 8300000, guid: bdac3ea422818e540904d53b53745cc7, type: 3}
   switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
-  reloadRaiseSound: {fileID: 8300000, guid: 0e7a97b7ac54cc7409ab8ce406498efa, type: 3}
+  reloadRaiseSound: {fileID: 8300000, guid: 3f0331bb9ddc27d43a426541d333dc40, type: 3}
+  reloadRattleSound: {fileID: 8300000, guid: 0e7a97b7ac54cc7409ab8ce406498efa, type: 3}
   reloadEndSound: {fileID: 8300000, guid: 055f7fb1371a14a418b9d1fb17b06541, type: 3}
   magOutSound: {fileID: 8300000, guid: 88731abce66d6a44ebc1327a5cd7559d, type: 3}
   magInSound: {fileID: 8300000, guid: 732ed69fedd7326488feb729b0eb501a, type: 3}
   emptyMagOutSound: {fileID: 8300000, guid: e6a5f900d1a3e0244822f82a69142db8, type: 3}
   emptyMagInSound: {fileID: 8300000, guid: ecb8057fb8646804cb69bf4308d4d99c, type: 3}
   magHitSound: {fileID: 8300000, guid: 431efbd7a09bbd14f9b455842b6ca2f2, type: 3}
+  emptyReloadRaiseSound: {fileID: 8300000, guid: a076054432af5344d840c52438bd960e, type: 3}
+  emptyReloadRattleSound: {fileID: 8300000, guid: 9ec527b76db8d0d47ab8bbc67a41599c, type: 3}
+  emptyReloadEndSound: {fileID: 8300000, guid: b960c190d64a8b449b722cadd9a9496a, type: 3}
+  emptyMagHitSound: {fileID: 0}
   boltChamberSound: {fileID: 8300000, guid: 50584df474926fc429b22ea138100d8b, type: 3}
   boltBackSound: {fileID: 8300000, guid: 1995392dd75f0ff468ed915a65afb020, type: 3}
   boltForwardSound: {fileID: 8300000, guid: c2ed1500d2bcc2643b993da62413bb51, type: 3}
+  switchUpSound: {fileID: 8300000, guid: d27b281eaae775c48b5bc9692f82a41f, type: 3}
+  switchDownSound: {fileID: 8300000, guid: fabc064c7af1ebc4d9495774457ca6f7, type: 3}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 0}
@@ -117,11 +124,16 @@ MonoBehaviour:
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
   isOpenBolt: 0
+  switchUpAnimation: SWITCHUP
+  switchDownAnimation: SWITCHDOWN
+  firstEquipAnimation: FIRSTEQUIP
+  switchDownTimeout: 0.5
+  switchUpTimeout: 0.5
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1
   recoilPattern: {x: 0, y: 1, z: -0.5}
-  ammoType: 1
+  ammoType: 3
   maxAmmoReserve: 240
   infiniteAmmo: 0
   rarity: 0

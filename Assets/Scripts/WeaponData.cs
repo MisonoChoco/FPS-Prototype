@@ -11,7 +11,7 @@ public class WeaponData : ScriptableObject
     [Header("Basic Information")]
     public string weaponName = "Default Weapon";
 
-    public WeaponModel weaponModel = WeaponModel.M1911;
+    public WeaponModel weaponModel;
     public GunType gunType = GunType.MagFed;
 
     [TextArea(2, 4)]
@@ -54,9 +54,11 @@ public class WeaponData : ScriptableObject
     [Header("Shell Reload System")]
     public bool useShellReload = false;
 
-    public float shellLoadTime = 0.8f;
+    public int reloadLoopAmount = 1;        // shells inserted per loop (2 for double-load etc)
+    public float shellLoadTime = 1f;     // fallback if no anim event
     public int maxShellsToLoad = 8;
-    public string shellLoadAnimation = "SHELL_LOAD";
+    public string reloadLoopAnimation = "RELOAD_LOOP";
+    public string reloadFinishAnimation = "RELOAD_FINISH";
 
     [Header("Weapon Visual Effects")]
     public bool haveWeaponRecoil = true;
@@ -129,9 +131,9 @@ public class WeaponData : ScriptableObject
     [Header("Cycle-Based Firing")]
     public bool requiresCycling = false;
 
-    public float cycleTime = 0.8f;
-    public string cycleAnimation = "CYCLE";
-    public AudioClip[] cycleSounds; // Array of pump/bolt sounds for randomization
+    public float rechamberTimeout = 0.8f;  // fallback if no anim event
+    public string rechamberAnimation = "RECHAMBER";
+    public AudioClip[] rechamberSounds;
 
     [Header("Magazine Drop")]
     public GameObject magazineDropPrefab;
@@ -146,15 +148,22 @@ public class WeaponData : ScriptableObject
     [Header("Reload Audio Events")]
     public AudioClip reloadRaiseSound;
 
+    public AudioClip reloadRattleSound;
     public AudioClip reloadEndSound;
     public AudioClip magOutSound;
     public AudioClip magInSound;
     public AudioClip emptyMagOutSound;
     public AudioClip emptyMagInSound;
     public AudioClip magHitSound;
+    public AudioClip emptyReloadRaiseSound;
+    public AudioClip emptyReloadRattleSound;
+    public AudioClip emptyReloadEndSound;
+    public AudioClip emptyMagHitSound;
     public AudioClip boltChamberSound;
     public AudioClip boltBackSound;   // HK/bolt-action only
     public AudioClip boltForwardSound; // HK/bolt-action only
+    public AudioClip switchUpSound;
+    public AudioClip switchDownSound;
 
     [Range(0f, 1f)]
     public float audioVolume = 1f;
@@ -182,6 +191,14 @@ public class WeaponData : ScriptableObject
     public string tacticalReloadAnimation = "RELOAD_TACTICAL";
     public string lastBulletReloadAnimation = "RELOAD_LASTBULLET";
     public bool isOpenBolt = false; // true for open bolt guns like some SMGs
+
+    [Header("Switch Animation Names")]
+    public string switchUpAnimation = "SWITCHUP";
+
+    public string switchDownAnimation = "SWITCHDOWN";
+    public string firstEquipAnimation = "FIRSTEQUIP";
+    public float switchDownTimeout = 0.5f; // fallback if no anim event
+    public float switchUpTimeout = 0.5f; // fallback if no anim event
 
     [Header("Weapon Handling")]
     public float aimSpeed = 8f; // How fast to aim down sights
@@ -257,6 +274,8 @@ namespace Weapon
     public enum WeaponModel
     {
         M1911,
+        KimberM1911,
+        P220,
         AK47,
         MCX,
         Shotgun,
@@ -264,6 +283,7 @@ namespace Weapon
         M4,
         Deagle,
         MP5,
+        MP7,
         M14,
         AKM
     }
@@ -305,7 +325,8 @@ public enum AmmoType
     Winchester308,
     ActionExpress50,
     BMG50,
-    Rocket
+    Rocket,
+    Premium
 }
 
 public enum WeaponRarity

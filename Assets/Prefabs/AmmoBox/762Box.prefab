@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 4250987399826232563}
   - component: {fileID: 1815625237287910034}
   - component: {fileID: 8008436448494622175}
-  - component: {fileID: 1854925042060328218}
+  - component: {fileID: 7580671602622932883}
   m_Layer: 0
   m_Name: 762Box
   m_TagString: Untagged
@@ -119,8 +119,8 @@ Transform:
   m_GameObject: {fileID: 6179346379925190649}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.431835, y: -0.0000050713797, z: 2.9603033}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8967414180807379743}
@@ -139,8 +139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoAmount: 150
-  ammoType: 2
+  ammoAmount: 180
+  ammoType: 4
 --- !u!65 &1815625237287910034
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -180,7 +180,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!54 &1854925042060328218
+--- !u!54 &7580671602622932883
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

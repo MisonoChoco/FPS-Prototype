@@ -12,13 +12,18 @@ public class SoundManager : MonoBehaviour
     public AudioSource musicChannel;
     public AudioSource playerChannel;
 
+    [Header("Weapon Shot Pool")]
+    [SerializeField] private int weaponShotPoolSize = 7;
+
+    private AudioSource[] weaponShotPool;
+    private int currentShotIndex = 0;
+
     [Header("Generic Weapon Sounds")]
     public AudioClip emptyGunClick;
 
     public AudioClip enemyHitmarker;
     public AudioClip MagDrop;
 
-    // Shell loading sounds — generic pool, not per-weapon
     [Header("Shell Loading")]
     public AudioClip[] ShellLoadSounds;
 
@@ -39,20 +44,36 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        InitWeaponShotPool();
+    }
+
+    private void InitWeaponShotPool()
+    {
+        weaponShotPool = new AudioSource[weaponShotPoolSize];
+        for (int i = 0; i < weaponShotPoolSize; i++)
+        {
+            weaponShotPool[i] = gameObject.AddComponent<AudioSource>();
+            weaponShotPool[i].playOnAwake = false;
+            weaponShotPool[i].volume = weaponChannel != null ? weaponChannel.volume : 1f;
+            weaponShotPool[i].outputAudioMixerGroup = weaponChannel?.outputAudioMixerGroup;
+        }
     }
 
     #region Weapon Sounds
 
-    // WeaponBase passes weaponData.shootSound directly — no switch needed
     public void PlayShootingSound(AudioClip clip)
     {
-        if (clip != null && weaponChannel != null)
-            weaponChannel.PlayOneShot(clip);
+        if (clip == null) return;
+
+        AudioSource source = weaponShotPool[currentShotIndex];
+        currentShotIndex = (currentShotIndex + 1) % weaponShotPoolSize;
+
+        source.clip = clip;
+        source.Play();
     }
 
-    // WeaponBase passes weaponData.reloadSound directly
     public void PlayReloadSound(AudioClip clip)
     {
         if (clip != null && weaponChannel != null)
@@ -65,7 +86,6 @@ public class SoundManager : MonoBehaviour
             weaponChannel.Stop();
     }
 
-    // WeaponBase passes weaponData.cycleSounds[] directly
     public void PlayCycleSound(AudioClip[] clips)
     {
         if (clips == null || clips.Length == 0 || weaponChannel == null) return;
@@ -74,7 +94,6 @@ public class SoundManager : MonoBehaviour
             weaponChannel.PlayOneShot(clips[randomIndex]);
     }
 
-    // Generic pool — not per-weapon
     public void PlayShellLoadSound()
     {
         if (ShellLoadSounds == null || ShellLoadSounds.Length == 0 || weaponChannel == null) return;
@@ -95,6 +114,12 @@ public class SoundManager : MonoBehaviour
             playerChannel.PlayOneShot(enemyHitmarker);
     }
 
+    public void PlayEmptyGunSound()
+    {
+        if (emptyGunClick != null && weaponChannel != null)
+            weaponChannel.PlayOneShot(emptyGunClick);
+    }
+
     #endregion Weapon Sounds
 
     #region Throwables
@@ -112,25 +137,6 @@ public class SoundManager : MonoBehaviour
     }
 
     #endregion Throwables
-
-    #region Zombie Sounds
-
-    //public void PlayZombieDeathSound()
-    //{ if (zombieDeath != null) entityChannel.PlayOneShot(zombieDeath); }
-
-    //public void PlayZombieWalkSound()
-    //{ if (zombieWalk != null) entityChannel.PlayOneShot(zombieWalk); }
-
-    //public void PlayZombieAttackSound()
-    //{ if (zombieAttack != null) entityChannel.PlayOneShot(zombieAttack); }
-
-    //public void PlayZombieChaseSound()
-    //{ if (zombieChase != null) entityChannel.PlayOneShot(zombieChase); }
-
-    //public void PlayZombieHurtSound()
-    //{ if (zombieHurt != null) entityChannel.PlayOneShot(zombieHurt); }
-
-    #endregion Zombie Sounds
 
     #region Player Sounds
 

@@ -28,17 +28,22 @@ public class WeaponAnimationEvents : MonoBehaviour
         PlayClip(weaponBase?.Data?.reloadRaiseSound);
     }
 
+    public void ReloadRattle()
+    {
+        PlayClip(weaponBase?.Data?.reloadRattleSound);
+    }
+
     public void ReloadEnd()
     {
         PlayClip(weaponBase?.Data?.reloadEndSound);
     }
 
-    public void MagOut()
+    public void TacMagOut()
     {
         PlayClip(weaponBase?.Data?.magOutSound);
     }
 
-    public void MagIn()
+    public void TacMagIn()
     {
         PlayClip(weaponBase?.Data?.magInSound);
     }
@@ -51,6 +56,26 @@ public class WeaponAnimationEvents : MonoBehaviour
     public void EmptyMagIn()
     {
         PlayClip(weaponBase?.Data?.emptyMagInSound);
+    }
+
+    public void EmptyRaise()
+    {
+        PlayClip(weaponBase?.Data?.emptyReloadRaiseSound);
+    }
+
+    public void EmptyRattle()
+    {
+        PlayClip(weaponBase?.Data?.emptyReloadRattleSound);
+    }
+
+    public void EmptyEnd()
+    {
+        PlayClip(weaponBase?.Data?.emptyReloadEndSound);
+    }
+
+    public void EmptyMagHit()
+    {
+        PlayClip(weaponBase?.Data?.emptyMagHitSound);
     }
 
     public void MagHit()
@@ -73,5 +98,52 @@ public class WeaponAnimationEvents : MonoBehaviour
     public void BoltForward()
     {
         PlayClip(weaponBase?.Data?.boltForwardSound);
+    }
+
+    // ────────────────────────────────────────
+
+    public void OnEquipComplete()
+    {
+        weaponBase?.EquipCompleted();
+    }
+
+    public void OnSwitchUpComplete()
+    {
+        weaponBase?.EquipCompleted();
+    }
+
+    public void OnSwitchDownComplete()
+    {
+        weaponBase?.SwitchDownCompleted();
+    }
+
+    public void SwitchUpAudio()
+    {
+        PlayClip(weaponBase?.Data?.switchUpSound);
+    }
+
+    public void SwitchDownAudio()
+    {
+        PlayClip(weaponBase?.Data?.switchDownSound);
+    }
+
+    // ────────────────────────────────────────
+
+    // Called at the moment shell enters chamber during RELOAD_LOOP
+    public void OnReloadLoopComplete()
+    {
+        weaponBase?.SignalReloadLoopComplete();
+    }
+
+    // Called at the moment shell enters chamber during RELOAD_FINISH
+    public void OnReloadFinishComplete()
+    {
+        weaponBase?.SignalReloadLoopComplete(); // same signal, finish loop
+    }
+
+    // Called when bolt/pump action completes after firing
+    public void OnRechamberComplete()
+    {
+        weaponBase?.SignalRechamberComplete();
     }
 }

@@ -12,17 +12,24 @@ public class WeaponManager : MonoBehaviour
     [SerializeField] private Transform[] weaponSlots = new Transform[3];
 
     [SerializeField] private int activeSlotIndex = 0;
+    [SerializeField] private int pendingSwitchIndex = -1;
 
     // Ammo tracked by AmmoType — adding any new weapon using an existing AmmoType
     // just works, zero code changes needed
     [Header("Ammo Amounts (by AmmoType)")]
-    [SerializeField] private int ammo_Pistol9mm = 0;
+    [SerializeField] private int ammo_LongRifle22 = 0;
 
-    [SerializeField] private int ammo_Rifle556 = 0;
-    [SerializeField] private int ammo_Rifle762 = 0;
-    [SerializeField] private int ammo_Shotgun12Gauge = 0;
-    [SerializeField] private int ammo_SniperRifle = 0;
-    [SerializeField] private int ammo_Special = 0;
+    [SerializeField] private int ammo_Parabellum9mm = 0;
+    [SerializeField] private int ammo_ACP45 = 0;
+    [SerializeField] private int ammo_NATO556 = 0;
+    [SerializeField] private int ammo_Soviet762 = 0;
+    [SerializeField] private int ammo_LapuaMagnum338 = 0;
+    [SerializeField] private int ammo_Gauge12 = 0;
+    [SerializeField] private int ammo_Winchester308 = 0;
+    [SerializeField] private int ammo_ActionExpress50 = 0;
+    [SerializeField] private int ammo_BMG50 = 0;
+    [SerializeField] private int ammo_Rocket = 0;
+    [SerializeField] private int ammo_Premium = 0;
 
     private Dictionary<AmmoType, int> totalAmmo = new();
 
@@ -85,13 +92,18 @@ public class WeaponManager : MonoBehaviour
 
     private void InitializeAmmoSystem()
     {
-        // Matches the AmmoType enum exactly — no per-weapon hardcoding
-        totalAmmo[AmmoType.Parabellum9mm] = ammo_Pistol9mm;
-        totalAmmo[AmmoType.NATO556] = ammo_Rifle556;
-        totalAmmo[AmmoType.Soviet762] = ammo_Rifle762;
-        totalAmmo[AmmoType.Gauge12] = ammo_Shotgun12Gauge;
-        totalAmmo[AmmoType.Winchester308] = ammo_SniperRifle;
-        totalAmmo[AmmoType.ActionExpress50] = ammo_Special;
+        totalAmmo[AmmoType.LongRifle22] = ammo_LongRifle22;
+        totalAmmo[AmmoType.Parabellum9mm] = ammo_Parabellum9mm;
+        totalAmmo[AmmoType.ACP45] = ammo_ACP45;
+        totalAmmo[AmmoType.NATO556] = ammo_NATO556;
+        totalAmmo[AmmoType.Soviet762] = ammo_Soviet762;
+        totalAmmo[AmmoType.LapuaMagnum338] = ammo_LapuaMagnum338;
+        totalAmmo[AmmoType.Gauge12] = ammo_Gauge12;
+        totalAmmo[AmmoType.Winchester308] = ammo_Winchester308;
+        totalAmmo[AmmoType.ActionExpress50] = ammo_ActionExpress50;
+        totalAmmo[AmmoType.BMG50] = ammo_BMG50;
+        totalAmmo[AmmoType.Rocket] = ammo_Rocket;
+        totalAmmo[AmmoType.Premium] = ammo_Premium;
     }
 
     private void InitializeThrowables()
@@ -141,6 +153,16 @@ public class WeaponManager : MonoBehaviour
 
     private void HandleWeaponSwitching()
     {
+        // During a switch, only allow cancelling (pressing current slot)
+        // Block pressing the target slot key until switch completes
+        if (pendingSwitchIndex != -1)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1) && activeSlotIndex == 0) SwitchToSlot(0);
+            if (Input.GetKeyDown(KeyCode.Alpha2) && activeSlotIndex == 1) SwitchToSlot(1);
+            if (Input.GetKeyDown(KeyCode.Alpha3) && activeSlotIndex == 2) SwitchToSlot(2);
+            return; // block all other switch input during switch
+        }
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchToSlot(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchToSlot(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchToSlot(2);
@@ -188,6 +210,35 @@ public class WeaponManager : MonoBehaviour
 
     #region Weapon Management
 
+    private Coroutine equipFallbackCoroutine;
+    private Coroutine switchDownFallbackCoroutine;
+
+    private void StartEquipFallback(WeaponBase weapon)
+    {
+        if (equipFallbackCoroutine != null) StopCoroutine(equipFallbackCoroutine);
+        equipFallbackCoroutine = StartCoroutine(EquipFallbackCoroutine(weapon));
+    }
+
+    private void StartSwitchDownFallback(WeaponBase weapon)
+    {
+        if (switchDownFallbackCoroutine != null) StopCoroutine(switchDownFallbackCoroutine);
+        switchDownFallbackCoroutine = StartCoroutine(SwitchDownFallbackCoroutine(weapon));
+    }
+
+    private IEnumerator EquipFallbackCoroutine(WeaponBase weapon)
+    {
+        yield return new WaitForSeconds(weapon.Data.switchUpTimeout);
+        if (weapon != null && weapon.IsEquipping)
+            weapon.EquipCompleted();
+    }
+
+    private IEnumerator SwitchDownFallbackCoroutine(WeaponBase weapon)
+    {
+        yield return new WaitForSeconds(weapon.Data.switchDownTimeout);
+        if (weapon != null && weapon.IsSwitchingDown)
+            weapon.SwitchDownCompleted();
+    }
+
     public bool PickupWeapon(WeaponBase weapon)
     {
         if (weapon == null) { Debug.LogWarning("WeaponManager: Null weapon pickup"); return false; }
@@ -222,6 +273,8 @@ public class WeaponManager : MonoBehaviour
         weapon.transform.localRotation = Quaternion.identity;
         bool isCurrentActiveSlot = (slotIndex == activeSlotIndex);
         weapon.SetActiveWeapon(isCurrentActiveSlot, isFirstPickup: isCurrentActiveSlot);
+        if (isCurrentActiveSlot)
+            StartEquipFallback(weapon);
 
         var outline = weapon.GetComponent<Outline>();
         if (outline != null) outline.enabled = false;
@@ -267,19 +320,66 @@ public class WeaponManager : MonoBehaviour
 
     public void SwitchToSlot(int slotIndex)
     {
-        if (!IsValidSlotIndex(slotIndex) || slotIndex == activeSlotIndex) return;
+        if (!IsValidSlotIndex(slotIndex)) return;
 
-        CurrentWeapon?.SetActiveWeapon(false);
+        // Player pressed the slot they're already on mid-switch — cancel and return
+        if (slotIndex == activeSlotIndex && pendingSwitchIndex != -1)
+        {
+            pendingSwitchIndex = -1;
+            CurrentWeapon?.CancelSwitchDown();
+            return;
+        }
+
+        // Normal guard — already on this slot and no pending switch
+        if (slotIndex == activeSlotIndex) return;
+
+        // New target — start switch
+        pendingSwitchIndex = slotIndex;
+
+        WeaponBase currentWeapon = CurrentWeapon;
+        if (currentWeapon != null)
+        {
+            currentWeapon.StartSwitchDown();
+            StartSwitchDownFallback(currentWeapon);
+        }
+        else
+            ActivateSlot(slotIndex);
+    }
+
+    // Called by WeaponBase.OnSwitchDownComplete() via animation event
+    public void ExecutePendingSwitch()
+    {
+        if (pendingSwitchIndex == -1) return;
+
+        int targetIndex = pendingSwitchIndex;
+        pendingSwitchIndex = -1;
+
+        // Deactivate old weapon and its slot
+        WeaponBase oldWeapon = CurrentWeapon;
+        if (oldWeapon != null)
+        {
+            oldWeapon.SetActiveWeapon(false);
+            weaponSlots[activeSlotIndex].gameObject.SetActive(false);
+        }
+
+        // Activate new slot and weapon
+        ActivateSlot(targetIndex);
+        OnWeaponSwitched?.Invoke(CurrentWeapon);
+    }
+
+    private void ActivateSlot(int slotIndex)
+    {
         activeSlotIndex = slotIndex;
+
+        if (weaponSlots[slotIndex] != null)
+            weaponSlots[slotIndex].gameObject.SetActive(true);
 
         WeaponBase newWeapon = CurrentWeapon;
         if (newWeapon != null)
         {
             newWeapon.SetActiveWeapon(true, isFirstPickup: false);
-            StartCoroutine(EnableWeaponAnimatorDelayed(newWeapon));
+            StartEquipFallback(newWeapon);
         }
-
-        OnWeaponSwitched?.Invoke(newWeapon);
     }
 
     private IEnumerator EnableWeaponAnimatorDelayed(WeaponBase weapon)
@@ -331,12 +431,18 @@ public class WeaponManager : MonoBehaviour
     // Keeps inspector fields in sync so you can see live values in editor
     private void SyncInspectorAmmoFields()
     {
-        ammo_Pistol9mm = totalAmmo.GetValueOrDefault(AmmoType.Parabellum9mm);
-        ammo_Rifle556 = totalAmmo.GetValueOrDefault(AmmoType.NATO556);
-        ammo_Rifle762 = totalAmmo.GetValueOrDefault(AmmoType.Soviet762);
-        ammo_Shotgun12Gauge = totalAmmo.GetValueOrDefault(AmmoType.Gauge12);
-        ammo_SniperRifle = totalAmmo.GetValueOrDefault(AmmoType.Winchester308);
-        ammo_Special = totalAmmo.GetValueOrDefault(AmmoType.ActionExpress50);
+        ammo_LongRifle22 = totalAmmo.GetValueOrDefault(AmmoType.LongRifle22);
+        ammo_Parabellum9mm = totalAmmo.GetValueOrDefault(AmmoType.Parabellum9mm);
+        ammo_ACP45 = totalAmmo.GetValueOrDefault(AmmoType.ACP45);
+        ammo_NATO556 = totalAmmo.GetValueOrDefault(AmmoType.NATO556);
+        ammo_Soviet762 = totalAmmo.GetValueOrDefault(AmmoType.Soviet762);
+        ammo_LapuaMagnum338 = totalAmmo.GetValueOrDefault(AmmoType.LapuaMagnum338);
+        ammo_Gauge12 = totalAmmo.GetValueOrDefault(AmmoType.Gauge12);
+        ammo_Winchester308 = totalAmmo.GetValueOrDefault(AmmoType.Winchester308);
+        ammo_ActionExpress50 = totalAmmo.GetValueOrDefault(AmmoType.ActionExpress50);
+        ammo_BMG50 = totalAmmo.GetValueOrDefault(AmmoType.BMG50);
+        ammo_Rocket = totalAmmo.GetValueOrDefault(AmmoType.Rocket);
+        ammo_Premium = totalAmmo.GetValueOrDefault(AmmoType.Premium);
     }
 
     #endregion Ammo Management

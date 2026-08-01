@@ -1,0 +1,144 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03385b920477804bae1691b40ab229b, type: 3}
+  m_Name: KimberM1911
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: Kimber M1911
+  weaponModel: 1
+  gunType: 0
+  description: ww2(026)
+  weaponIcon: {fileID: 21300000, guid: ee5d848ad03f10640a6cf38f94489bf5, type: 2}
+  ammoIcon: {fileID: 21300000, guid: 54717d5faf98270438bef86b0e7b1d2f, type: 2}
+  baseViewmodelPosition: {x: 0.3, y: 0.15, z: -0.15}
+  baseViewmodelRotation: {x: 0, y: 0, z: 0}
+  inspectDuration: 12
+  damage: 30
+  fireRate: 300
+  range: 100
+  magazineSize: 7
+  muzzleVelocity: 300
+  hipSpread: 8
+  adsSpread: 0
+  spreadPerShot: 6
+  spreadMax: 35
+  spreadRecoveryRate: 50
+  spreadRecoveryDelay: 0.25
+  bulletSpreadScale: 0.003
+  useGravity: 1
+  dropOffStart: 50
+  dropOffEnd: 100
+  minDamageMultiplier: 0.3
+  useShellReload: 0
+  shellLoadTime: 0.8
+  maxShellsToLoad: 8
+  shellLoadAnimation: SHELL_LOAD
+  haveWeaponRecoil: 1
+  haveCameraRecoil: 1
+  haveRotationalSway: 1
+  haveBobbing: 1
+  haveJumpSway: 1
+  recoilRotationSpeed: 40
+  recoilRollIntensity: 5
+  recoilReturnSpeed: 20
+  hipFireRecoil: {x: 1, y: 1.5, z: 0}
+  adsFireRecoil: {x: 0.5, y: 1, z: 0}
+  hRecoil: 1
+  vRecoil: 2
+  gunRecoilPositionSpeed: 50
+  gunPositionReturnSpeed: 40
+  recoilKickBackHip: {x: 0, y: 0.2, z: -0.1}
+  recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
+  gunRecoilRotationSpeed: 30
+  gunRotationReturnSpeed: 20
+  recoilRotationHip: {x: 60, y: 5, z: 0}
+  recoilRotationAds: {x: 10, y: 4, z: 6}
+  rotationSwayIntensity: 20
+  rotationSwaySmoothness: 2
+  jumpIntensity: 5
+  weaponMaxClamp: 20
+  weaponMinClamp: 20
+  jumpSmooth: 15
+  landingIntensity: 5
+  landingSmooth: 15
+  recoverySpeed: 50
+  bobbingMagnitude: 0.01
+  idleSpeed: 2
+  walkSpeedMultiplier: 4
+  walkSpeedMax: 6
+  aimReduction: 4
+  availableShootingModes: 00000000
+  defaultShootingMode: 0
+  bulletsPerBurst: 3
+  burstDelay: 0.1
+  projectileType: 0
+  pelletsPerShot: 1
+  pelletSpread: 0
+  requiresCycling: 0
+  cycleTime: 0.8
+  cycleAnimation: CYCLE
+  cycleSounds: []
+  magazineDropPrefab: {fileID: 8979655581460389549, guid: d126d480254ba314d9a404544543ea53, type: 3}
+  shootSound: {fileID: 8300000, guid: 464d9a89a68115544b8c8eb770bf50b3, type: 3}
+  reloadSound: {fileID: 8300000, guid: 796cdd4a78a1ac0419ea1e3c022957fe, type: 3}
+  emptySound: {fileID: 8300000, guid: 91f2502c5acc50f429f59cc4e3c46bd9, type: 3}
+  switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
+  reloadRaiseSound: {fileID: 0}
+  reloadRattleSound: {fileID: 0}
+  reloadEndSound: {fileID: 0}
+  magOutSound: {fileID: 0}
+  magInSound: {fileID: 0}
+  emptyMagOutSound: {fileID: 0}
+  emptyMagInSound: {fileID: 0}
+  magHitSound: {fileID: 0}
+  emptyReloadRaiseSound: {fileID: 0}
+  emptyReloadRattleSound: {fileID: 0}
+  emptyReloadEndSound: {fileID: 0}
+  emptyMagHitSound: {fileID: 0}
+  boltChamberSound: {fileID: 0}
+  boltBackSound: {fileID: 0}
+  boltForwardSound: {fileID: 0}
+  switchUpSound: {fileID: 0}
+  switchDownSound: {fileID: 0}
+  audioVolume: 1
+  muzzleFlashPrefab: {fileID: 0}
+  shellCasingPrefab: {fileID: 1046677776983374096, guid: 53f1328754e99b7459427f98b6f74222, type: 3}
+  impactEffectPrefab: {fileID: 0}
+  muzzleLightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  muzzleLightIntensity: 2
+  muzzleLightDuration: 0.02
+  shootAnimation: RECOIL
+  shootADSAnimation: RECOIL_ADS
+  adsEnterAnimation: enterADS
+  adsExitAnimation: exitADS
+  idleAnimation: Idle
+  reloadAnimation: RELOAD
+  tacticalReloadAnimation: RELOAD_TACTICAL
+  lastBulletReloadAnimation: RELOAD_LASTBULLET
+  isOpenBolt: 0
+  switchUpAnimation: SWITCHUP
+  switchDownAnimation: SWITCHDOWN
+  firstEquipAnimation: FIRSTEQUIP
+  switchDownTimeout: 0.5
+  switchUpTimeout: 0.5
+  aimSpeed: 8
+  weaponSway: 1
+  recoilAmount: 1
+  recoilPattern: {x: 0, y: 1, z: -0.5}
+  ammoType: 2
+  maxAmmoReserve: 240
+  infiniteAmmo: 0
+  rarity: 0
+  purchasePrice: 100
+  sellPrice: 50
+  canBePurchased: 1
+  canBeDropped: 1
+  supportedAttachments: 

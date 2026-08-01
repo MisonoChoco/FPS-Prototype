@@ -210,8 +210,8 @@ Transform:
   m_GameObject: {fileID: 4788481739679773216}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.9659258, z: 0, w: 0.2588191}
-  m_LocalPosition: {x: 9.502, y: 0.8375, z: 6.604}
-  m_LocalScale: {x: 7, y: 7, z: 7}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5986958780820893843}
@@ -230,8 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoAmount: 200
-  ammoType: 1
+  ammoAmount: 90
+  ammoType: 7
 --- !u!95 &6831772071575843531
 Animator:
   serializedVersion: 7

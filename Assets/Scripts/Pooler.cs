@@ -100,7 +100,7 @@ public class ProjectileFactory : MonoBehaviour
     private GameObject CreatePooledObject(GameObject prefab, ProjectileType type)
     {
         GameObject obj = Instantiate(prefab, transform);
-        obj.name = $"{type}_{obj.GetInstanceID()}";
+        obj.name = $"{type}_{obj.GetEntityId().ToString()}";
         obj.SetActive(false);
 
         // Ensure the object can be returned to pool

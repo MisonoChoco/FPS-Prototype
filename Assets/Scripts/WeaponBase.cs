@@ -28,16 +28,23 @@ public abstract class WeaponBase : MonoBehaviour
     public Vector3 magazineDropForce = new Vector3(-2f, -1f, 1f);
     public float magazineDropTorque = 5f;
 
+    [Header("Last Magazine Drop")]
+    public Transform lastMagazineDropPoint;
+
+    public Vector3 lastMagazineDropForce = new Vector3(-2f, -1f, 1f);
+    public float lastMagazineDropTorque = 5f;
+
     [Header("Weapon Info")]
     public Weapon.WeaponModel weaponModel;
 
     public Weapon.ShootingMode[] availableShootingModes = { Weapon.ShootingMode.Semi };
 
     // Cycling
-    public bool IsCycled { get; private set; } = true;
+    public bool IsCychambered { get; private set; } = true;
 
-    private bool isCycling = false;
-    private Coroutine cycleCoroutine;
+    private bool isRechambering = false;
+    private Coroutine rechamberCoroutine;
+    private bool rechamberEventSignaled = false;
 
     // Inspection
     private bool isInspecting = false;
@@ -76,6 +83,11 @@ public abstract class WeaponBase : MonoBehaviour
     public bool IsReloading { get; protected set; }
     public bool ReadyToShoot { get; protected set; } = true;
     public int BulletsLeft { get; protected set; }
+
+    private bool isSwitchingDown = false;
+    public bool IsSwitchingDown => isSwitchingDown;
+
+    public bool IsEquipping { get; private set; } = false;
     public Weapon.ShootingMode CurrentShootingMode { get; protected set; }
 
     // ── Spread ───────────────────────────────────────────────────
@@ -194,8 +206,12 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void HandleInput()
     {
+        // Only hard-block input during switch-down animation
+        // During equip (switch-up/first equip), player can switch away freely
+        if (IsEquipping && isSwitchingDown) return;
+
         HandleAiming();
-        HandleShooting();
+        HandleShooting();   // shooting still blocked via ReadyToShoot = false
         HandleReloading();
         HandleInspection();
         HandleFireModeSwitch();
@@ -322,12 +338,6 @@ public abstract class WeaponBase : MonoBehaviour
             return;
         }
 
-        if (inputPressed && weaponData.requiresCycling && !IsCycled && !isCycling)
-        {
-            StartCycle();
-            return;
-        }
-
         if (inputPressed && ReadyToShoot && BulletsLeft > 0 && !IsReloading)
         {
             isShooting = true;
@@ -425,13 +435,20 @@ public abstract class WeaponBase : MonoBehaviour
         BulletsLeft--;
         ReadyToShoot = false;
 
+        weaponAnimator?.SetTrigger("SHOOT");
+
         ApplyRecoilEffects();
         BuildSpread();
 
         CreateProjectile(CalculateShootDirection());
         PlayShootingEffects();
 
-        if (weaponData.requiresCycling) IsCycled = false;
+        // Queue rechamber for manual action weapons
+        if (weaponData.requiresCycling)
+        {
+            IsCychambered = false;
+            StartRechamber();
+        }
 
         HandleShootingMode();
         OnWeaponFired?.Invoke(this);
@@ -443,26 +460,39 @@ public abstract class WeaponBase : MonoBehaviour
         }
     }
 
-    protected virtual void StartCycle()
+    private void StartRechamber()
     {
-        if (isCycling || IsCycled) return;
-        if (cycleCoroutine != null) StopCoroutine(cycleCoroutine);
-        cycleCoroutine = StartCoroutine(CycleCoroutine());
+        if (isRechambering || IsCychambered) return;
+        if (rechamberCoroutine != null) StopCoroutine(rechamberCoroutine);
+        rechamberCoroutine = StartCoroutine(RechamberCoroutine());
     }
 
-    protected virtual IEnumerator CycleCoroutine()
+    private IEnumerator RechamberCoroutine()
     {
-        isCycling = true;
+        isRechambering = true;
         ReadyToShoot = false;
+        rechamberEventSignaled = false;
 
-        weaponAnimator?.SetTrigger(weaponData.cycleAnimation);
-        PlayCycleSound();
+        weaponAnimator?.SetTrigger(weaponData.rechamberAnimation);
+        SoundManager.Instance?.PlayCycleSound(weaponData.rechamberSounds);
 
-        yield return new WaitForSeconds(weaponData.cycleTime);
+        // Wait for animation event — fallback to timeout
+        float elapsed = 0f;
+        while (!rechamberEventSignaled && elapsed < weaponData.rechamberTimeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
 
-        IsCycled = true;
-        isCycling = false;
+        IsCychambered = true;
+        isRechambering = false;
         ReadyToShoot = true;
+    }
+
+    // Called by WeaponAnimationEvents
+    public void SignalRechamberComplete()
+    {
+        rechamberEventSignaled = true;
     }
 
     protected virtual void ApplyRecoilEffects()
@@ -497,7 +527,8 @@ public abstract class WeaponBase : MonoBehaviour
     }
 
     protected virtual bool CanShoot() =>
-        ReadyToShoot && BulletsLeft > 0 && !IsReloading;
+    ReadyToShoot && BulletsLeft > 0 && !IsReloading &&
+    (!weaponData.requiresCycling || IsCychambered);
 
     protected virtual void CreateProjectile(Vector3 direction)
     {
@@ -661,7 +692,20 @@ public abstract class WeaponBase : MonoBehaviour
         var rb = mag.GetComponent<Rigidbody>() ?? mag.AddComponent<Rigidbody>();
         rb.AddForce(magazineDropPoint.TransformDirection(magazineDropForce), ForceMode.Impulse);
         rb.AddTorque(UnityEngine.Random.insideUnitSphere * magazineDropTorque, ForceMode.Impulse);
-        Destroy(mag, 10f);
+        Destroy(mag, 20f);
+    }
+
+    public void DropMagazineLastReload()
+    {
+        if (weaponData.magazineDropPrefab == null || lastMagazineDropPoint == null) return;
+
+        GameObject mag = Instantiate(weaponData.magazineDropPrefab,
+            lastMagazineDropPoint.position, lastMagazineDropPoint.rotation);
+
+        var rb = mag.GetComponent<Rigidbody>() ?? mag.AddComponent<Rigidbody>();
+        rb.AddForce(lastMagazineDropPoint.TransformDirection(lastMagazineDropForce), ForceMode.Impulse);
+        rb.AddTorque(UnityEngine.Random.insideUnitSphere * lastMagazineDropTorque, ForceMode.Impulse);
+        Destroy(mag, 20f);
     }
 
     protected virtual bool HasAmmoAvailable() =>
@@ -692,24 +736,26 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual IEnumerator MagazineReloadCoroutine()
     {
-        // Trigger animation — WeaponAnimationEvents.MagIn() / BoltPull() signals completion
+        weaponAnimator?.SetBool("isReady", false);
         weaponAnimator?.SetTrigger(GetReloadAnimationName());
         OnReloadStarted?.Invoke(this);
 
         reloadEventSignaled = false;
 
-        // Wait purely for animation event — no timer
+        // Only waits for animation event — no input cancel
         while (!reloadEventSignaled)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                CancelReload();
-                yield break;
-            }
             yield return null;
         }
 
         CompleteReload();
+    }
+
+    private bool reloadLoopEventSignaled = false;
+
+    public void SignalReloadLoopComplete()
+    {
+        reloadLoopEventSignaled = true;
     }
 
     protected virtual IEnumerator ShellReloadCoroutine()
@@ -718,19 +764,48 @@ public abstract class WeaponBase : MonoBehaviour
 
         while (BulletsLeft < weaponData.magazineSize)
         {
-            if (Input.GetMouseButtonDown(0)) { CancelReload(); yield break; }
-
             int available = WeaponManager.Instance?.CheckAmmoLeftFor(weaponData.ammoType) ?? 0;
             if (available <= 0) break;
 
-            weaponAnimator?.SetTrigger(weaponData.shellLoadAnimation);
+            // How many shells this loop inserts
+            int shellsThisLoop = Mathf.Min(
+                weaponData.reloadLoopAmount,
+                weaponData.magazineSize - BulletsLeft,
+                available);
+
+            // Check if this is the last loop — play finish anim instead
+            bool isLastLoop = (BulletsLeft + shellsThisLoop >= weaponData.magazineSize) ||
+                              (available - shellsThisLoop <= 0);
+
+            string animTrigger = isLastLoop
+                ? weaponData.reloadFinishAnimation
+                : weaponData.reloadLoopAnimation;
+
+            reloadLoopEventSignaled = false;
+            weaponAnimator?.SetTrigger(animTrigger);
             SoundManager.Instance?.PlayShellLoadSound();
 
-            yield return new WaitForSeconds(weaponData.shellLoadTime);
+            // Wait for animation event — fallback to shellLoadTime
+            float elapsed = 0f;
+            while (!reloadLoopEventSignaled && elapsed < weaponData.shellLoadTime)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
 
-            BulletsLeft++;
-            WeaponManager.Instance?.DecreaseTotalAmmo(1, weaponData.ammoType);
+            // Add shells after animation completes
+            for (int i = 0; i < shellsThisLoop; i++)
+            {
+                BulletsLeft++;
+                WeaponManager.Instance?.DecreaseTotalAmmo(1, weaponData.ammoType);
+            }
+
+            if (isLastLoop) break;
         }
+
+        // After shell reload done — rechamber if needed
+        if (weaponData.requiresCycling && !IsCychambered)
+            yield return StartCoroutine(RechamberCoroutine());
 
         ReadyToShoot = true;
         IsReloading = false;
@@ -742,9 +817,12 @@ public abstract class WeaponBase : MonoBehaviour
         IsReloading = false;
         ReadyToShoot = true;
 
-        weaponAnimator?.ResetTrigger("RELOAD");
-        weaponAnimator?.Play("Idle", -1, 0f);
-        weaponAnimator?.Update(0f);
+        if (weaponAnimator != null && weaponAnimator.isActiveAndEnabled)
+        {
+            weaponAnimator.ResetTrigger("RELOAD");
+            weaponAnimator.Play("Idle", -1, 0f);
+            weaponAnimator.Update(0f);
+        }
 
         SoundManager.Instance?.StopReloadSound();
     }
@@ -763,6 +841,36 @@ public abstract class WeaponBase : MonoBehaviour
         OnReloadCompleted?.Invoke(this);
     }
 
+    public void StartSwitchDown()
+    {
+        if (IsReloading) ForceStopReload();
+        if (IsADS) ExitADS();
+
+        isShooting = false;
+        IsEquipping = true;
+        isSwitchingDown = true;
+        ReadyToShoot = false;
+
+        if (weaponAnimator != null && weaponAnimator.isActiveAndEnabled)
+        {
+            weaponAnimator.ResetTrigger("RELOAD");
+            weaponAnimator.SetTrigger(weaponData.switchDownAnimation);
+        }
+    }
+
+    public void CancelSwitchDown()
+    {
+        isSwitchingDown = false;
+        IsEquipping = false;
+        ReadyToShoot = true;
+
+        if (weaponAnimator != null && weaponAnimator.isActiveAndEnabled)
+        {
+            weaponAnimator.ResetTrigger(weaponData.switchDownAnimation);
+            weaponAnimator.Play("Idle", -1, 0f);
+        }
+    }
+
     private void ForceStopReload()
     {
         if (reloadCoroutine != null)
@@ -774,8 +882,12 @@ public abstract class WeaponBase : MonoBehaviour
         IsReloading = false;
         ReadyToShoot = true;
 
-        weaponAnimator?.Rebind();
-        weaponAnimator?.Update(0f);
+        if (weaponAnimator != null && weaponAnimator.isActiveAndEnabled)
+        {
+            weaponAnimator.ResetTrigger("RELOAD");
+            weaponAnimator.Play("Idle", -1, 0f);
+            weaponAnimator.Update(0f);
+        }
 
         SoundManager.Instance?.StopReloadSound();
     }
@@ -795,7 +907,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     #region Sounds
 
-    protected virtual void PlayCycleSound() => SoundManager.Instance?.PlayCycleSound(weaponData.cycleSounds);
+    protected virtual void PlayCycleSound() => SoundManager.Instance?.PlayCycleSound(weaponData.rechamberSounds);
 
     protected virtual void PlayReloadSound() => SoundManager.Instance?.PlayReloadSound(weaponData.reloadSound);
 
@@ -819,56 +931,55 @@ public abstract class WeaponBase : MonoBehaviour
     {
         IsActiveWeapon = active;
 
+        if (weaponAnimator != null)
+            weaponAnimator.enabled = active;
+
         if (leftArm != null) leftArm.SetActive(active);
         if (rightArm != null) rightArm.SetActive(active);
 
         if (!active)
         {
-            if (weaponAnimator != null)
-                weaponAnimator.enabled = false;
-
             rotationRecoil = Vector3.zero;
             positionRecoil = Vector3.zero;
             cameraFollow?.ResetRecoil();
 
-            if (cycleCoroutine != null)
+            if (rechamberCoroutine != null)
             {
-                StopCoroutine(cycleCoroutine);
-                cycleCoroutine = null;
-                isCycling = false;
+                StopCoroutine(rechamberCoroutine);
+                rechamberCoroutine = null;
+                isRechambering = false;
             }
 
             if (IsReloading) ForceStopReload();
 
             isShooting = false;
+            IsEquipping = false;  // reset — so next time they equip, anim plays again
+            ReadyToShoot = false;  // reset — weapon is not ready until equip completes on return
             if (IsADS) ExitADS();
 
             GetComponent<Outline>().enabled = false;
         }
         else
         {
-            EnableAnimator();
-
             if (weaponAnimator != null)
             {
-                // Reset common state triggers to avoid overlapping animations
                 weaponAnimator.ResetTrigger("RELOAD");
                 weaponAnimator.ResetTrigger("INSPECT");
-
-                if (isFirstPickup)
-                {
-                    // Trigger your "First Equip" animation (e.g., pulling back charging handle on pickup)
-                    weaponAnimator.SetTrigger("FIRSTEQUIP");
-                }
-                else
-                {
-                    // Trigger your standard "Switch / Draw" animation
-                    weaponAnimator.SetTrigger("SWITCH");
-                }
+                weaponAnimator.ResetTrigger("SWITCHDOWN");
+                weaponAnimator.ResetTrigger("SWITCHUP");
+                weaponAnimator.ResetTrigger("FIRSTEQUIP");
             }
 
-            if (weaponData.requiresCycling && !IsCycled && !isCycling)
-                StartCycle();
+            IsEquipping = true;
+            ReadyToShoot = false;
+
+            if (isFirstPickup)
+                weaponAnimator?.SetTrigger(weaponData.firstEquipAnimation);
+            else
+                weaponAnimator?.SetTrigger(weaponData.switchUpAnimation);
+
+            if (weaponData.requiresCycling && IsCychambered && !isRechambering)
+                StartRechamber();
         }
     }
 
@@ -897,6 +1008,19 @@ public abstract class WeaponBase : MonoBehaviour
     public virtual float GetDamageAtDistance(float distance) => weaponData.GetDamageAtDistance(distance);
 
     public void SignalReloadComplete() => reloadEventSignaled = true;
+
+    public void EquipCompleted()
+    {
+        IsEquipping = false;
+        isSwitchingDown = false;
+        ReadyToShoot = true;
+    }
+
+    public void SwitchDownCompleted()
+    {
+        isSwitchingDown = false;
+        WeaponManager.Instance?.ExecutePendingSwitch();
+    }
 
     public void EnableAnimator()
     {

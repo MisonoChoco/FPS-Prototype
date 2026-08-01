@@ -156,7 +156,7 @@ public class ItemCore : MonoBehaviour
 
     private void UseArmorPlate()
     {
-        Player player = UnityEngine.Object.FindFirstObjectByType<Player>();
+        Player player = UnityEngine.Object.FindAnyObjectByType<Player>();
         if (player != null)
         {
             player.AddArmor(armorAmount);
@@ -166,7 +166,7 @@ public class ItemCore : MonoBehaviour
 
     private void UseMedkit()
     {
-        Player player = UnityEngine.Object.FindFirstObjectByType<Player>();
+        Player player = UnityEngine.Object.FindAnyObjectByType<Player>();
         if (player != null)
         {
             player.Heal(healAmount);
@@ -176,7 +176,7 @@ public class ItemCore : MonoBehaviour
 
     private void UseBandage()
     {
-        Player player = UnityEngine.Object.FindFirstObjectByType<Player>();
+        Player player = UnityEngine.Object.FindAnyObjectByType<Player>();
         if (player != null)
         {
             player.Heal(healAmount);

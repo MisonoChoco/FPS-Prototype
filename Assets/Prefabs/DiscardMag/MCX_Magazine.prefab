@@ -52,7 +52,7 @@ MonoBehaviour:
   magDropSource: {fileID: 4872194161643618788}
   audioClips:
   - {fileID: 8300000, guid: 540151a6991577f43bd48050cf665017, type: 3}
-  playCooldown: 1
+  playCooldown: 1.5
 --- !u!33 &8433625120232199653
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -123,7 +123,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.4
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0

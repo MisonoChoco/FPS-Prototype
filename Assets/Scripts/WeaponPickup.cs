@@ -221,8 +221,20 @@ public class WeaponPickup : MonoBehaviour
 
         return weaponComponent.weaponModel switch
         {
-            Weapon.WeaponModel.M1911 => "M1911 Pistol",
-            Weapon.WeaponModel.AK47 => "AK-47 Rifle",
+            Weapon.WeaponModel.M1911 => "M1911",
+            Weapon.WeaponModel.AK47 => "AK47",
+            Weapon.WeaponModel.MP5 => "MP5",
+            Weapon.WeaponModel.Shotgun => "Shotgun",
+            Weapon.WeaponModel.MCX => "MCX",
+            Weapon.WeaponModel.M4 => "M4",
+            Weapon.WeaponModel.AWM => "AWM",
+            Weapon.WeaponModel.Deagle => "Deagle",
+            Weapon.WeaponModel.MP7 => "MP7",
+            Weapon.WeaponModel.M14 => "M14",
+            Weapon.WeaponModel.AKM => "AKM",
+            Weapon.WeaponModel.KimberM1911 => "KimberM1911",
+            Weapon.WeaponModel.P220 => "P220",
+
             _ => weaponComponent.weaponModel.ToString()
         };
     }

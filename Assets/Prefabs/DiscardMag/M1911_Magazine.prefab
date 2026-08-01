@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7903550835672664459}
+  - component: {fileID: -796756786574979984}
   - component: {fileID: 3870910889833342302}
   - component: {fileID: 1505058905594742431}
   - component: {fileID: 5631930010674655695}
   - component: {fileID: 7649511122512318898}
-  - component: {fileID: -796756786574979984}
   - component: {fileID: 3560131430074985397}
   m_Layer: 6
   m_Name: M1911_Magazine
@@ -37,6 +37,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-796756786574979984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8979655581460389549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 315cbe2e840ee4440a64a7aa5dad3b44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiscardedMag
+  magDropSource: {fileID: 3560131430074985397}
+  audioClips:
+  - {fileID: 8300000, guid: 78a2fea944fd0bd4d9d98860a86860fc, type: 3}
+  playCooldown: 1.5
 --- !u!33 &3870910889833342302
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -142,22 +158,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-796756786574979984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8979655581460389549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 315cbe2e840ee4440a64a7aa5dad3b44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DiscardedMag
-  magDropSource: {fileID: 3560131430074985397}
-  audioClips:
-  - {fileID: 8300000, guid: 78a2fea944fd0bd4d9d98860a86860fc, type: 3}
-  playCooldown: 1
 --- !u!82 &3560131430074985397
 AudioSource:
   m_ObjectHideFlags: 0
@@ -171,7 +171,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.4
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0

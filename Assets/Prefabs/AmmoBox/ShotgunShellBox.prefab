@@ -574,10 +574,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7477517369582225895}
+  - component: {fileID: 4376154941030670199}
   - component: {fileID: 4971285983362016470}
   - component: {fileID: 572504535662222591}
   - component: {fileID: 2365889695881894332}
-  - component: {fileID: 4376154941030670199}
   - component: {fileID: 9069517466631855947}
   - component: {fileID: 7804948575371311117}
   m_Layer: 0
@@ -596,8 +596,8 @@ Transform:
   m_GameObject: {fileID: 3867686308054836001}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.677, y: 0.793, z: 6.589625}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2129215692258743557}
@@ -612,6 +612,20 @@ Transform:
   - {fileID: 3119685923685185488}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4376154941030670199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3867686308054836001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoAmount: 40
+  ammoType: 6
 --- !u!33 &4971285983362016470
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -690,20 +704,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14388251, y: 0.13357127, z: 0.15150347}
   m_Center: {x: 0.009130995, y: 0.06678563, z: -0.016720343}
---- !u!114 &4376154941030670199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3867686308054836001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ammoAmount: 50
-  ammoType: 3
 --- !u!114 &9069517466631855947
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,419 +3,186 @@ using Weapon;
 
 public class InteractionManager : MonoBehaviour
 {
-    public static InteractionManager Instance { get; set; }
+    public static InteractionManager Instance { get; private set; }
 
-    [Header("Interaction Settings")]
+    [Header("Settings")]
     [SerializeField] private float interactionRange = 5f;
 
-    [SerializeField] private LayerMask interactionLayers = -1;
+    [SerializeField] private LayerMask interactionLayers = ~0;
 
-    // Current hovered objects
-    public WeaponBase hoveredWeapon = null;
+    // Hovered objects
+    public WeaponBase hoveredWeapon;
 
-    public AmmoBox hoveredAmmoBox = null;
-    public Throwable hoveredThrowable = null;
-    public ItemCore hoveredItem = null; // NEW
+    public AmmoBox hoveredAmmoBox;
+    public Throwable hoveredThrowable;
+    public ItemCore hoveredItem;
+    public AmmoTable hoveredAmmoTable;
 
-    // Cache for performance
     private Camera playerCamera;
 
-    private Ray interactionRay;
-    private RaycastHit hitInfo;
-
-    #region Initialization
+    #region Unity
 
     private void Awake()
     {
-        InitializeSingleton();
-        CacheComponents();
-    }
-
-    private void InitializeSingleton()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }
-
-    private void CacheComponents()
-    {
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
         playerCamera = Camera.main;
-        if (playerCamera == null)
-        {
-            Debug.LogError("InteractionManager: No main camera found!");
-        }
     }
-
-    #endregion Initialization
-
-    #region Update Loop
 
     private void Update()
     {
         if (playerCamera == null) return;
-
-        HandleInteractionRaycast();
-        HandleInteractionInput();
+        UpdateHovered();
+        if (Input.GetKeyDown(KeyCode.F)) TryInteract();
     }
 
-    private void HandleInteractionRaycast()
+    #endregion Unity
+
+    #region Raycast
+
+    private void UpdateHovered()
     {
-        // Create ray from camera center
-        interactionRay = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        if (Physics.Raycast(interactionRay, out hitInfo, interactionRange, interactionLayers))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, interactionLayers))
         {
-            GameObject hitObject = hitInfo.transform.gameObject;
-
-            HandleWeaponInteraction(hitObject);
-            HandleAmmoInteraction(hitObject);
-            HandleThrowableInteraction(hitObject);
-            HandleItemInteraction(hitObject); // NEW
+            GameObject obj = hit.transform.gameObject;
+            SetHovered(obj.GetComponent<WeaponBase>(), ref hoveredWeapon, Color.green, w => !w.IsActiveWeapon);
+            SetHovered(obj.GetComponent<AmmoBox>(), ref hoveredAmmoBox, Color.blue, _ => true);
+            SetHovered(obj.GetComponent<Throwable>(), ref hoveredThrowable, Color.yellow, _ => true);
+            SetHovered(obj.GetComponent<ItemCore>(), ref hoveredItem, Color.white, it => !it.IsActiveItem);
+            SetHovered(obj.GetComponent<AmmoTable>(), ref hoveredAmmoTable, Color.cyan, _ => true);
         }
         else
         {
-            ClearAllInteractions();
+            ClearAll();
         }
     }
 
-    private void HandleInteractionInput()
+    private void SetHovered<T>(T candidate, ref T current, Color outlineColor,
+        System.Func<T, bool> condition) where T : MonoBehaviour
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (candidate != null && condition(candidate))
         {
-            TryInteractWithHoveredObject();
-        }
-    }
-
-    #endregion Update Loop
-
-    #region Weapon Interaction
-
-    private void HandleWeaponInteraction(GameObject hitObject)
-    {
-        WeaponBase weapon = hitObject.GetComponent<WeaponBase>();
-        if (weapon != null && !weapon.IsActiveWeapon)
-        {
-            SetHoveredWeapon(weapon);
+            if (current == candidate) return;
+            ClearOutline(current);
+            current = candidate;
+            ApplyOutline(current, outlineColor);
         }
         else
         {
-            ClearHoveredWeapon();
+            ClearOutline(current);
+            current = null;
         }
     }
 
-    private void SetHoveredWeapon(WeaponBase weapon)
+    private void ApplyOutline<T>(T obj, Color color) where T : MonoBehaviour
     {
-        if (hoveredWeapon == weapon) return;
-
-        ClearHoveredWeapon();
-        hoveredWeapon = weapon;
-
-        var outline = weapon.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = true;
-            outline.OutlineColor = Color.green;
-        }
+        if (obj == null) return;
+        var outline = obj.GetComponent<Outline>();
+        if (outline != null) { outline.enabled = true; outline.OutlineColor = color; }
     }
 
-    private void ClearHoveredWeapon()
+    private void ClearOutline<T>(T obj) where T : MonoBehaviour
     {
-        if (hoveredWeapon != null)
+        if (obj == null) return;
+        var outline = obj.GetComponent<Outline>();
+        if (outline != null) outline.enabled = false;
+    }
+
+    private void ClearAll()
+    {
+        ClearOutline(hoveredWeapon); hoveredWeapon = null;
+        ClearOutline(hoveredAmmoBox); hoveredAmmoBox = null;
+        ClearOutline(hoveredThrowable); hoveredThrowable = null;
+        ClearOutline(hoveredItem); hoveredItem = null;
+        ClearOutline(hoveredAmmoTable); hoveredAmmoTable = null;
+    }
+
+    #endregion Raycast
+
+    #region Interaction
+
+    private void TryInteract()
+    {
+        if (hoveredWeapon != null) { InteractWeapon(); return; }
+        if (hoveredAmmoBox != null) { InteractAmmo(); return; }
+        if (hoveredThrowable != null) { InteractThrowable(); return; }
+        if (hoveredItem != null) { InteractItem(); return; }
+        if (hoveredAmmoTable != null) { InteractAmmoTable(); return; }
+    }
+
+    private void InteractWeapon()
+    {
+        if (WeaponManager.Instance?.PickupWeapon(hoveredWeapon) == true)
         {
-            var outline = hoveredWeapon.GetComponent<Outline>();
-            if (outline != null)
-            {
-                outline.enabled = false;
-            }
+            ClearOutline(hoveredWeapon);
             hoveredWeapon = null;
         }
     }
 
-    #endregion Weapon Interaction
-
-    #region Ammo Interaction
-
-    private void HandleAmmoInteraction(GameObject hitObject)
+    private void InteractAmmo()
     {
-        AmmoBox ammoBox = hitObject.GetComponent<AmmoBox>();
-        if (ammoBox != null)
-        {
-            SetHoveredAmmoBox(ammoBox);
-        }
-        else
-        {
-            ClearHoveredAmmoBox();
-        }
+        if (WeaponManager.Instance == null) return;
+        WeaponManager.Instance.PickupAmmo(hoveredAmmoBox);
+        Destroy(hoveredAmmoBox.gameObject);
+        hoveredAmmoBox = null;
     }
 
-    private void SetHoveredAmmoBox(AmmoBox ammoBox)
+    private void InteractThrowable()
     {
-        if (hoveredAmmoBox == ammoBox) return;
-
-        ClearHoveredAmmoBox();
-        hoveredAmmoBox = ammoBox;
-
-        var outline = ammoBox.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = true;
-            outline.OutlineColor = Color.blue;
-        }
+        WeaponManager.Instance?.PickupThrowable(hoveredThrowable);
+        ClearOutline(hoveredThrowable);
+        hoveredThrowable = null;
     }
 
-    private void ClearHoveredAmmoBox()
+    private void InteractItem()
     {
-        if (hoveredAmmoBox != null)
+        if (PlayerInventory.Instance?.PickupItem(hoveredItem) == true)
         {
-            var outline = hoveredAmmoBox.GetComponent<Outline>();
-            if (outline != null)
-            {
-                outline.enabled = false;
-            }
-            hoveredAmmoBox = null;
-        }
-    }
-
-    #endregion Ammo Interaction
-
-    #region Throwable Interaction
-
-    private void HandleThrowableInteraction(GameObject hitObject)
-    {
-        Throwable throwable = hitObject.GetComponent<Throwable>();
-        if (throwable != null)
-        {
-            SetHoveredThrowable(throwable);
-        }
-        else
-        {
-            ClearHoveredThrowable();
-        }
-    }
-
-    private void SetHoveredThrowable(Throwable throwable)
-    {
-        if (hoveredThrowable == throwable) return;
-
-        ClearHoveredThrowable();
-        hoveredThrowable = throwable;
-
-        var outline = throwable.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = true;
-            outline.OutlineColor = Color.yellow;
-        }
-    }
-
-    private void ClearHoveredThrowable()
-    {
-        if (hoveredThrowable != null)
-        {
-            var outline = hoveredThrowable.GetComponent<Outline>();
-            if (outline != null)
-            {
-                outline.enabled = false;
-            }
-            hoveredThrowable = null;
-        }
-    }
-
-    #endregion Throwable Interaction
-
-    #region Item Interaction (NEW)
-
-    private void HandleItemInteraction(GameObject hitObject)
-    {
-        ItemCore item = hitObject.GetComponent<ItemCore>();
-        if (item != null && !item.IsActiveItem)
-        {
-            SetHoveredItem(item);
-        }
-        else
-        {
-            ClearHoveredItem();
-        }
-    }
-
-    private void SetHoveredItem(ItemCore item)
-    {
-        if (hoveredItem == item) return;
-
-        ClearHoveredItem();
-        hoveredItem = item;
-
-        var outline = item.GetComponent<Outline>();
-        if (outline != null)
-        {
-            outline.enabled = true;
-            outline.OutlineColor = Color.white; // White outline for items
-        }
-    }
-
-    private void ClearHoveredItem()
-    {
-        if (hoveredItem != null)
-        {
-            var outline = hoveredItem.GetComponent<Outline>();
-            if (outline != null)
-            {
-                outline.enabled = false;
-            }
+            Destroy(hoveredItem.gameObject);
             hoveredItem = null;
         }
     }
 
-    #endregion Item Interaction (NEW)
-
-    #region Interaction Execution
-
-    private void TryInteractWithHoveredObject()
+    private void InteractAmmoTable()
     {
-        // Try weapon interaction
-        if (hoveredWeapon != null)
-        {
-            InteractWithWeapon();
-            return;
-        }
-
-        // Try ammo interaction
-        if (hoveredAmmoBox != null)
-        {
-            InteractWithAmmoBox();
-            return;
-        }
-
-        // Try throwable interaction
-        if (hoveredThrowable != null)
-        {
-            InteractWithThrowable();
-            return;
-        }
-
-        // Try item interaction (NEW)
-        if (hoveredItem != null)
-        {
-            InteractWithItem();
-            return;
-        }
+        hoveredAmmoTable.Interact();
+        ClearOutline(hoveredAmmoTable);
+        hoveredAmmoTable = null;
     }
 
-    private void InteractWithWeapon()
+    #endregion Interaction
+
+    #region Public API
+
+    public bool HasHoveredObject() =>
+        hoveredWeapon != null ||
+        hoveredAmmoBox != null ||
+        hoveredThrowable != null ||
+        hoveredItem != null ||
+        hoveredAmmoTable != null;
+
+    public string GetHoveredInfo()
     {
-        if (WeaponManager.Instance != null)
-        {
-            bool success = WeaponManager.Instance.PickupWeapon(hoveredWeapon);
-            if (success)
-            {
-                ClearHoveredWeapon();
-            }
-        }
+        if (hoveredWeapon != null) return $"[F] Pick up {hoveredWeapon.weaponModel}";
+        if (hoveredAmmoBox != null) return $"[F] Pick up {hoveredAmmoBox.ammoType} x{hoveredAmmoBox.ammoAmount}";
+        if (hoveredThrowable != null) return $"[F] Pick up {hoveredThrowable.throwableType}";
+        if (hoveredItem != null) return $"[F] Pick up {hoveredItem.ItemName}";
+        if (hoveredAmmoTable != null) return "[F] Open ammo table";
+        return string.Empty;
     }
 
-    private void InteractWithAmmoBox()
-    {
-        if (WeaponManager.Instance != null)
-        {
-            WeaponManager.Instance.PickupAmmo(hoveredAmmoBox);
-            Destroy(hoveredAmmoBox.gameObject);
-            ClearHoveredAmmoBox();
-        }
-    }
-
-    private void InteractWithThrowable()
-    {
-        if (WeaponManager.Instance != null)
-        {
-            WeaponManager.Instance.PickupThrowable(hoveredThrowable);
-            ClearHoveredThrowable();
-        }
-    }
-
-    private void InteractWithItem() // NEW
-    {
-        if (PlayerInventory.Instance != null)
-        {
-            bool success = PlayerInventory.Instance.PickupItem(hoveredItem);
-            if (success)
-            {
-                Destroy(hoveredItem.gameObject);
-                ClearHoveredItem();
-            }
-        }
-    }
-
-    #endregion Interaction Execution
-
-    #region Utility Methods
-
-    private void ClearAllInteractions()
-    {
-        ClearHoveredWeapon();
-        ClearHoveredAmmoBox();
-        ClearHoveredThrowable();
-        ClearHoveredItem(); // NEW
-    }
-
-    public bool HasAnyHoveredObject()
-    {
-        return hoveredWeapon != null ||
-               hoveredAmmoBox != null ||
-               hoveredThrowable != null ||
-               hoveredItem != null; // NEW
-    }
-
-    public string GetHoveredObjectInfo()
-    {
-        if (hoveredWeapon != null)
-        {
-            return $"Press F to pickup {hoveredWeapon.weaponModel}";
-        }
-
-        if (hoveredAmmoBox != null)
-        {
-            return $"Press F to pickup {hoveredAmmoBox.ammoType} ({hoveredAmmoBox.ammoAmount})";
-        }
-
-        if (hoveredThrowable != null)
-        {
-            return $"Press F to pickup {hoveredThrowable.throwableType}";
-        }
-
-        if (hoveredItem != null) // NEW
-        {
-            return $"Press F to pickup {hoveredItem.ItemName}";
-        }
-
-        return "";
-    }
-
-    #endregion Utility Methods
+    #endregion Public API
 
     #region Debug
 
     private void OnDrawGizmosSelected()
     {
         if (playerCamera == null) return;
-
-        // Draw interaction ray
         Gizmos.color = Color.red;
-        Vector3 rayStart = playerCamera.transform.position;
-        Vector3 rayEnd = rayStart + playerCamera.transform.forward * interactionRange;
-        Gizmos.DrawLine(rayStart, rayEnd);
-
-        // Draw hit point if we have one
-        if (Physics.Raycast(playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)), out RaycastHit hit, interactionRange))
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(hit.point, 0.1f);
-        }
+        Gizmos.DrawRay(playerCamera.transform.position,
+            playerCamera.transform.forward * interactionRange);
     }
 
     #endregion Debug

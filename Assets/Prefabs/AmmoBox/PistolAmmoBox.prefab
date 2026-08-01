@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4856672091187758957}
+  - component: {fileID: 2608946733679701631}
   - component: {fileID: 1183013365801166524}
   - component: {fileID: 1794037953693347805}
   - component: {fileID: 4042888452548121561}
   - component: {fileID: 1574059073660465154}
-  - component: {fileID: 2608946733679701631}
   - component: {fileID: 1593002641196374679}
   - component: {fileID: 5650692171162687758}
   m_Layer: 0
@@ -48,6 +48,20 @@ Transform:
   - {fileID: 5530329760297789622}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &2608946733679701631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482695153711405331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoAmount: 100
+  ammoType: 2
 --- !u!33 &1183013365801166524
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -148,20 +162,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.072182715, y: 0.043726474, z: 0.081940524}
   m_Center: {x: 0, y: 9.313226e-10, z: 0}
---- !u!114 &2608946733679701631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 482695153711405331}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ammoAmount: 100
-  ammoType: 0
 --- !u!114 &1593002641196374679
 MonoBehaviour:
   m_ObjectHideFlags: 0
