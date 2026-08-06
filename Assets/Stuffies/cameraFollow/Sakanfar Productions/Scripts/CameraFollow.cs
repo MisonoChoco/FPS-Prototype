@@ -308,7 +308,7 @@ namespace FollowCamera
         /// Called by WeaponBase each shot. Accumulates into the offset target.
         /// </summary>
 
-        [SerializeField] private float recoilOffsetXMax = 45f; // max upward kick in degrees
+        [SerializeField] private float recoilOffsetXMax = 90f; // max upward kick in degrees
 
         [SerializeField] private float recoilOffsetYMax = 15f; // max horizontal drift
 

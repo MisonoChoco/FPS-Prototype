@@ -85,31 +85,33 @@ MonoBehaviour:
   pelletsPerShot: 1
   pelletSpread: 0
   requiresCycling: 1
-  rechamberTimeout: 1
+  rechamberTimeout: 0
   rechamberAnimation: RECHAMBER
   rechamberSounds: []
   magazineDropPrefab: {fileID: 0}
   shootSound: {fileID: 8300000, guid: 53ea1251c8b337946b719bfcf37b41e4, type: 3}
   reloadSound: {fileID: 0}
-  emptySound: {fileID: 0}
-  switchModeSound: {fileID: 0}
-  reloadRaiseSound: {fileID: 0}
-  reloadRattleSound: {fileID: 0}
-  reloadEndSound: {fileID: 0}
-  magOutSound: {fileID: 0}
-  magInSound: {fileID: 0}
-  emptyMagOutSound: {fileID: 0}
-  emptyMagInSound: {fileID: 0}
-  magHitSound: {fileID: 0}
-  emptyReloadRaiseSound: {fileID: 0}
-  emptyReloadRattleSound: {fileID: 0}
-  emptyReloadEndSound: {fileID: 0}
-  emptyMagHitSound: {fileID: 0}
-  boltChamberSound: {fileID: 0}
-  boltBackSound: {fileID: 0}
-  boltForwardSound: {fileID: 0}
-  switchUpSound: {fileID: 0}
-  switchDownSound: {fileID: 0}
+  emptySound: {fileID: 8300000, guid: 85bf5b2769362e147842ec4d7afd8b08, type: 3}
+  switchModeSound: {fileID: 8300000, guid: 8636e839fb47fd548b91b84353b7ffdf, type: 3}
+  reloadRaiseSound: {fileID: 8300000, guid: 28a626ddd455f824d962bfb02b13826c, type: 3}
+  reloadRattleSound: {fileID: 8300000, guid: 99b38a230ca7f064b87086076f0126bc, type: 3}
+  reloadEndSound: {fileID: 8300000, guid: b58b899a7bddbb44fb1761764edbaf6b, type: 3}
+  magOutSound: {fileID: 8300000, guid: 57d1f8f30b941d44c9510e5ee376da3e, type: 3}
+  magInSound: {fileID: 8300000, guid: 65d1a758019c38941857f7a61f477fb8, type: 3}
+  emptyMagOutSound: {fileID: 8300000, guid: dfe442d002f055941846e006313aa383, type: 3}
+  emptyMagInSound: {fileID: 8300000, guid: 38e449d0eac5d214a9c130a368bd473b, type: 3}
+  magHitSound: {fileID: 8300000, guid: 9e8ee81a6de4e7a4185e14081e70188f, type: 3}
+  emptyReloadRaiseSound: {fileID: 8300000, guid: e325374c2fce4f5499f580d1425f0cd1, type: 3}
+  emptyReloadRattleSound: {fileID: 8300000, guid: 04740fcdb80d944498f8fa9ca32ffda9, type: 3}
+  emptyReloadEndSound: {fileID: 8300000, guid: ac8618dee472f5146ab7f10c9cf75f14, type: 3}
+  emptyMagHitSound: {fileID: 8300000, guid: 014bdfd5cabd26a4badbd1a73780d721, type: 3}
+  boltChamberSound: {fileID: 8300000, guid: 861b0ac85bd337e49a81ee1adcb3695d, type: 3}
+  boltBackSound: {fileID: 8300000, guid: dab00aea762aeac41b628591398a0e1d, type: 3}
+  boltForwardSound: {fileID: 8300000, guid: 46f6c4f94d86f9b4faba78c3f93a14a9, type: 3}
+  boltEndSound: {fileID: 8300000, guid: 6598cea12a895524fb7555d951232d2e, type: 3}
+  ejectClickSound: {fileID: 8300000, guid: 20fc466246a93f04680283159977dccf, type: 3}
+  switchUpSound: {fileID: 8300000, guid: cb07f138d92cd754b88c7009a026f132, type: 3}
+  switchDownSound: {fileID: 8300000, guid: 8f4069b1845e8c5438c4fbbdc1f82d8c, type: 3}
   audioVolume: 1
   muzzleFlashPrefab: {fileID: 0}
   shellCasingPrefab: {fileID: 0}

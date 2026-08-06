@@ -614,7 +614,11 @@ public abstract class WeaponBase : MonoBehaviour
     {
         muzzleFlash?.Play();
         if (muzzleLight != null) StartCoroutine(FlashMuzzleLight());
-        EjectShell();
+
+        // For cycling weapons
+        if (!weaponData.requiresCycling)
+            EjectShell();
+
         SoundManager.Instance?.PlayShootingSound(weaponData.shootSound);
     }
 
@@ -1038,6 +1042,11 @@ public abstract class WeaponBase : MonoBehaviour
         if (BulletsLeft > 1) return weaponData.tacticalReloadAnimation;
         return weaponData.reloadAnimation;
     }
+
+    //public void EjectShellCasing()
+    //{
+    //    EjectShell();
+    //}
 
     #endregion Helpers
 }

@@ -100,6 +100,21 @@ public class WeaponAnimationEvents : MonoBehaviour
         PlayClip(weaponBase?.Data?.boltForwardSound);
     }
 
+    public void BoltEnd()
+    {
+        PlayClip(weaponBase?.Data?.boltEndSound);
+    }
+
+    public void EjectClick()
+    {
+        PlayClip(weaponBase?.Data?.ejectClickSound);
+    }
+
+    //public void EjectShell()
+    //{
+    //    weaponBase?.EjectShellCasing();
+    //}
+
     // ────────────────────────────────────────
 
     public void OnEquipComplete()

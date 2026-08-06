@@ -162,6 +162,8 @@ public class WeaponData : ScriptableObject
     public AudioClip boltChamberSound;
     public AudioClip boltBackSound;   // HK/bolt-action only
     public AudioClip boltForwardSound; // HK/bolt-action only
+    public AudioClip boltEndSound; // HK/bolt-action only
+    public AudioClip ejectClickSound;
     public AudioClip switchUpSound;
     public AudioClip switchDownSound;
 
