@@ -165,7 +165,7 @@ public class InteractionManager : MonoBehaviour
 
     public string GetHoveredInfo()
     {
-        if (hoveredWeapon != null) return $"[F] Pick up {hoveredWeapon.weaponModel}";
+        if (hoveredWeapon != null) return $"[F] Pick up {hoveredWeapon.Data.weaponModel}";
         if (hoveredAmmoBox != null) return $"[F] Pick up {hoveredAmmoBox.ammoType} x{hoveredAmmoBox.ammoAmount}";
         if (hoveredThrowable != null) return $"[F] Pick up {hoveredThrowable.throwableType}";
         if (hoveredItem != null) return $"[F] Pick up {hoveredItem.ItemName}";

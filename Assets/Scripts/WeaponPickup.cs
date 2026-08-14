@@ -163,7 +163,8 @@ public class WeaponPickup : MonoBehaviour
         isPickupEnabled = false;
         enabled = false;
 
-        Debug.Log($"Picked up weapon: {weaponComponent.weaponModel}");
+        // OnPickupSuccess()
+        Debug.Log($"Picked up weapon: {weaponComponent.Data.weaponModel}");
     }
 
     private void OnPickupFailed()
@@ -209,7 +210,7 @@ public class WeaponPickup : MonoBehaviour
         // Set to default layer for pickup
         gameObject.layer = LayerMask.NameToLayer("Default");
 
-        Debug.Log($"Weapon {weaponComponent.weaponModel} enabled for pickup");
+        Debug.Log($"Weapon {weaponComponent.Data.weaponModel} enabled for pickup");
     }
 
     /// <summary>
@@ -219,7 +220,7 @@ public class WeaponPickup : MonoBehaviour
     {
         if (weaponComponent == null) return "Unknown Weapon";
 
-        return weaponComponent.weaponModel switch
+        return weaponComponent.Data.weaponModel switch
         {
             Weapon.WeaponModel.M1911 => "M1911",
             Weapon.WeaponModel.AK47 => "AK47",
@@ -235,7 +236,7 @@ public class WeaponPickup : MonoBehaviour
             Weapon.WeaponModel.KimberM1911 => "KimberM1911",
             Weapon.WeaponModel.P220 => "P220",
 
-            _ => weaponComponent.weaponModel.ToString()
+            _ => weaponComponent.Data.weaponModel.ToString()
         };
     }
 

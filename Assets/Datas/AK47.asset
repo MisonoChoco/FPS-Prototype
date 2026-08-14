@@ -38,9 +38,11 @@ MonoBehaviour:
   dropOffEnd: 100
   minDamageMultiplier: 0.3
   useShellReload: 0
+  reloadLoopAmount: 1
   shellLoadTime: 0.8
   maxShellsToLoad: 8
-  shellLoadAnimation: SHELL_LOAD
+  reloadLoopAnimation: RELOAD_LOOP
+  reloadFinishAnimation: RELOAD_FINISH
   haveWeaponRecoil: 1
   haveCameraRecoil: 1
   haveRotationalSway: 1
@@ -53,7 +55,7 @@ MonoBehaviour:
   adsFireRecoil: {x: 1, y: 0.5, z: 0}
   hRecoil: 1
   vRecoil: 1.25
-  gunRecoilPositionSpeed: 40
+  gunRecoilPositionSpeed: 35
   gunPositionReturnSpeed: 10
   recoilKickBackHip: {x: 0.05, y: -0.1, z: -0.5}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
@@ -83,9 +85,8 @@ MonoBehaviour:
   pelletsPerShot: 1
   pelletSpread: 0
   requiresCycling: 0
-  cycleTime: 0.8
-  cycleAnimation: CYCLE
-  cycleSounds: []
+  rechamberAnimation: RECHAMBER
+  rechamberSounds: []
   magazineDropPrefab: {fileID: 1919992424398036836, guid: 0bdd831cc991d1c468dbdcdb381ee6b9, type: 3}
   shootSound: {fileID: 8300000, guid: fae457cc4c56d234cbad2d162cf146f0, type: 3}
   reloadSound: {fileID: 0}
@@ -106,6 +107,8 @@ MonoBehaviour:
   boltChamberSound: {fileID: 8300000, guid: b434736c6632d42429e9277262de0a74, type: 3}
   boltBackSound: {fileID: 8300000, guid: e34862dc60cb3b746a14265b77ccb8d3, type: 3}
   boltForwardSound: {fileID: 8300000, guid: e04fc25e7ee564d4d896f09fc408ec27, type: 3}
+  boltEndSound: {fileID: 0}
+  ejectClickSound: {fileID: 0}
   switchUpSound: {fileID: 0}
   switchDownSound: {fileID: 0}
   audioVolume: 1
@@ -120,6 +123,7 @@ MonoBehaviour:
   adsEnterAnimation: enterADS
   adsExitAnimation: exitADS
   idleAnimation: Idle
+  inspectAnimation: INSPECT
   reloadAnimation: RELOAD
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET

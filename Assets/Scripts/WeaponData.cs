@@ -131,7 +131,6 @@ public class WeaponData : ScriptableObject
     [Header("Cycle-Based Firing")]
     public bool requiresCycling = false;
 
-    public float rechamberTimeout = 0.8f;  // fallback if no anim event
     public string rechamberAnimation = "RECHAMBER";
     public AudioClip[] rechamberSounds;
 
@@ -186,6 +185,7 @@ public class WeaponData : ScriptableObject
     public string adsEnterAnimation = "enterADS";
     public string adsExitAnimation = "exitADS";
     public string idleAnimation = "Idle";
+    public string inspectAnimation = "INSPECT";
 
     [Header("Reload Animation Names")]
     public string reloadAnimation = "RELOAD";
@@ -252,6 +252,9 @@ public class WeaponData : ScriptableObject
                 defaultShootingMode = availableShootingModes[0];
             }
         }
+
+        if (requiresCycling && defaultShootingMode != ShootingMode.Semi)
+            Debug.LogWarning($"[{name}] requiresCycling is on but defaultShootingMode is {defaultShootingMode} — cycling weapons should be Semi-only.");
     }
 
     // Helper method for damage calculation
