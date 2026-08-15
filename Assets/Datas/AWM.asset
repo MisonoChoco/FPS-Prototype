@@ -48,21 +48,23 @@ MonoBehaviour:
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 35
-  recoilRollIntensity: 12.5
-  recoilReturnSpeed: 3
+  recoilRotationSpeed: 40
+  recoilRollIntensity: 15
+  recoilReturnSpeed: 5
   hipFireRecoil: {x: 4, y: 2, z: 0}
-  adsFireRecoil: {x: 2, y: 2, z: 0}
+  adsFireRecoil: {x: 2, y: 1, z: 0}
   hRecoil: 2
   vRecoil: 6
+  rollShakeStiffness: 250
+  rollShakeDamping: 8
   gunRecoilPositionSpeed: 40
   gunPositionReturnSpeed: 2.5
   recoilKickBackHip: {x: 0.12, y: 0.22, z: -1}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 20
-  gunRotationReturnSpeed: 10
   recoilRotationHip: {x: 20, y: 5, z: 10}
   recoilRotationAds: {x: 10, y: 4, z: 6}
+  gunRecoilShakeStiffness: 300
+  gunRecoilShakeDamping: 10
   rotationSwayIntensity: 10
   rotationSwaySmoothness: 2
   jumpIntensity: 5
@@ -85,6 +87,7 @@ MonoBehaviour:
   pelletsPerShot: 1
   pelletSpread: 0
   requiresCycling: 1
+  postFireEndlag: 0.6
   rechamberAnimation: RECHAMBER
   rechamberSounds: []
   magazineDropPrefab: {fileID: 459392828258993712, guid: 9e903658112ced6448a5291f1b72962d, type: 3}
@@ -131,8 +134,8 @@ MonoBehaviour:
   switchUpAnimation: SWITCHUP
   switchDownAnimation: SWITCHDOWN
   firstEquipAnimation: FIRSTEQUIP
-  switchDownTimeout: 0.5
-  switchUpTimeout: 0.5
+  switchDownTimeout: 3
+  switchUpTimeout: 3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1

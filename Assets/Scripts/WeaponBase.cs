@@ -45,6 +45,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     private bool isRechambering = false;
     private Coroutine rechamberCoroutine;
+    private Coroutine postFireCoroutine;
     private bool rechamberEventSignaled = false;
 
     // ── Inspection state ──────────────────────────────────────────
@@ -58,7 +59,7 @@ public abstract class WeaponBase : MonoBehaviour
     protected Camera playerCamera;
 
     // ── Weapon recoil (viewmodel) state ────────────────────────────
-    private Vector3 rotationRecoil;
+    private Vector3 rotationRecoilVelocity = Vector3.zero;
 
     private Vector3 positionRecoil;
     private Vector3 weaponRot;
@@ -102,6 +103,7 @@ public abstract class WeaponBase : MonoBehaviour
     // ── Internal flags / coroutine handles ───────────────────────────────
     protected bool isShooting;
 
+    private bool reloadQueued = false;
     protected bool allowReset = true;
     protected int burstBulletsLeft;
     protected Coroutine reloadCoroutine;
@@ -233,8 +235,16 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void HandleReloading()
     {
-        if (Input.GetKeyDown(KeyCode.R) && CanReload())
+        if (!Input.GetKeyDown(KeyCode.R)) return;
+
+        if (CanReload())
+        {
             StartReload();
+        }
+        else if (weaponData.RequiresCycling && isRechambering)
+        {
+            reloadQueued = true; // fire automatically once the bolt finishes cycling
+        }
     }
 
     protected virtual void HandleFireModeSwitch()
@@ -340,7 +350,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual bool CanShoot() =>
         ReadyToShoot && BulletsLeft > 0 && !IsReloading &&
-        (!weaponData.requiresCycling || IsCychambered);
+        (!weaponData.RequiresCycling || IsCychambered);
 
     protected virtual void FireWeapon()
     {
@@ -357,11 +367,11 @@ public abstract class WeaponBase : MonoBehaviour
         CreateProjectile(CalculateShootDirection());
         PlayShootingEffects();
 
-        if (weaponData.requiresCycling)
+        if (weaponData.RequiresCycling)
         {
             IsCychambered = false;
             if (BulletsLeft > 0)
-                StartRechamber();
+                StartPostFireEndlag();
         }
         else
         {
@@ -394,7 +404,8 @@ public abstract class WeaponBase : MonoBehaviour
             float rollKick = UnityEngine.Random.Range(weaponData.recoilRollIntensity * 0.5f,
                               weaponData.recoilRollIntensity) * Mathf.Sign(yawKick);
             cameraFollow.ApplyRecoilKick(pitchKick, yawKick, rollKick,
-                weaponData.recoilRotationSpeed, weaponData.recoilReturnSpeed);
+                weaponData.recoilRotationSpeed, weaponData.recoilReturnSpeed,
+                weaponData.rollShakeStiffness, weaponData.rollShakeDamping);
         }
 
         if (weaponData.haveWeaponRecoil)
@@ -402,10 +413,12 @@ public abstract class WeaponBase : MonoBehaviour
             Vector3 rotRecoil = IsADS ? weaponData.recoilRotationAds : weaponData.recoilRotationHip;
             Vector3 posRecoil = IsADS ? weaponData.recoilKickBackAds : weaponData.recoilKickBackHip;
 
-            rotationRecoil += new Vector3(
+            // Kick the spring's velocity — this creates the punchy, multi-wobble settle
+            rotationRecoilVelocity += new Vector3(
                 -rotRecoil.x,
                 UnityEngine.Random.Range(-rotRecoil.y, rotRecoil.y),
                 UnityEngine.Random.Range(-rotRecoil.z, rotRecoil.z));
+
             positionRecoil += new Vector3(
                 UnityEngine.Random.Range(-posRecoil.x, posRecoil.x),
                 UnityEngine.Random.Range(-posRecoil.y, posRecoil.y),
@@ -474,7 +487,7 @@ public abstract class WeaponBase : MonoBehaviour
         if (muzzleLight != null) StartCoroutine(FlashMuzzleLight());
 
         // For cycling weapons
-        if (!weaponData.requiresCycling)
+        if (!weaponData.RequiresCycling)
             EjectShell();
 
         SoundManager.Instance?.PlayShootingSound(weaponData.shootSound);
@@ -517,6 +530,19 @@ public abstract class WeaponBase : MonoBehaviour
         rechamberCoroutine = StartCoroutine(RechamberCoroutine());
     }
 
+    private void StartPostFireEndlag()
+    {
+        if (postFireCoroutine != null) StopCoroutine(postFireCoroutine);
+        postFireCoroutine = StartCoroutine(PostFireEndlagCoroutine());
+    }
+
+    private IEnumerator PostFireEndlagCoroutine()
+    {
+        yield return new WaitForSeconds(weaponData.postFireEndlag);
+        postFireCoroutine = null;
+        StartRechamber();
+    }
+
     private IEnumerator RechamberCoroutine()
     {
         isRechambering = true;
@@ -533,11 +559,23 @@ public abstract class WeaponBase : MonoBehaviour
         isRechambering = false;
         ReadyToShoot = true;
         rechamberCoroutine = null;
+
+        if (reloadQueued && CanReload())
+        {
+            reloadQueued = false;
+            StartReload();
+        }
     }
 
     // Cancels an in-progress rechamber WITHOUT marking the round as chambered.
     private void CancelRechamber()
     {
+        reloadQueued = false;
+        if (postFireCoroutine != null)
+        {
+            StopCoroutine(postFireCoroutine);
+            postFireCoroutine = null;
+        }
         if (rechamberCoroutine != null)
         {
             StopCoroutine(rechamberCoroutine);
@@ -545,9 +583,8 @@ public abstract class WeaponBase : MonoBehaviour
         }
         isRechambering = false;
 
-        if (weaponData.requiresCycling = true && !IsCychambered)
+        if (weaponData.RequiresCycling)
         {
-            ReadyToShoot = false;
             weaponAnimator?.ResetTrigger(weaponData.rechamberAnimation);
         }
     }
@@ -624,7 +661,7 @@ public abstract class WeaponBase : MonoBehaviour
     #region Reloading
 
     protected virtual bool CanReload() =>
-        !IsReloading && BulletsLeft < weaponData.magazineSize && HasAmmoAvailable();
+    !IsReloading && !isRechambering && BulletsLeft < weaponData.magazineSize && HasAmmoAvailable();
 
     protected virtual bool HasAmmoAvailable() =>
         WeaponManager.Instance?.CheckAmmoLeftFor(weaponData.ammoType) > 0;
@@ -655,7 +692,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual IEnumerator MagazineReloadCoroutine()
     {
-        bool reloadIncludesChambering = weaponData.requiresCycling && BulletsLeft == 0;
+        bool reloadIncludesChambering = weaponData.RequiresCycling && BulletsLeft == 0;
 
         weaponAnimator?.SetTrigger(GetReloadAnimationName());
         OnReloadStarted?.Invoke(this);
@@ -713,7 +750,7 @@ public abstract class WeaponBase : MonoBehaviour
         }
 
         // After shell reload done — rechamber if needed
-        if (weaponData.requiresCycling && !IsCychambered)
+        if (weaponData.RequiresCycling && !IsCychambered)
             yield return StartCoroutine(RechamberCoroutine());
 
         ReadyToShoot = true;
@@ -733,7 +770,7 @@ public abstract class WeaponBase : MonoBehaviour
         BulletsLeft += toReload;
         WeaponManager.Instance?.DecreaseTotalAmmo(toReload, weaponData.ammoType);
 
-        if (weaponData.requiresCycling && !IsCychambered)
+        if (weaponData.RequiresCycling && !IsCychambered)
         {
             if (chamberedDuringReload)
             {
@@ -779,7 +816,7 @@ public abstract class WeaponBase : MonoBehaviour
             weaponAnimator.Update(0f);
         }
 
-        if (weaponData.requiresCycling && !IsCychambered)
+        if (weaponData.RequiresCycling && !IsCychambered)
         {
             ReadyToShoot = false;
             StartRechamber();
@@ -863,7 +900,7 @@ public abstract class WeaponBase : MonoBehaviour
         isSwitchingDown = false;
         IsEquipping = false;
 
-        if (weaponData.requiresCycling && !IsCychambered)
+        if (weaponData.RequiresCycling && !IsCychambered)
         {
             ReadyToShoot = false;
             StartRechamber();
@@ -905,7 +942,8 @@ public abstract class WeaponBase : MonoBehaviour
 
         if (!active)
         {
-            rotationRecoil = Vector3.zero;
+            rotationRecoilVelocity = Vector3.zero; // was: rotationRecoil = Vector3.zero;
+            weaponRot = Vector3.zero;
             positionRecoil = Vector3.zero;
             cameraFollow?.ResetRecoil();
 
@@ -930,7 +968,7 @@ public abstract class WeaponBase : MonoBehaviour
                 weaponAnimator.ResetTrigger(weaponData.switchUpAnimation);
                 weaponAnimator.ResetTrigger(weaponData.firstEquipAnimation);
 
-                if (weaponData.requiresCycling)
+                if (weaponData.RequiresCycling)
                 {
                     weaponAnimator.ResetTrigger(weaponData.rechamberAnimation);
                 }
@@ -944,7 +982,7 @@ public abstract class WeaponBase : MonoBehaviour
             else
                 weaponAnimator?.SetTrigger(weaponData.switchUpAnimation);
 
-            if (weaponData.requiresCycling && !IsCychambered && !isRechambering)
+            if (weaponData.RequiresCycling && !IsCychambered && !isRechambering)
                 StartRechamber();
         }
     }
@@ -963,15 +1001,18 @@ public abstract class WeaponBase : MonoBehaviour
     {
         if (!weaponData.haveWeaponRecoil || gunPositionHolder == null) return;
 
-        rotationRecoil = Vector3.Lerp(rotationRecoil, Vector3.zero,
-            weaponData.gunRotationReturnSpeed * Time.deltaTime);
+        // Position: simple punch-and-return
         positionRecoil = Vector3.Lerp(positionRecoil, Vector3.zero,
             weaponData.gunPositionReturnSpeed * Time.deltaTime);
-
         gunPositionHolder.localPosition = Vector3.Slerp(gunPositionHolder.localPosition,
             positionRecoil, weaponData.gunRecoilPositionSpeed * Time.deltaTime);
-        weaponRot = Vector3.Slerp(weaponRot, rotationRecoil,
-            weaponData.gunRecoilRotationSpeed * Time.deltaTime);
+
+        // Rotation: damped spring — kicks and wobbles before settling
+        Vector3 rotAccel = -weaponData.gunRecoilShakeStiffness * weaponRot
+                            - weaponData.gunRecoilShakeDamping * rotationRecoilVelocity;
+        rotationRecoilVelocity += rotAccel * Time.deltaTime;
+        weaponRot += rotationRecoilVelocity * Time.deltaTime;
+
         gunPositionHolder.localRotation = Quaternion.Euler(weaponRot);
     }
 

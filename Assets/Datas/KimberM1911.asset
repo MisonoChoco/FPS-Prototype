@@ -38,9 +38,11 @@ MonoBehaviour:
   dropOffEnd: 100
   minDamageMultiplier: 0.3
   useShellReload: 0
+  reloadLoopAmount: 1
   shellLoadTime: 0.8
   maxShellsToLoad: 8
-  shellLoadAnimation: SHELL_LOAD
+  reloadLoopAnimation: RELOAD_LOOP
+  reloadFinishAnimation: RELOAD_FINISH
   haveWeaponRecoil: 1
   haveCameraRecoil: 1
   haveRotationalSway: 1
@@ -53,14 +55,16 @@ MonoBehaviour:
   adsFireRecoil: {x: 0.5, y: 1, z: 0}
   hRecoil: 1
   vRecoil: 2
+  rollShakeStiffness: 300
+  rollShakeDamping: 12
   gunRecoilPositionSpeed: 50
   gunPositionReturnSpeed: 40
   recoilKickBackHip: {x: 0, y: 0.2, z: -0.1}
   recoilKickBackAds: {x: -0.08, y: 0.01, z: 0.009}
-  gunRecoilRotationSpeed: 30
-  gunRotationReturnSpeed: 20
   recoilRotationHip: {x: 60, y: 5, z: 0}
   recoilRotationAds: {x: 10, y: 4, z: 6}
+  gunRecoilShakeStiffness: 400
+  gunRecoilShakeDamping: 18
   rotationSwayIntensity: 20
   rotationSwaySmoothness: 2
   jumpIntensity: 5
@@ -83,9 +87,9 @@ MonoBehaviour:
   pelletsPerShot: 1
   pelletSpread: 0
   requiresCycling: 0
-  cycleTime: 0.8
-  cycleAnimation: CYCLE
-  cycleSounds: []
+  postFireEndlag: 0.8
+  rechamberAnimation: RECHAMBER
+  rechamberSounds: []
   magazineDropPrefab: {fileID: 8979655581460389549, guid: d126d480254ba314d9a404544543ea53, type: 3}
   shootSound: {fileID: 8300000, guid: 464d9a89a68115544b8c8eb770bf50b3, type: 3}
   reloadSound: {fileID: 8300000, guid: 796cdd4a78a1ac0419ea1e3c022957fe, type: 3}
@@ -106,6 +110,8 @@ MonoBehaviour:
   boltChamberSound: {fileID: 0}
   boltBackSound: {fileID: 0}
   boltForwardSound: {fileID: 0}
+  boltEndSound: {fileID: 0}
+  ejectClickSound: {fileID: 0}
   switchUpSound: {fileID: 0}
   switchDownSound: {fileID: 0}
   audioVolume: 1
@@ -120,6 +126,7 @@ MonoBehaviour:
   adsEnterAnimation: enterADS
   adsExitAnimation: exitADS
   idleAnimation: Idle
+  inspectAnimation: INSPECT
   reloadAnimation: RELOAD
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
@@ -127,8 +134,8 @@ MonoBehaviour:
   switchUpAnimation: SWITCHUP
   switchDownAnimation: SWITCHDOWN
   firstEquipAnimation: FIRSTEQUIP
-  switchDownTimeout: 0.5
-  switchUpTimeout: 0.5
+  switchDownTimeout: 3
+  switchUpTimeout: 3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1

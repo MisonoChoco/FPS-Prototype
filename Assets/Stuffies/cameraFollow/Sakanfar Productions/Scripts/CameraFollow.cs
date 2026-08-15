@@ -45,6 +45,10 @@ namespace FollowCamera
         [SerializeField] private float landingShakeDuration = 0.3f;
         [SerializeField] private float shakeReduction = 2f;
 
+        private float rollVelocity = 0f;
+        private float rollShakeStiffness = 300f;
+        private float rollShakeDamping = 12f;
+
         // Mouse look — base rotation only, never touched by recoil
         private float xRotation = 0f;
 
@@ -220,8 +224,10 @@ namespace FollowCamera
                 recoilOffsetY = Mathf.Lerp(recoilOffsetY, 0f, recoilReturnSpeed * Time.deltaTime);
             }
 
-            // Roll always recovers (it's a cosmetic tilt, not an aim offset)
-            currentRoll = Mathf.Lerp(currentRoll, 0f, 8f * Time.deltaTime);
+            // Roll: damped spring — kicks out, overshoots, wobbles a few times, settles
+            float rollAccel = -rollShakeStiffness * currentRoll - rollShakeDamping * rollVelocity;
+            rollVelocity += rollAccel * Time.deltaTime;
+            currentRoll += rollVelocity * Time.deltaTime;
         }
 
         private void HandleZoom()
@@ -313,14 +319,17 @@ namespace FollowCamera
         [SerializeField] private float recoilOffsetYMax = 15f; // max horizontal drift
 
         public void ApplyRecoilKick(float pitchKick, float yawKick, float rollKick,
-    float snapSpeed, float returnSpeed)
+    float snapSpeed, float returnSpeed, float rollStiffness, float rollDamping)
         {
             recoilSnapSpeed = snapSpeed;
             recoilReturnSpeed = returnSpeed;
+            rollShakeStiffness = rollStiffness;
+            rollShakeDamping = rollDamping;
 
             recoilOffsetX = Mathf.Clamp(recoilOffsetX - pitchKick, -recoilOffsetXMax, recoilOffsetXMax);
             recoilOffsetY = Mathf.Clamp(recoilOffsetY + yawKick, -recoilOffsetYMax, recoilOffsetYMax);
-            currentRoll += rollKick;
+
+            rollVelocity += rollKick * 15f; // impulse scale — tune if kicks feel too weak/strong
         }
 
         /// <summary>
@@ -342,6 +351,7 @@ namespace FollowCamera
             recoilVisualX = 0f;
             recoilVisualY = 0f;
             currentRoll = 0f;
+            rollVelocity = 0f;
         }
 
         // ── Other Public API ──────────────────────────────────────────

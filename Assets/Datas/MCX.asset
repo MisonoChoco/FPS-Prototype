@@ -38,29 +38,33 @@ MonoBehaviour:
   dropOffEnd: 100
   minDamageMultiplier: 0.3
   useShellReload: 0
+  reloadLoopAmount: 1
   shellLoadTime: 0.8
   maxShellsToLoad: 8
-  shellLoadAnimation: SHELL_LOAD
+  reloadLoopAnimation: RELOAD_LOOP
+  reloadFinishAnimation: RELOAD_FINISH
   haveWeaponRecoil: 1
   haveCameraRecoil: 1
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 20
+  recoilRotationSpeed: 30
   recoilRollIntensity: 2
   recoilReturnSpeed: 10
   hipFireRecoil: {x: 1.5, y: 1, z: 0}
   adsFireRecoil: {x: 0.75, y: 0.5, z: 0}
   hRecoil: 1
   vRecoil: 1.5
+  rollShakeStiffness: 350
+  rollShakeDamping: 10
   gunRecoilPositionSpeed: 25
   gunPositionReturnSpeed: 10
   recoilKickBackHip: {x: 0.035, y: -0.05, z: -0.25}
   recoilKickBackAds: {x: 0.025, y: 0, z: -0.1}
-  gunRecoilRotationSpeed: -10
-  gunRotationReturnSpeed: -5
   recoilRotationHip: {x: 6, y: 0, z: 4}
   recoilRotationAds: {x: 9, y: 5, z: 7}
+  gunRecoilShakeStiffness: 400
+  gunRecoilShakeDamping: 18
   rotationSwayIntensity: 10
   rotationSwaySmoothness: 2
   jumpIntensity: 5
@@ -83,9 +87,9 @@ MonoBehaviour:
   pelletsPerShot: 1
   pelletSpread: 0
   requiresCycling: 0
-  cycleTime: 0.8
-  cycleAnimation: CYCLE
-  cycleSounds: []
+  postFireEndlag: 0.8
+  rechamberAnimation: RECHAMBER
+  rechamberSounds: []
   magazineDropPrefab: {fileID: 2975772731521528104, guid: 63d5691d78cbc36468d77675c8699441, type: 3}
   shootSound: {fileID: 8300000, guid: 67a465db4db3f7c4c89c10c8613a83ab, type: 3}
   reloadSound: {fileID: 0}
@@ -106,6 +110,8 @@ MonoBehaviour:
   boltChamberSound: {fileID: 8300000, guid: 50584df474926fc429b22ea138100d8b, type: 3}
   boltBackSound: {fileID: 8300000, guid: 1995392dd75f0ff468ed915a65afb020, type: 3}
   boltForwardSound: {fileID: 8300000, guid: c2ed1500d2bcc2643b993da62413bb51, type: 3}
+  boltEndSound: {fileID: 0}
+  ejectClickSound: {fileID: 0}
   switchUpSound: {fileID: 8300000, guid: d27b281eaae775c48b5bc9692f82a41f, type: 3}
   switchDownSound: {fileID: 8300000, guid: fabc064c7af1ebc4d9495774457ca6f7, type: 3}
   audioVolume: 1
@@ -120,6 +126,7 @@ MonoBehaviour:
   adsEnterAnimation: enterADS
   adsExitAnimation: exitADS
   idleAnimation: Idle
+  inspectAnimation: INSPECT
   reloadAnimation: RELOAD
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
@@ -127,8 +134,8 @@ MonoBehaviour:
   switchUpAnimation: SWITCHUP
   switchDownAnimation: SWITCHDOWN
   firstEquipAnimation: FIRSTEQUIP
-  switchDownTimeout: 0.5
-  switchUpTimeout: 0.5
+  switchDownTimeout: 3
+  switchUpTimeout: 3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1

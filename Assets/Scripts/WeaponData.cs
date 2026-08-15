@@ -77,6 +77,8 @@ public class WeaponData : ScriptableObject
     public Vector3 adsFireRecoil = new Vector3(2f, 2f, 2f);
     public float hRecoil = 0.215f;
     public float vRecoil = 0.221f;
+    public float rollShakeStiffness = 300f; // higher = faster oscillation
+    public float rollShakeDamping = 12f;    // lower = more visible wobbles before settling
 
     [Header("Weapon Recoil Values")]
     public float gunRecoilPositionSpeed = 8f;
@@ -84,10 +86,10 @@ public class WeaponData : ScriptableObject
     public float gunPositionReturnSpeed = 10f;
     public Vector3 recoilKickBackHip = new Vector3(0.015f, 0f, 0.05f);
     public Vector3 recoilKickBackAds = new Vector3(-0.08f, 0.01f, 0.009f);
-    public float gunRecoilRotationSpeed = 8f;
-    public float gunRotationReturnSpeed = 38f;
     public Vector3 recoilRotationHip = new Vector3(10f, 5f, 7f);
     public Vector3 recoilRotationAds = new Vector3(10f, 4f, 6f);
+    public float gunRecoilShakeStiffness = 400f;
+    public float gunRecoilShakeDamping = 18f;
 
     [Header("Rotational Sway Values")]
     public float rotationSwayIntensity = 10f;
@@ -129,8 +131,10 @@ public class WeaponData : ScriptableObject
     public float pelletSpread = 0f; // Additional spread for multiple pellets
 
     [Header("Cycle-Based Firing")]
-    public bool requiresCycling = false;
+    [SerializeField] private bool requiresCycling = false;
 
+    public bool RequiresCycling => requiresCycling; // read-only outside this class
+    public float postFireEndlag = 0.8f;
     public string rechamberAnimation = "RECHAMBER";
     public AudioClip[] rechamberSounds;
 
@@ -199,8 +203,8 @@ public class WeaponData : ScriptableObject
 
     public string switchDownAnimation = "SWITCHDOWN";
     public string firstEquipAnimation = "FIRSTEQUIP";
-    public float switchDownTimeout = 0.5f; // fallback if no anim event
-    public float switchUpTimeout = 0.5f; // fallback if no anim event
+    public float switchDownTimeout = 3f; // fallback if no anim event
+    public float switchUpTimeout = 3f; // fallback if no anim event
 
     [Header("Weapon Handling")]
     public float aimSpeed = 8f; // How fast to aim down sights

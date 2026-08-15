@@ -38,29 +38,33 @@ MonoBehaviour:
   dropOffEnd: 100
   minDamageMultiplier: 0.3
   useShellReload: 0
+  reloadLoopAmount: 1
   shellLoadTime: 0.8
   maxShellsToLoad: 8
-  shellLoadAnimation: SHELL_LOAD
+  reloadLoopAnimation: RELOAD_LOOP
+  reloadFinishAnimation: RELOAD_FINISH
   haveWeaponRecoil: 1
   haveCameraRecoil: 1
   haveRotationalSway: 1
   haveBobbing: 1
   haveJumpSway: 1
-  recoilRotationSpeed: 20
-  recoilRollIntensity: 1
+  recoilRotationSpeed: 27.5
+  recoilRollIntensity: 1.5
   recoilReturnSpeed: 15
   hipFireRecoil: {x: 1.25, y: 0.5, z: 0}
   adsFireRecoil: {x: 0.75, y: 0.5, z: 0}
   hRecoil: 0.75
   vRecoil: 1.25
+  rollShakeStiffness: 400
+  rollShakeDamping: 11
   gunRecoilPositionSpeed: 30
   gunPositionReturnSpeed: 15
   recoilKickBackHip: {x: 0.075, y: 0, z: -0.2}
   recoilKickBackAds: {x: 0.05, y: 0, z: -0.1}
-  gunRecoilRotationSpeed: -15
-  gunRotationReturnSpeed: -7
   recoilRotationHip: {x: 10, y: 5, z: 7}
   recoilRotationAds: {x: 10, y: 4, z: 6}
+  gunRecoilShakeStiffness: 400
+  gunRecoilShakeDamping: 18
   rotationSwayIntensity: 10
   rotationSwaySmoothness: 2
   jumpIntensity: 5
@@ -83,9 +87,9 @@ MonoBehaviour:
   pelletsPerShot: 1
   pelletSpread: 0
   requiresCycling: 0
-  cycleTime: 0.8
-  cycleAnimation: CYCLE
-  cycleSounds: []
+  postFireEndlag: 0.8
+  rechamberAnimation: RECHAMBER
+  rechamberSounds: []
   magazineDropPrefab: {fileID: 5085648602101725522, guid: 0d31697044fb8b74cae449f8c4a136b4, type: 3}
   shootSound: {fileID: 8300000, guid: 793a749aeda79fb43955055eb336015d, type: 3}
   reloadSound: {fileID: 0}
@@ -106,6 +110,8 @@ MonoBehaviour:
   boltChamberSound: {fileID: 8300000, guid: 7505c752cc973c246851bf205b52c866, type: 3}
   boltBackSound: {fileID: 8300000, guid: 356949441f3d8714db800603b6315ad9, type: 3}
   boltForwardSound: {fileID: 8300000, guid: 04f0ab582742ee44381d14bdaa3d44ea, type: 3}
+  boltEndSound: {fileID: 0}
+  ejectClickSound: {fileID: 0}
   switchUpSound: {fileID: 8300000, guid: eec19675d589d60459815ecce15591c7, type: 3}
   switchDownSound: {fileID: 8300000, guid: 2ac9ed4530142e54f8ca94f9cb5137a4, type: 3}
   audioVolume: 1
@@ -120,6 +126,7 @@ MonoBehaviour:
   adsEnterAnimation: enterADS
   adsExitAnimation: exitADS
   idleAnimation: Idle
+  inspectAnimation: INSPECT
   reloadAnimation: RELOAD
   tacticalReloadAnimation: RELOAD_TACTICAL
   lastBulletReloadAnimation: RELOAD_LASTBULLET
@@ -127,8 +134,8 @@ MonoBehaviour:
   switchUpAnimation: SWITCHUP
   switchDownAnimation: SWITCHDOWN
   firstEquipAnimation: FIRSTEQUIP
-  switchDownTimeout: 0.5
-  switchUpTimeout: 0.5
+  switchDownTimeout: 3
+  switchUpTimeout: 3
   aimSpeed: 8
   weaponSway: 1
   recoilAmount: 1
