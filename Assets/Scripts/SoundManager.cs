@@ -42,6 +42,12 @@ public class SoundManager : MonoBehaviour
 
     public AudioClip smokeSound;
 
+    [Header("Armor")]
+    public AudioClip armorHitSound;
+
+    public AudioClip armorBreakSound;
+    public AudioClip selfArmorBreak;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -146,8 +152,20 @@ public class SoundManager : MonoBehaviour
     public void PlayPlayerDieSound()
     { if (playerDie != null) entityChannel.PlayOneShot(playerDie); }
 
+    public void PlaySelfArmorBreakSound()
+    { if (armorBreak != null) playerChannel.PlayOneShot(selfArmorBreak); }
+
+    public void PlayArmorHitSound()
+    {
+        if (armorHitSound != null && playerChannel != null)
+            playerChannel.PlayOneShot(armorHitSound);
+    }
+
     public void PlayArmorBreakSound()
-    { if (armorBreak != null) playerChannel.PlayOneShot(armorBreak); }
+    {
+        if (armorBreakSound != null && playerChannel != null)
+            playerChannel.PlayOneShot(armorBreakSound);
+    }
 
     #endregion Player Sounds
 

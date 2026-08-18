@@ -38,6 +38,7 @@ public class HUDManager : MonoBehaviour
     public bool debugHitmarker = true; // Toggle debug logs
     private Queue<GameObject> hitmarkerPool;
     private List<GameObject> activeHitmarkers;
+    private Dictionary<GameObject, Image[]> hitmarkerImageCache;
 
     public Sprite emptySlot;
     public Sprite greySlot;
@@ -140,6 +141,7 @@ public class HUDManager : MonoBehaviour
 
         hitmarkerPool = new Queue<GameObject>();
         activeHitmarkers = new List<GameObject>();
+        hitmarkerImageCache = new Dictionary<GameObject, Image[]>();
 
         for (int i = 0; i < hitmarkerPoolSize; i++)
         {
@@ -153,6 +155,9 @@ public class HUDManager : MonoBehaviour
             {
                 canvasGroup = hitmarker.AddComponent<CanvasGroup>();
             }
+
+            // Cache all 4 hand Images so we don't re-fetch every hit
+            hitmarkerImageCache[hitmarker] = hitmarker.GetComponentsInChildren<Image>();
 
             // Force animator to load its runtime controller
             if (animator != null)
@@ -171,13 +176,13 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    private void ShowHitmarker(Vector3 hitPosition, int damage)
+    private void ShowHitmarker(Vector3 hitPosition, int damage, HitFeedbackType hitType)
     {
         hitPosition = new Vector3(0, 0, 0);
 
         if (debugHitmarker)
         {
-            Debug.Log($"HUDManager: ShowHitmarker called! Position: {hitPosition}, Damage: {damage}");
+            Debug.Log($"HUDManager: ShowHitmarker called! Position: {hitPosition}, Damage: {damage}, Type: {hitType}");
         }
 
         if (hitmarkerPool == null)
@@ -195,7 +200,7 @@ public class HUDManager : MonoBehaviour
         }
 
         // Randomize rotation (Z-axis for 2D UI elements)
-        float randomRotation = UnityEngine.Random.Range(-10f, 10f);
+        float randomRotation = UnityEngine.Random.Range(-12f, 12f);
         hitmarker.transform.rotation = Quaternion.Euler(0f, 0f, randomRotation);
 
         // Reset alpha to full opacity
@@ -206,19 +211,41 @@ public class HUDManager : MonoBehaviour
         }
         canvasGroup.alpha = 1f;
 
+        // Tint all 4 hands blue on armor hits, white otherwise
+        if (!hitmarkerImageCache.TryGetValue(hitmarker, out Image[] hitmarkerImages))
+        {
+            // Fallback for hitmarkers created outside the initial pool (pool-exhaustion case)
+            hitmarkerImages = hitmarker.GetComponentsInChildren<Image>();
+            hitmarkerImageCache[hitmarker] = hitmarkerImages;
+        }
+
+        Color tint = hitType == HitFeedbackType.Armor ? Color.blue : Color.white;
+        foreach (var img in hitmarkerImages)
+        {
+            img.color = tint;
+        }
+
         hitmarker.SetActive(true);
 
-        // Reset animator
+        // Reset animator and play the state matching this hit's feedback type
         Animator animator = hitmarker.GetComponent<Animator>();
         if (animator != null)
         {
             animator.Rebind();
             animator.Update(0f);
-            animator.Play("Hitmarker", 0, 0f);
+
+            string stateName = hitType switch
+            {
+                HitFeedbackType.ArmorBreak => "ArmorBreak",
+                HitFeedbackType.Kill => "EnemyKill",
+                _ => "Hitmarker"
+            };
+
+            animator.Play(stateName, 0, 0f);
 
             if (debugHitmarker)
             {
-                Debug.Log("HUDManager: Playing hitmarker animation");
+                Debug.Log($"HUDManager: Playing hitmarker animation state '{stateName}'");
             }
         }
         else

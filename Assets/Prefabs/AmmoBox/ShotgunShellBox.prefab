@@ -624,7 +624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoAmount: 40
+  ammoAmount: 30
   ammoType: 6
 --- !u!33 &4971285983362016470
 MeshFilter:

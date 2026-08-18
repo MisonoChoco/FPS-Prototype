@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmmoBox
-  ammoAmount: 50
+  ammoAmount: 5
   ammoType: 11
 --- !u!54 &6566991049601546172
 Rigidbody:

@@ -52,6 +52,9 @@ MonoBehaviour:
   muzzleLight: {fileID: 0}
   ejectionPort: {fileID: 0}
   shellCasing: {fileID: 1046677776983374096, guid: 53f1328754e99b7459427f98b6f74222, type: 3}
+  magInGun: {fileID: 0}
+  leftArm: {fileID: 0}
+  rightArm: {fileID: 0}
   gunPositionHolder: {fileID: 0}
   magazineDropPoint: {fileID: 0}
   magazineDropForce: {x: -2, y: -1, z: 1}
@@ -59,11 +62,6 @@ MonoBehaviour:
   lastMagazineDropPoint: {fileID: 0}
   lastMagazineDropForce: {x: -2, y: -1, z: 1}
   lastMagazineDropTorque: 5
-  weaponModel: 0
-  availableShootingModes: 00000000
-  leftArm: {fileID: 0}
-  rightArm: {fileID: 0}
-  magInGun: {fileID: 0}
 --- !u!1 &279874640166624288
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,7 +88,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1415545347383847751}
@@ -3816,7 +3814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1415545347383847751
 Transform:
   m_ObjectHideFlags: 0

@@ -6,6 +6,13 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.VFX;
 
+#region Feedback Types
+
+public enum HitFeedbackType
+{ Flesh, Armor, ArmorBreak, Kill }
+
+#endregion Feedback Types
+
 #region Interfaces
 
 public interface IProjectile
@@ -154,6 +161,8 @@ public abstract class CollisionHandler
 
 public class EnemyCollisionHandler : CollisionHandler
 {
+    protected Enemy.HitOutcome lastHitOutcome;
+
     public EnemyCollisionHandler(IProjectile projectile) : base(projectile)
     {
     }
@@ -162,6 +171,8 @@ public class EnemyCollisionHandler : CollisionHandler
 
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
+        lastHitOutcome = default;
+
         var enemy = target.GetComponent<Enemy>();
         if (enemy == null)
         {
@@ -169,28 +180,31 @@ public class EnemyCollisionHandler : CollisionHandler
             return;
         }
 
-        if (!enemy.isDead)
+        if (enemy.isDead) return;
+
+        lastHitOutcome = enemy.TakeDamage(projectile.Damage);
+        PlayHitFeedback(lastHitOutcome, impactData, target);
+    }
+
+    protected virtual void PlayHitFeedback(Enemy.HitOutcome outcome, ImpactData impactData, GameObject target)
+    {
+        if (outcome.WasKill)
         {
-            var damageInfo = new DamageInfo(
-                projectile.Damage,
-                impactData.Point,
-                -impactData.Normal,
-                (projectile as MonoBehaviour)?.gameObject,
-                DamageType.Bullet);
-
-            if (enemy is IDamageable damageable)
-                damageable.TakeDamage(projectile.Damage, damageInfo);
-            else
-                enemy.TakeDamage(projectile.Damage);
-
-            SoundManager.Instance?.PlayEnemyHitmarker();
+            target.GetComponent<CapsuleCollider>()?.gameObject.SetActive(false);
             EffectHelper.CreateBloodEffect(impactData.Point, impactData.Normal, target);
         }
-
-        if (enemy.isDead)
+        else if (outcome.ArmorBroke)
         {
-            SoundManager.Instance?.PlayKillFeedback();
-            target.GetComponent<CapsuleCollider>()?.gameObject.SetActive(false);
+            SoundManager.Instance?.PlayArmorBreakSound();
+        }
+        else if (outcome.WasArmorHit)
+        {
+            SoundManager.Instance?.PlayArmorHitSound();
+        }
+        else
+        {
+            SoundManager.Instance?.PlayEnemyHitmarker();
+            EffectHelper.CreateBloodEffect(impactData.Point, impactData.Normal, target);
         }
     }
 }
@@ -237,8 +251,6 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
     protected List<CollisionHandler> collisionHandlers;
     protected int penetrationCount = 0;
 
-    // Damage is set externally by WeaponBase via SetDamage()
-    // so it always reflects weaponData.damage — never a local inspector value
     private int _damage = 0;
 
     public float Speed { get; private set; }
@@ -253,10 +265,6 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         InitializeCollisionHandlers();
     }
 
-    // Start() intentionally does NOT call Launch() —
-    // Launch() is called explicitly by WeaponBase.ConfigureProjectile()
-    // with the correct direction and speed from WeaponData.
-    // Calling it here would override the velocity set by the weapon.
     protected virtual void Start()
     {
         StartCoroutine(DestroyAfterLifetime());
@@ -280,10 +288,8 @@ public abstract class ProjectileBase : MonoBehaviour, IProjectile
         };
     }
 
-    // Called by WeaponBase.ConfigureProjectile() — sets damage from weaponData
     public void SetDamage(int damage) => _damage = damage;
 
-    // Called by WeaponBase.ConfigureProjectile() — sets direction and speed from weaponData
     public virtual void Launch(Vector3 direction, float speed)
     {
         Speed = speed;
@@ -466,7 +472,13 @@ public class BulletEnemyHandler : EnemyCollisionHandler
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
         base.HandleCollision(target, impactData);
-        BulletImpactEvents.Instance?.InvokeEnemyHit(impactData.Point, projectile.Damage);
+
+        HitFeedbackType feedback = lastHitOutcome.WasKill ? HitFeedbackType.Kill
+            : lastHitOutcome.ArmorBroke ? HitFeedbackType.ArmorBreak
+            : lastHitOutcome.WasArmorHit ? HitFeedbackType.Armor
+            : HitFeedbackType.Flesh;
+
+        BulletImpactEvents.Instance?.InvokeEnemyHit(impactData.Point, projectile.Damage, feedback);
     }
 }
 
@@ -508,7 +520,7 @@ public class BulletImpactEvents : MonoBehaviour
 {
     public static BulletImpactEvents Instance { get; private set; }
 
-    public event Action<Vector3, int> OnEnemyHit;
+    public event Action<Vector3, int, HitFeedbackType> OnEnemyHit;
 
     public event Action<Vector3, int> OnPlayerHit;
 
@@ -522,7 +534,8 @@ public class BulletImpactEvents : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    public void InvokeEnemyHit(Vector3 position, int damage) => OnEnemyHit?.Invoke(position, damage);
+    public void InvokeEnemyHit(Vector3 position, int damage, HitFeedbackType type) =>
+        OnEnemyHit?.Invoke(position, damage, type);
 
     public void InvokePlayerHit(Vector3 position, int damage) => OnPlayerHit?.Invoke(position, damage);
 

@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b2e30f6f9aac4b90d8bd35f2c51e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoAmount: 150
+  ammoAmount: 50
   ammoType: 1
 --- !u!114 &-6314106008560899023
 MonoBehaviour:

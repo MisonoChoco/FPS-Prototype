@@ -236,6 +236,9 @@ MonoBehaviour:
   muzzleLight: {fileID: 0}
   ejectionPort: {fileID: 7643415640639392965}
   shellCasing: {fileID: 5768728132570183689, guid: 06c32825dbf48ba42889b61cf19a493b, type: 3}
+  magInGun: {fileID: 6735301565574598821}
+  leftArm: {fileID: 0}
+  rightArm: {fileID: 0}
   gunPositionHolder: {fileID: 0}
   magazineDropPoint: {fileID: 4201132067829113218}
   magazineDropForce: {x: 4, y: 1, z: 3}
@@ -243,11 +246,6 @@ MonoBehaviour:
   lastMagazineDropPoint: {fileID: 4201132067829113218}
   lastMagazineDropForce: {x: -4, y: -1, z: 3}
   lastMagazineDropTorque: 0.25
-  weaponModel: 2
-  availableShootingModes: 0200000000000000
-  leftArm: {fileID: 0}
-  rightArm: {fileID: 0}
-  magInGun: {fileID: 6735301565574598821}
 --- !u!65 &7620256741387042195
 BoxCollider:
   m_ObjectHideFlags: 0

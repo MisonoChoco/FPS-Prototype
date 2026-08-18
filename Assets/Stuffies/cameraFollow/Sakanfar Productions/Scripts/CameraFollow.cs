@@ -32,6 +32,7 @@ namespace FollowCamera
         [SerializeField] private float normalFOV = 60f;
         [SerializeField] private float zoomedFOV = 30f;
         [SerializeField] private float runningFOV = 70f;
+        [SerializeField] private float tacSprintFOV = 78f;
         [SerializeField] private float zoomSpeed = 5f;
         [SerializeField] private float aimSensitivityMultiplier = 0.5f;
 
@@ -44,6 +45,9 @@ namespace FollowCamera
         [SerializeField] private float landingShakeIntensity = 0.15f;
         [SerializeField] private float landingShakeDuration = 0.3f;
         [SerializeField] private float shakeReduction = 2f;
+
+        //[Header("Crouching Settings")]
+        private float crouchOffsetY = 0f;
 
         private float rollVelocity = 0f;
         private float rollShakeStiffness = 300f;
@@ -186,7 +190,7 @@ namespace FollowCamera
             transform.localRotation = Quaternion.Euler(xRotation + recoilVisualX, recoilVisualY, currentRoll);
 
             if (enableCameraShake)
-                transform.localPosition = cameraShakeOffset;
+                transform.localPosition = cameraShakeOffset + new Vector3(0f, crouchOffsetY, 0f);
         }
 
         /// <summary>
@@ -233,9 +237,11 @@ namespace FollowCamera
         private void HandleZoom()
         {
             isAiming = Input.GetKey(aimKey);
+            bool isTacSprinting = playerController != null && playerController.IsTacSprinting();
             bool isPlayerRunning = playerController != null && playerController.IsRunning();
 
             if (isAiming) targetFOV = zoomedFOV;
+            else if (isTacSprinting) targetFOV = tacSprintFOV;
             else if (isPlayerRunning) targetFOV = runningFOV;
             else targetFOV = normalFOV;
 
@@ -392,6 +398,11 @@ namespace FollowCamera
         public Vector3 GetBaseAimOrigin()
         {
             return playerCamera != null ? playerCamera.transform.position : transform.position;
+        }
+
+        public void SetCrouchOffset(float offsetY)
+        {
+            crouchOffsetY = offsetY;
         }
     }
 }

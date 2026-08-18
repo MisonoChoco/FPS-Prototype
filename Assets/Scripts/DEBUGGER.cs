@@ -21,7 +21,6 @@ public class EventChainDebugger : MonoBehaviour
 
         Debug.Log("✅ BulletImpactEvents.Instance found, subscribing to events...");
 
-        BulletImpactEvents.Instance.OnEnemyHit += TestEnemyHit;
         BulletImpactEvents.Instance.OnPlayerHit += TestPlayerHit;
         BulletImpactEvents.Instance.OnWallHit += TestWallHit;
         BulletImpactEvents.Instance.OnTargetHit += TestTargetHit;
@@ -53,7 +52,6 @@ public class EventChainDebugger : MonoBehaviour
     {
         if (BulletImpactEvents.Instance != null)
         {
-            BulletImpactEvents.Instance.OnEnemyHit -= TestEnemyHit;
             BulletImpactEvents.Instance.OnPlayerHit -= TestPlayerHit;
             BulletImpactEvents.Instance.OnWallHit -= TestWallHit;
             BulletImpactEvents.Instance.OnTargetHit -= TestTargetHit;

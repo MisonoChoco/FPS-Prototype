@@ -331,10 +331,6 @@ public abstract class WeaponBase : MonoBehaviour
         {
             isShooting = false;
         }
-        else
-        {
-            playerController?.AddRecoil(0f, 0f);
-        }
     }
 
     protected virtual bool GetShootingInput()
