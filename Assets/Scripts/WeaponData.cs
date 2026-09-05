@@ -25,6 +25,7 @@ public class WeaponData : ScriptableObject
 
     public Vector3 baseViewmodelRotation = Vector3.zero;
     public float inspectDuration = 12f;
+    public float overallSwaySmoothness = 12f;
 
     [Header("Combat Stats")]
     public int damage = 25;
@@ -95,6 +96,19 @@ public class WeaponData : ScriptableObject
     public float rotationSwayIntensity = 10f;
 
     public float rotationSwaySmoothness = 2f;
+    public float swayClampAngle = 6f;
+
+    [Header("Positional Sway Values")]
+    public float positionSwayIntensity = 0.02f;
+
+    public float positionSwayClamp = 0.05f;
+
+    [Header("Movement Drag Values")]
+    public bool haveMovementDrag = true;
+
+    public float dragIntensity = 0.02f;
+    public float dragMaxOffset = 0.08f;
+    public float dragSmoothTime = 0.15f;
 
     [Header("Jump Sway Values")]
     public float jumpIntensity = 5f;
@@ -113,6 +127,14 @@ public class WeaponData : ScriptableObject
     public float walkSpeedMultiplier = 4f;
     public float walkSpeedMax = 6f;
     public float aimReduction = 4f;
+    public float bobbingRollIntensity = 1.5f;
+    public float bobbingSettleSpeed = 4f;
+
+    [Header("Crouch Tactical Tilt")]
+    public Vector3 crouchTiltRotation = new Vector3(4f, 0f, 18f);
+
+    public Vector3 crouchTiltPosition = new Vector3(-0.015f, -0.01f, 0f);
+    public float crouchTiltTime = 0.18f;
 
     [Header("Fire Modes")]
     public ShootingMode[] availableShootingModes = { ShootingMode.Semi };

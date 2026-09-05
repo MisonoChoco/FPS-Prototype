@@ -21,6 +21,7 @@ MonoBehaviour:
   baseViewmodelPosition: {x: 0.4, y: 0.1, z: 0.8}
   baseViewmodelRotation: {x: 0, y: 0, z: 0}
   inspectDuration: 12
+  overallSwaySmoothness: 12
   damage: 15
   fireRate: 940
   range: 100
@@ -67,18 +68,30 @@ MonoBehaviour:
   gunRecoilShakeDamping: 18
   rotationSwayIntensity: 10
   rotationSwaySmoothness: 2
-  jumpIntensity: 5
-  weaponMaxClamp: 20
-  weaponMinClamp: 20
+  swayClampAngle: 6
+  positionSwayIntensity: 0.02
+  positionSwayClamp: 0.05
+  haveMovementDrag: 1
+  dragIntensity: 0.02
+  dragMaxOffset: 0.08
+  dragSmoothTime: 0.1
+  jumpIntensity: 10
+  weaponMaxClamp: 3
+  weaponMinClamp: 1.2
   jumpSmooth: 15
-  landingIntensity: 5
-  landingSmooth: 15
-  recoverySpeed: 50
-  bobbingMagnitude: 0.009
+  landingIntensity: 12
+  landingSmooth: 24
+  recoverySpeed: 60
+  bobbingMagnitude: 0.04
   idleSpeed: 2
   walkSpeedMultiplier: 4
   walkSpeedMax: 6
   aimReduction: 4
+  bobbingRollIntensity: 1.5
+  bobbingSettleSpeed: 4
+  crouchTiltRotation: {x: -3.6, y: -1, z: 22}
+  crouchTiltPosition: {x: -0.18, y: -0.02, z: -0.1}
+  crouchTiltTime: 0.18
   availableShootingModes: 0000000002000000
   defaultShootingMode: 2
   bulletsPerBurst: 3

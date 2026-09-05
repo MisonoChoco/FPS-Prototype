@@ -71,6 +71,20 @@ public abstract class WeaponBase : MonoBehaviour
     private float mouseX;
     private float mouseY;
 
+    // ── Additive sway/bob offsets (composited once per frame in ApplySwayAndBob) ──
+    private Vector3 mouseSwayRotation;
+
+    private Vector3 mouseSwayPosition;
+    private Vector3 dragOffset;
+    private Vector3 dragVelocityRef;
+    private Vector3 bobPositionOffset;
+    private float bobRollOffset;
+    private Vector3 jumpRotationOffset;
+    private Vector3 crouchRotationOffset;
+    private Vector3 crouchPositionOffset;
+    private Vector3 crouchRotationVelocity;
+    private Vector3 crouchPositionVelocity;
+
     // ── Jump sway state ──────────────────────────────────────────────
     private float impactForce = 0;
 
@@ -78,7 +92,6 @@ public abstract class WeaponBase : MonoBehaviour
     private float sinY = 0f;
 
     private float sinX = 0f;
-    private Vector3 lastPosition;
 
     // ── Core weapon state ───────────────────────────────────────────────
     public bool IsActiveWeapon { get; set; }
@@ -158,9 +171,13 @@ public abstract class WeaponBase : MonoBehaviour
         UpdateSpread();
         HandleWeaponRecoil();
         HandleCameraRecoil();
-        WeaponRotationSway();
-        WeaponBobbing();
-        JumpSwayEffect();
+
+        UpdateMouseSway();
+        UpdateMovementDrag();
+        UpdateBobbing();
+        UpdateJumpTilt();
+        UpdateCrouchTilt();
+        ApplySwayAndBob();
     }
 
     #endregion Unity Lifecycle
@@ -198,7 +215,6 @@ public abstract class WeaponBase : MonoBehaviour
         if (weaponAnimator != null)
             weaponAnimator.enabled = false;
 
-        lastPosition = transform.position;
         if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
         if (gunPositionHolder == null) gunPositionHolder = transform;
         if (weaponData.haveRotationalSway) originRotation = transform.localRotation;
@@ -1021,77 +1037,145 @@ public abstract class WeaponBase : MonoBehaviour
         cameraFollow.SetFiringState(currentlyFiring);
     }
 
-    private void WeaponRotationSway()
+    private void UpdateMouseSway()
     {
-        if (!weaponData.haveRotationalSway) return;
+        if (!weaponData.haveRotationalSway)
+        {
+            mouseSwayRotation = Vector3.zero;
+            mouseSwayPosition = Vector3.zero;
+            return;
+        }
 
+        Vector3 targetRot = new Vector3(
+            Mathf.Clamp(mouseY * weaponData.rotationSwayIntensity, -weaponData.swayClampAngle, weaponData.swayClampAngle),
+            Mathf.Clamp(-mouseX * weaponData.rotationSwayIntensity, -weaponData.swayClampAngle, weaponData.swayClampAngle),
+            Mathf.Clamp(-mouseX * weaponData.rotationSwayIntensity * 0.5f, -weaponData.swayClampAngle, weaponData.swayClampAngle));
+
+        Vector3 targetPos = new Vector3(
+            Mathf.Clamp(-mouseX * weaponData.positionSwayIntensity, -weaponData.positionSwayClamp, weaponData.positionSwayClamp),
+            Mathf.Clamp(-mouseY * weaponData.positionSwayIntensity, -weaponData.positionSwayClamp, weaponData.positionSwayClamp),
+            0f);
+
+        float t = weaponData.rotationSwaySmoothness * Time.deltaTime;
+        mouseSwayRotation = Vector3.Lerp(mouseSwayRotation, targetRot, t);
+        mouseSwayPosition = Vector3.Lerp(mouseSwayPosition, targetPos, t);
+    }
+
+    private void UpdateMovementDrag()
+    {
+        if (!weaponData.haveMovementDrag || playerController == null)
+        {
+            dragOffset = Vector3.zero;
+            return;
+        }
+
+        Vector3 worldVel = playerController.GetVelocity();
+        Vector3 localVel = transform.parent != null
+            ? transform.parent.InverseTransformDirection(worldVel)
+            : worldVel;
+
+        // Vertical air motion is jump tilt's job — drag only reacts to planar strafing.
+        Vector3 planarVel = new Vector3(localVel.x, 0f, localVel.z);
+
+        Vector3 targetDrag = new Vector3(-planarVel.x, 0f, -planarVel.z) * weaponData.dragIntensity;
+        targetDrag = Vector3.ClampMagnitude(targetDrag, weaponData.dragMaxOffset);
+
+        dragOffset = Vector3.SmoothDamp(dragOffset, targetDrag, ref dragVelocityRef, weaponData.dragSmoothTime);
+    }
+
+    private void UpdateBobbing()
+    {
+        if (!weaponData.haveBobbing)
+        {
+            bobPositionOffset = Vector3.zero;
+            bobRollOffset = 0f;
+            return;
+        }
+
+        bool noFootstepBob = playerController != null &&
+            (!playerController.IsGrounded() || playerController.IsSliding());
+
+        if (noFootstepBob)
+        {
+            float settleT = Time.deltaTime * weaponData.bobbingSettleSpeed;
+            bobPositionOffset = Vector3.Lerp(bobPositionOffset, Vector3.zero, settleT);
+            bobRollOffset = Mathf.Lerp(bobRollOffset, 0f, settleT);
+            return;
+        }
+
+        float speed = playerController != null ? playerController.GetCurrentSpeed() : 0f;
+        float delta = Time.deltaTime * weaponData.idleSpeed;
+        delta += Mathf.Clamp(speed * weaponData.walkSpeedMultiplier, 0f, weaponData.walkSpeedMax);
+
+        sinX += delta / 2f;
+        sinY += delta;
+        sinX %= Mathf.PI * 2f;
+        sinY %= Mathf.PI * 2f;
+
+        float aimScale = IsADS ? 1f / weaponData.aimReduction : 1f;
+        float magnitude = weaponData.bobbingMagnitude * aimScale;
+
+        bobPositionOffset = new Vector3(Mathf.Sin(sinX) * magnitude, Mathf.Sin(sinY) * magnitude, 0f);
+        bobRollOffset = Mathf.Sin(sinX) * weaponData.bobbingRollIntensity * aimScale;
+    }
+
+    private void UpdateJumpTilt()
+    {
+        if (!weaponData.haveJumpSway || playerController == null || IsADS)
+        {
+            jumpRotationOffset = Vector3.Lerp(jumpRotationOffset, Vector3.zero, Time.deltaTime * weaponData.landingSmooth);
+            return;
+        }
+
+        if (!playerController.IsGrounded())
+        {
+            float yVelocity = Mathf.Clamp(playerController.GetVelocity().y, -weaponData.weaponMinClamp, weaponData.weaponMaxClamp);
+            impactForce = -yVelocity * weaponData.landingIntensity;
+
+            Vector3 target = new Vector3(0f, 0f, yVelocity * weaponData.jumpIntensity);
+            jumpRotationOffset = Vector3.Lerp(jumpRotationOffset, target, Time.deltaTime * weaponData.jumpSmooth);
+        }
+        else if (impactForce >= 0f)
+        {
+            Vector3 target = new Vector3(0f, 0f, impactForce);
+            jumpRotationOffset = Vector3.Lerp(jumpRotationOffset, target, Time.deltaTime * weaponData.landingSmooth);
+            impactForce -= weaponData.recoverySpeed * Time.deltaTime;
+        }
+        else
+        {
+            jumpRotationOffset = Vector3.Lerp(jumpRotationOffset, Vector3.zero, Time.deltaTime * weaponData.landingSmooth);
+        }
+    }
+
+    private void UpdateCrouchTilt()
+    {
+        bool crouchStance = playerController != null && playerController.IsCrouching();
+
+        Vector3 targetRot = crouchStance ? weaponData.crouchTiltRotation : Vector3.zero;
+        Vector3 targetPos = crouchStance ? weaponData.crouchTiltPosition : Vector3.zero;
+
+        crouchRotationOffset = Vector3.SmoothDamp(crouchRotationOffset, targetRot, ref crouchRotationVelocity, weaponData.crouchTiltTime);
+        crouchPositionOffset = Vector3.SmoothDamp(crouchPositionOffset, targetPos, ref crouchPositionVelocity, weaponData.crouchTiltTime);
+    }
+
+    private void ApplySwayAndBob()
+    {
         Quaternion baseRotation = weaponData.baseViewmodelRotation != Vector3.zero
             ? Quaternion.Euler(weaponData.baseViewmodelRotation)
             : originRotation;
 
-        Quaternion swayRot = Quaternion.AngleAxis(weaponData.rotationSwayIntensity * mouseX * -1f, Vector3.up);
-        transform.localRotation = Quaternion.Lerp(transform.localRotation,
-            baseRotation * swayRot, weaponData.rotationSwaySmoothness * Time.deltaTime);
-    }
+        Vector3 rotationOffset = mouseSwayRotation + jumpRotationOffset + crouchRotationOffset
+            + new Vector3(0f, 0f, bobRollOffset);
 
-    private void WeaponBobbing()
-    {
-        if (!weaponData.haveBobbing) return;
+        Quaternion targetRotation = baseRotation * Quaternion.Euler(rotationOffset);
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRotation,
+            weaponData.overallSwaySmoothness * Time.deltaTime);
 
-        Vector3 basePosition = weaponData.baseViewmodelPosition;
+        Vector3 positionOffset = mouseSwayPosition + dragOffset + bobPositionOffset + crouchPositionOffset;
+        Vector3 targetPosition = weaponData.baseViewmodelPosition + positionOffset;
 
-        if (playerController != null && !playerController.IsGrounded())
-        {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, basePosition, Time.deltaTime);
-            return;
-        }
-
-        float delta = Time.deltaTime * weaponData.idleSpeed;
-        float velocity = (lastPosition - transform.position).magnitude * weaponData.walkSpeedMultiplier;
-        delta += Mathf.Clamp(velocity, 0, weaponData.walkSpeedMax);
-
-        sinX += delta / 2;
-        sinY += delta;
-        sinX %= Mathf.PI * 2;
-        sinY %= Mathf.PI * 2;
-
-        float mag = IsADS
-            ? weaponData.bobbingMagnitude / weaponData.aimReduction
-            : weaponData.bobbingMagnitude;
-
-        transform.localPosition = basePosition + mag * Mathf.Sin(sinY) * Vector3.up;
-        transform.localPosition += mag * Mathf.Sin(sinX) * Vector3.right;
-        lastPosition = transform.position;
-    }
-
-    private void JumpSwayEffect()
-    {
-        if (!weaponData.haveJumpSway || IsADS || playerController == null) return;
-
-        switch (playerController.IsGrounded())
-        {
-            case false:
-                float yVelocity = playerController.GetVelocity().y;
-                yVelocity = Mathf.Clamp(yVelocity, -weaponData.weaponMinClamp, weaponData.weaponMaxClamp);
-                impactForce = -yVelocity * weaponData.landingIntensity;
-                if (IsADS) yVelocity = Mathf.Max(yVelocity, 0);
-                transform.localRotation = Quaternion.Lerp(transform.localRotation,
-                    Quaternion.Euler(0f, 0f, yVelocity * weaponData.jumpIntensity),
-                    Time.deltaTime * weaponData.jumpSmooth);
-                break;
-
-            case true when impactForce >= 0:
-                transform.localRotation = Quaternion.Lerp(transform.localRotation,
-                    Quaternion.Euler(0, 0, impactForce),
-                    Time.deltaTime * weaponData.landingSmooth);
-                impactForce -= weaponData.recoverySpeed * Time.deltaTime;
-                break;
-
-            case true:
-                transform.localRotation = Quaternion.Lerp(transform.localRotation,
-                    Quaternion.identity, Time.deltaTime * weaponData.landingSmooth);
-                break;
-        }
+        transform.localPosition = Vector3.Lerp(transform.localPosition, targetPosition,
+            weaponData.overallSwaySmoothness * Time.deltaTime);
     }
 
     #endregion Weapon Effects (Recoil / Sway / Bobbing)

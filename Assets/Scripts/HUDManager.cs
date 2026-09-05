@@ -247,7 +247,7 @@ public class HUDManager : MonoBehaviour
         }
 
         activeHitmarkers.Add(hitmarker);
-        StartCoroutine(ReturnHitmarkerToPool(hitmarker, 0.2f));
+        StartCoroutine(ReturnHitmarkerToPool(hitmarker, 1f));
     }
 
     private GameObject GetHitmarkerFromPool()

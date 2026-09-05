@@ -18,9 +18,10 @@ MonoBehaviour:
   description: s1mple
   weaponIcon: {fileID: 0}
   ammoIcon: {fileID: 0}
-  baseViewmodelPosition: {x: 0.25, y: 0, z: 1.5}
-  baseViewmodelRotation: {x: 0, y: 0, z: 0}
+  baseViewmodelPosition: {x: 0.3, y: 0.1, z: 1.6}
+  baseViewmodelRotation: {x: 5, y: 1, z: 0}
   inspectDuration: 12
+  overallSwaySmoothness: 12
   damage: 75
   fireRate: 300
   range: 200
@@ -67,18 +68,30 @@ MonoBehaviour:
   gunRecoilShakeDamping: 10
   rotationSwayIntensity: 10
   rotationSwaySmoothness: 2
+  swayClampAngle: 6
+  positionSwayIntensity: 0.02
+  positionSwayClamp: 0.05
+  haveMovementDrag: 1
+  dragIntensity: 0.02
+  dragMaxOffset: 0.08
+  dragSmoothTime: 0.075
   jumpIntensity: 5
-  weaponMaxClamp: 20
-  weaponMinClamp: 20
+  weaponMaxClamp: 3
+  weaponMinClamp: 1.2
   jumpSmooth: 15
   landingIntensity: 5
-  landingSmooth: 15
-  recoverySpeed: 50
-  bobbingMagnitude: 0.009
+  landingSmooth: 10
+  recoverySpeed: 45
+  bobbingMagnitude: 0.01
   idleSpeed: 2
   walkSpeedMultiplier: 4
   walkSpeedMax: 6
   aimReduction: 4
+  bobbingRollIntensity: 1.5
+  bobbingSettleSpeed: 4
+  crouchTiltRotation: {x: -4, y: -2, z: 20}
+  crouchTiltPosition: {x: 0.2, y: -0.2, z: -0.04}
+  crouchTiltTime: 0.18
   availableShootingModes: 00000000
   defaultShootingMode: 0
   bulletsPerBurst: 3
