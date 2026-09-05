@@ -32,6 +32,61 @@ Transform:
   - {fileID: 6703772164101397986}
   m_Father: {fileID: 1936219602583974081}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &89623386631584564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4156679483111347732}
+  - component: {fileID: 7852962139606446627}
+  m_Layer: 0
+  m_Name: HeadCollider
+  m_TagString: Head
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4156679483111347732
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89623386631584564}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4421498514400097102}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7852962139606446627
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89623386631584564}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1273998
+  m_Height: 0.31031585
+  m_Direction: 1
+  m_Center: {x: 0.116173744, y: 1.4454845, z: 0.52464116}
 --- !u!1 &109224981643719169
 GameObject:
   m_ObjectHideFlags: 0
@@ -1957,6 +2012,7 @@ Transform:
   - {fileID: 1807838882344960435}
   - {fileID: 3475871756349100453}
   - {fileID: 3882458792109328718}
+  - {fileID: 4156679483111347732}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6649155834582721157
@@ -1972,6 +2028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 100
+  Armor: 75
   isDead: 0
 --- !u!114 &5953676969667899720
 MonoBehaviour:
@@ -2081,10 +2138,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4755567
-  m_Height: 1.7859981
+  m_Radius: 0.31845918
+  m_Height: 1.6513749
   m_Direction: 1
-  m_Center: {x: 0.070429206, y: 0.7629261, z: 0.2610259}
+  m_Center: {x: 0.026846409, y: 0.6956145, z: 0.13573661}
 --- !u!82 &1518429674659930971
 AudioSource:
   m_ObjectHideFlags: 0

@@ -55,7 +55,6 @@ public class Enemy : MonoBehaviour
             outcome.WasKill = true;
             animator.SetTrigger(Random.Range(0, 2) == 0 ? "DieBack" : "DieForward");
             zombieAudio?.PlayDeath();
-            SoundManager.Instance?.PlayKillFeedback();
             KillFeedManager.Instance?.AddKill(gameObject.name);
         }
         else

@@ -33,6 +33,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip playerDie;
     public AudioClip armorBreak;
     public AudioClip killFeedbackSound;
+    public AudioClip headshotKillSound;
 
     [Header("Music")]
     public AudioClip gameOverMusic;
@@ -112,6 +113,12 @@ public class SoundManager : MonoBehaviour
     {
         if (killFeedbackSound != null && playerChannel != null)
             playerChannel.PlayOneShot(killFeedbackSound);
+    }
+
+    public void PlayHeadshotKillFeedback()
+    {
+        if (headshotKillSound != null && playerChannel != null)
+            playerChannel.PlayOneShot(headshotKillSound);
     }
 
     public void PlayEnemyHitmarker()

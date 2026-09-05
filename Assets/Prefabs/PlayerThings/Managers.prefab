@@ -395,11 +395,12 @@ MonoBehaviour:
   playerDie: {fileID: 8300000, guid: ec2d302a1adf444409833e7514dea3bc, type: 3}
   armorBreak: {fileID: 8300000, guid: d54546950c4e4a940b8ad8daf687ee61, type: 3}
   killFeedbackSound: {fileID: 8300000, guid: 02d0d79058e7ecd4dbecdf93d1a6ce22, type: 3}
+  headshotKillSound: {fileID: 8300000, guid: 28b382b5d0a817d48a942df374adf6c3, type: 3}
   gameOverMusic: {fileID: 8300000, guid: ddcd580469fc2954a999d2b97ad1b104, type: 3}
   grenadeSound: {fileID: 8300000, guid: 66ab811f1737aa6468545295cc67b180, type: 3}
   smokeSound: {fileID: 0}
   armorHitSound: {fileID: 8300000, guid: 5ac5b88d5c47f4240aced4ad74b87b35, type: 3}
-  armorBreakSound: {fileID: 8300000, guid: 1abf36ffb6ebb3c4986aa8c7beb6753f, type: 3}
+  armorBreakSound: {fileID: 8300000, guid: 83a53a0baf9091842a579f8a32e8d210, type: 3}
   selfArmorBreak: {fileID: 8300000, guid: d54546950c4e4a940b8ad8daf687ee61, type: 3}
 --- !u!82 &5716307139016731608
 AudioSource:

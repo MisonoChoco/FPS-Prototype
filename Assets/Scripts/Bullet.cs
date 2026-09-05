@@ -9,7 +9,11 @@ using UnityEngine.VFX;
 #region Feedback Types
 
 public enum HitFeedbackType
-{ Flesh, Armor, ArmorBreak, Kill }
+{
+    Flesh, Armor, ArmorBreak, Kill,
+    HeadshotHit, HeadshotKill,
+    HeadshotArmor, HeadshotArmorBreak
+}
 
 #endregion Feedback Types
 
@@ -96,7 +100,7 @@ public class ImpactData
         Point = contact.point;
         Normal = contact.normal;
         Target = target;
-        HitCollider = contact.thisCollider;
+        HitCollider = contact.otherCollider;
         ImpactForce = force;
     }
 
@@ -167,16 +171,16 @@ public class EnemyCollisionHandler : CollisionHandler
     {
     }
 
-    public override bool CanHandle(string tag) => tag == "Enemy";
+    public override bool CanHandle(string tag) => tag == "Enemy" || tag == "Head";
 
     public override void HandleCollision(GameObject target, ImpactData impactData)
     {
         lastHitOutcome = default;
 
-        var enemy = target.GetComponent<Enemy>();
+        var enemy = target.GetComponentInParent<Enemy>();
         if (enemy == null)
         {
-            Debug.LogWarning($"[EnemyCollisionHandler] {target.name} tagged Enemy but has no Enemy component.");
+            Debug.LogWarning($"[EnemyCollisionHandler] {target.name} tagged {target.tag} but has no Enemy component in parent hierarchy.");
             return;
         }
 
@@ -190,7 +194,7 @@ public class EnemyCollisionHandler : CollisionHandler
     {
         if (outcome.WasKill)
         {
-            target.GetComponent<CapsuleCollider>()?.gameObject.SetActive(false);
+            target.GetComponentInParent<CapsuleCollider>()?.gameObject.SetActive(false);
             EffectHelper.CreateBloodEffect(impactData.Point, impactData.Normal, target);
         }
         else if (outcome.ArmorBroke)
@@ -473,10 +477,29 @@ public class BulletEnemyHandler : EnemyCollisionHandler
     {
         base.HandleCollision(target, impactData);
 
-        HitFeedbackType feedback = lastHitOutcome.WasKill ? HitFeedbackType.Kill
-            : lastHitOutcome.ArmorBroke ? HitFeedbackType.ArmorBreak
-            : lastHitOutcome.WasArmorHit ? HitFeedbackType.Armor
-            : HitFeedbackType.Flesh;
+        bool isHeadshot = impactData.HitCollider != null && impactData.HitCollider.CompareTag("Head");
+
+        HitFeedbackType feedback;
+        if (lastHitOutcome.WasKill)
+        {
+            feedback = isHeadshot ? HitFeedbackType.HeadshotKill : HitFeedbackType.Kill;
+            if (isHeadshot)
+                SoundManager.Instance?.PlayHeadshotKillFeedback();
+            else
+                SoundManager.Instance?.PlayKillFeedback();
+        }
+        else if (lastHitOutcome.ArmorBroke)
+        {
+            feedback = isHeadshot ? HitFeedbackType.HeadshotArmorBreak : HitFeedbackType.ArmorBreak;
+        }
+        else if (lastHitOutcome.WasArmorHit)
+        {
+            feedback = isHeadshot ? HitFeedbackType.HeadshotArmor : HitFeedbackType.Armor;
+        }
+        else
+        {
+            feedback = isHeadshot ? HitFeedbackType.HeadshotHit : HitFeedbackType.Flesh;
+        }
 
         BulletImpactEvents.Instance?.InvokeEnemyHit(impactData.Point, projectile.Damage, feedback);
     }

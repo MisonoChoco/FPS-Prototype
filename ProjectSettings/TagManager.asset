@@ -10,6 +10,8 @@ TagManager:
   - CinemachineTarget
   - Enemy
   - Zombie
+  - Bullet
+  - Head
   layers:
   - Default
   - TransparentFX
@@ -56,3 +58,4 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
+  m_MigratedRenderPipelines: []

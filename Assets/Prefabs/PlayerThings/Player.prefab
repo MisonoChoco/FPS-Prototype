@@ -619,8 +619,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5e8ffb1310baf44ea32ca749817aef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivityX: 100
-  mouseSensitivityY: 100
+  mouseSensitivityX: 70
+  mouseSensitivityY: 70
   invertMouseY: 0
   minVerticalAngle: -90
   maxVerticalAngle: 90
@@ -1303,6 +1303,7 @@ MonoBehaviour:
   sprintSpeed: 7
   tacSprintMultiplier: 1.35
   crouchSpeed: 3
+  proneSpeed: 1
   groundAcceleration: 20
   groundDeceleration: 25
   jumpHeight: 2
@@ -1323,13 +1324,17 @@ MonoBehaviour:
   obstructionMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  proneKey: 99
+  proneHeight: 0.5
+  proneCenter: {x: 0, y: -1.5, z: 0}
+  cameraProneOffset: -1.2
   sprintForwardThreshold: 0.5
   tacSprintMaxDuration: 4
   tacSprintRegenDuration: 8
   tacSprintRegenPenaltyWhileSprinting: 0.25
   tacSprintActivationThreshold: 0.5
   slideFriction: 4
-  slideCancelFriction: 20
+  slideCancelPunishment: 3
   slideEndSpeed: 2
   slideSteerInfluence: 0.15
   runKey: 304

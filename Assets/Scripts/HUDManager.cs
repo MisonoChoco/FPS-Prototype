@@ -122,6 +122,27 @@ public class HUDManager : MonoBehaviour
 
     #region Hitmarker System
 
+    private GameObject CreateHitmarkerInstance(int index)
+    {
+        GameObject hitmarker = Instantiate(hitmarkerPrefab, hitmarkerContainer);
+        hitmarker.name = $"Hitmarker_{index}";
+
+        Animator animator = hitmarker.GetComponent<Animator>();
+        CanvasGroup canvasGroup = hitmarker.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = hitmarker.AddComponent<CanvasGroup>();
+        }
+
+        if (animator != null)
+        {
+            animator.enabled = false;
+            animator.enabled = true;
+        }
+
+        return hitmarker;
+    }
+
     private void InitializeHitmarkerPool()
     {
         if (hitmarkerPrefab == null)
@@ -141,31 +162,10 @@ public class HUDManager : MonoBehaviour
 
         hitmarkerPool = new Queue<GameObject>();
         activeHitmarkers = new List<GameObject>();
-        hitmarkerImageCache = new Dictionary<GameObject, Image[]>();
 
         for (int i = 0; i < hitmarkerPoolSize; i++)
         {
-            GameObject hitmarker = Instantiate(hitmarkerPrefab, hitmarkerContainer);
-            hitmarker.name = $"Hitmarker_{i}";
-
-            // Force initialization by accessing components
-            Animator animator = hitmarker.GetComponent<Animator>();
-            CanvasGroup canvasGroup = hitmarker.GetComponent<CanvasGroup>();
-            if (canvasGroup == null)
-            {
-                canvasGroup = hitmarker.AddComponent<CanvasGroup>();
-            }
-
-            // Cache all 4 hand Images so we don't re-fetch every hit
-            hitmarkerImageCache[hitmarker] = hitmarker.GetComponentsInChildren<Image>();
-
-            // Force animator to load its runtime controller
-            if (animator != null)
-            {
-                animator.enabled = false;
-                animator.enabled = true;
-            }
-
+            GameObject hitmarker = CreateHitmarkerInstance(i);
             hitmarker.SetActive(false);
             hitmarkerPool.Enqueue(hitmarker);
         }
@@ -199,11 +199,9 @@ public class HUDManager : MonoBehaviour
             return;
         }
 
-        // Randomize rotation (Z-axis for 2D UI elements)
         float randomRotation = UnityEngine.Random.Range(-12f, 12f);
         hitmarker.transform.rotation = Quaternion.Euler(0f, 0f, randomRotation);
 
-        // Reset alpha to full opacity
         CanvasGroup canvasGroup = hitmarker.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
@@ -211,41 +209,36 @@ public class HUDManager : MonoBehaviour
         }
         canvasGroup.alpha = 1f;
 
-        // Tint all 4 hands blue on armor hits, white otherwise
-        if (!hitmarkerImageCache.TryGetValue(hitmarker, out Image[] hitmarkerImages))
-        {
-            // Fallback for hitmarkers created outside the initial pool (pool-exhaustion case)
-            hitmarkerImages = hitmarker.GetComponentsInChildren<Image>();
-            hitmarkerImageCache[hitmarker] = hitmarkerImages;
-        }
-
-        Color tint = hitType == HitFeedbackType.Armor ? Color.blue : Color.white;
-        foreach (var img in hitmarkerImages)
-        {
-            img.color = tint;
-        }
-
         hitmarker.SetActive(true);
 
-        // Reset animator and play the state matching this hit's feedback type
         Animator animator = hitmarker.GetComponent<Animator>();
         if (animator != null)
         {
-            animator.Rebind();
-            animator.Update(0f);
+            // Clear any stale trigger from this hitmarker's previous use in the pool
+            animator.ResetTrigger("ArmorBreak");
+            animator.ResetTrigger("EnemyKill");
+            animator.ResetTrigger("HeadshotHit");
+            animator.ResetTrigger("HeadshotKill");
+            animator.ResetTrigger("ArmorHit");
+            animator.ResetTrigger("FleshHit");
+            animator.ResetTrigger("HeadshotArmor");
 
-            string stateName = hitType switch
+            string triggerName = hitType switch
             {
                 HitFeedbackType.ArmorBreak => "ArmorBreak",
                 HitFeedbackType.Kill => "EnemyKill",
-                _ => "Hitmarker"
+                HitFeedbackType.HeadshotHit => "HeadshotHit",
+                HitFeedbackType.HeadshotKill => "HeadshotKill",
+                HitFeedbackType.Armor => "ArmorHit",
+                HitFeedbackType.HeadshotArmor => "HeadshotArmor",
+                _ => "FleshHit"
             };
 
-            animator.Play(stateName, 0, 0f);
+            animator.SetTrigger(triggerName);
 
             if (debugHitmarker)
             {
-                Debug.Log($"HUDManager: Playing hitmarker animation state '{stateName}'");
+                Debug.Log($"HUDManager: Fired hitmarker trigger '{triggerName}'");
             }
         }
         else
@@ -266,8 +259,7 @@ public class HUDManager : MonoBehaviour
         else
         {
             Debug.LogWarning("HUDManager: Hitmarker pool exhausted, creating new instance");
-            GameObject newHitmarker = Instantiate(hitmarkerPrefab, hitmarkerContainer);
-            return newHitmarker;
+            return CreateHitmarkerInstance(hitmarkerPoolSize + UnityEngine.Random.Range(1000, 9999));
         }
     }
 

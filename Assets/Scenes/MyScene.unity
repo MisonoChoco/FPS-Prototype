@@ -45987,6 +45987,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1239774995}
     - target: {fileID: 8448046462471386427, guid: ce421fe21d6f4f1438a31c57b9a1c54c, type: 3}
+      propertyPath: hitmarkerPoolSize
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448046462471386427, guid: ce421fe21d6f4f1438a31c57b9a1c54c, type: 3}
       propertyPath: unActiveWeaponUI2
       value: 
       objectReference: {fileID: 600237999}
